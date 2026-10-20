@@ -11,10 +11,13 @@ mkdirSync(OUT, { recursive: true })
 const LOG = new URL('events.jsonl', OUT)
 
 // Current scenario, changed between tests with GET /mode?permission=...&ask=...&denied=...
-//   permission: none | hang | hold:<s>:<allow|deny|none> | setmode:<mode>
+//   permission: none | hang | hold:<s>:<allow|deny|none> | manual | setmode:<mode>
+//   manual holds every request until GET /release?behavior=<allow|deny|none>
 //   ask:        none | answer:<label>
 //   denied:     none | retry
 const mode: Record<string, string> = { permission: 'none', ask: 'none', denied: 'none' }
+
+const pending: Array<(behavior: string) => void> = []
 
 const log = (entry: object) => appendFileSync(LOG, JSON.stringify({ t: new Date().toISOString(), ...entry }) + '\n')
 const sleep = (s: number) => new Promise((r) => setTimeout(r, s * 1000))
@@ -28,6 +31,7 @@ async function answer(event: string, body: any): Promise<object | null> {
   if (event === 'PermissionRequest') {
     const [kind, a, b] = mode.permission.split(':')
     if (kind === 'hang') return null
+    if (kind === 'manual') return new Promise((resolve) => pending.push((behavior) => resolve(permission(behavior))))
     if (kind === 'hold') { await sleep(Number(a)); return permission(b) }
     if (kind === 'setmode') return permission('allow', { updatedPermissions: [{ type: 'setMode', mode: a, destination: 'session' }] })
     return {}
@@ -50,6 +54,14 @@ createServer(async (req, res) => {
     for (const [k, v] of url.searchParams) mode[k] = v
     log({ kind: 'mode', mode })
     res.writeHead(200, { 'content-type': 'application/json' }).end(JSON.stringify(mode))
+    return
+  }
+  if (req.method === 'GET' && url.pathname === '/release') {
+    const behavior = url.searchParams.get('behavior') ?? 'none'
+    const n = pending.length
+    pending.splice(0).forEach((release) => release(behavior))
+    log({ kind: 'release', behavior, released: n })
+    res.writeHead(200, { 'content-type': 'application/json' }).end(JSON.stringify({ behavior, released: n }))
     return
   }
   if (req.method !== 'POST' || !url.pathname.startsWith('/hook/')) { res.writeHead(404).end(); return }

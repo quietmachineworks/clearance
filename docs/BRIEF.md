@@ -183,7 +183,7 @@ Results: ADR-0003.
 | # | Question | Status |
 |---|---|---|
 | 1 | Terminal dialog while a `PermissionRequest` hook waits, timeout, empty answer | settled: dialog shown in parallel, timeout leaves it open |
-| 1b | Human answers in the terminal first: is the hook request closed, a late answer ignored? | open, one manual test |
+| 1b | Human answers in the terminal first: is the hook request closed, a late answer ignored? | settled: terminal wins, late answer ignored, closure not reliable |
 | 2 | `updatedPermissions` with `setMode` | settled: works, destination `session` |
 | 3 | Shape of `PermissionDenied`, retry | from the docs; real payload in M1 |
 | 4 | `AskUserQuestion` answered through `updatedInput.answers` | settled: works |
