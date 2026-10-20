@@ -1,0 +1,6 @@
+node_modules/
+*.log
+.env
+.env.*
+# local runtime state: event journal, token
+data/

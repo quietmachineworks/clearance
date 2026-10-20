@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>clearance · chibi</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&amp;display=swap">
+<style>
+body{margin:0}
+@keyframes cb-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.6px)}}
+@keyframes cb-drip{0%{transform:translateY(-2px);opacity:0}25%{opacity:1}100%{transform:translateY(5px);opacity:0}}
+@keyframes cb-throb{0%,100%{transform:scale(1)}50%{transform:scale(1.28)}}
+@keyframes cb-twinkle{0%,100%{transform:scale(0.7);opacity:0.6}50%{transform:scale(1.15);opacity:1}}
+@keyframes cb-float{0%{transform:translate(0,3px);opacity:0}30%{opacity:1}100%{transform:translate(3px,-5px);opacity:0}}
+@keyframes cb-shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-1.2px)}75%{transform:translateX(1.2px)}}
+@keyframes cb-speed{0%,100%{opacity:0.2}50%{opacity:0.85}}
+@keyframes cb-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none !important}}
+</style>
+</helmet>
+<span role="img" aria-label="{{label}}" style="display: block; width: {{px}}; height: {{px}}">
+<svg width="{{px}}" height="{{px}}" viewBox="0 0 64 64" aria-hidden="true" style="display: block; overflow: visible">
+<rect x="0" y="0" width="64" height="64" rx="16" fill="{{tint}}" opacity="{{bgOp}}"></rect>
+<g opacity="{{mSpeed}}" style="animation: cb-speed 0.9s ease-in-out infinite">
+<path d="M2.5 22 L10.5 24 M1.5 32 L9.5 32 M2.5 42 L10.5 40 M61.5 22 L53.5 24 M62.5 32 L54.5 32 M61.5 42 L53.5 40" stroke="#141414" stroke-width="1.4" stroke-linecap="round"></path>
+</g>
+<g style="transform-box: fill-box; transform-origin: 50% 100%; animation: cb-bob 2.6s ease-in-out infinite">
+<path d="M13 64 Q14 49 32 48 Q50 49 51 64 Z" fill="#2B2A33"></path>
+<path d="M26.5 49 L32 55.5 L37.5 49" stroke="#FFFFFF" stroke-width="1.6" fill="none" stroke-linejoin="round"></path>
+<rect x="29" y="43" width="6" height="6" fill="#FFF1E4"></rect>
+<ellipse cx="32" cy="31.5" rx="15" ry="14.5" fill="#FFF1E4" stroke="#141414" stroke-width="1.3"></ellipse>
+<path d="M19.1 38.5 a2.4 1.3 0 1 0 4.8 0 a2.4 1.3 0 1 0 -4.8 0 M40.1 38.5 a2.4 1.3 0 1 0 4.8 0 a2.4 1.3 0 1 0 -4.8 0" fill="#FF9DA8" opacity="{{blush}}"></path>
+<path d="M16.5 31 Q14 11 32 10.5 Q50 11 47.5 31 L44.5 23 L40.5 27 L37 20.5 L32.5 26 L28 20 L24 26 L20.5 22 Z" fill="{{hair}}" stroke="#141414" stroke-width="1.3" stroke-linejoin="round"></path>
+<path d="M31 11.5 Q33 2.5 40 4.5 Q35 5.5 33.5 11.5 Z" fill="{{hair}}" stroke="#141414" stroke-width="1.1" stroke-linejoin="round" opacity="{{oAhoge}}"></path>
+<g opacity="{{oPhones}}">
+<path d="M14.5 30 Q13.5 7.5 32 7.5 Q50.5 7.5 49.5 30" stroke="#141414" stroke-width="3" fill="none" stroke-linecap="round"></path>
+<rect x="10.5" y="25.5" width="6" height="10.5" rx="2.4" fill="#141414"></rect>
+<rect x="47.5" y="25.5" width="6" height="10.5" rx="2.4" fill="#141414"></rect>
+<rect x="11.8" y="27.5" width="3.4" height="6.5" rx="1.4" fill="{{hair}}"></rect>
+<rect x="48.8" y="27.5" width="3.4" height="6.5" rx="1.4" fill="{{hair}}"></rect>
+</g>
+<path d="{{eyesFillD}}" fill="{{eye}}"></path>
+<path d="M26.4 31.4 a0.85 0.85 0 1 0 0.01 0 M39.4 31.4 a0.85 0.85 0 1 0 0.01 0" fill="#FFFFFF" opacity="{{shine}}"></path>
+<path d="{{eyesStrokeD}}" fill="none" stroke="#141414" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="{{browsD}}" fill="none" stroke="#141414" stroke-width="1.5" stroke-linecap="round"></path>
+<g opacity="{{oGlasses}}">
+<path d="M25.5 33 m-4.8 0 a4.8 4.8 0 1 0 9.6 0 a4.8 4.8 0 1 0 -9.6 0 M38.5 33 m-4.8 0 a4.8 4.8 0 1 0 9.6 0 a4.8 4.8 0 1 0 -9.6 0" fill="rgba(255,255,255,0.18)" stroke="#141414" stroke-width="1.4"></path>
+<path d="M30.3 32.5 Q32 31.5 33.7 32.5" fill="none" stroke="#141414" stroke-width="1.4"></path>
+<path d="M22 30.4 L23.6 29.2 M35 30.4 L36.6 29.2" stroke="#FFFFFF" stroke-width="1.1" stroke-linecap="round"></path>
+</g>
+<path d="{{mouthFillD}}" fill="#141414"></path>
+<path d="{{mouthStrokeD}}" fill="none" stroke="#141414" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+</g>
+<g opacity="{{mSweat}}" style="transform-box: fill-box; animation: cb-drip 1.8s ease-in infinite">
+<path d="M51 14.5 Q48.2 19.6 51 21.9 Q53.8 19.6 51 14.5 Z" fill="#8FD0F7" stroke="#2A6F9E" stroke-width="1"></path>
+</g>
+<g opacity="{{mBang}}" style="animation: cb-shake 0.45s ease-in-out infinite">
+<path d="M52 2 L57.6 2 L55.9 14.6 L53.7 14.6 Z" fill="#E8341C" stroke="#141414" stroke-width="1" stroke-linejoin="round"></path>
+<path d="M54.8 17.4 m-1.9 0 a1.9 1.9 0 1 0 3.8 0 a1.9 1.9 0 1 0 -3.8 0" fill="#E8341C" stroke="#141414" stroke-width="1"></path>
+</g>
+<g opacity="{{mQ}}" style="animation: cb-bob 1.6s ease-in-out infinite">
+<text x="55" y="16.5" text-anchor="middle" font-family="'Dela Gothic One', sans-serif" font-size="16" fill="#2F6FE0" stroke="#141414" stroke-width="0.8">?</text>
+</g>
+<g opacity="{{mVein}}" style="transform-box: fill-box; transform-origin: center; animation: cb-throb 0.9s ease-in-out infinite">
+<path d="M47.5 10 Q50 12.5 47.5 15 M49.5 8 Q52 10.5 54.5 8 M56.5 10 Q54 12.5 56.5 15 M49.5 17 Q52 14.5 54.5 17" stroke="#E8341C" stroke-width="2.3" fill="none" stroke-linecap="round"></path>
+</g>
+<g opacity="{{mSpark}}">
+<path style="transform-box: fill-box; transform-origin: center; animation: cb-twinkle 1.4s ease-in-out infinite" d="M53 3 L54.3 7.7 L59 9 L54.3 10.3 L53 15 L51.7 10.3 L47 9 L51.7 7.7 Z" fill="#FFC21A" stroke="#141414" stroke-width="0.8" stroke-linejoin="round"></path>
+<path style="transform-box: fill-box; transform-origin: center; animation: cb-twinkle 1.4s ease-in-out 0.7s infinite" d="M10 6 L10.8 8.7 L13.5 9.5 L10.8 10.3 L10 13 L9.2 10.3 L6.5 9.5 L9.2 8.7 Z" fill="#FFC21A" stroke="#141414" stroke-width="0.7" stroke-linejoin="round"></path>
+</g>
+<g opacity="{{mZzz}}">
+<text x="47" y="15" font-family="'Dela Gothic One', sans-serif" font-size="7" fill="#141414" style="animation: cb-float 2.4s ease-out infinite">z</text>
+<text x="52" y="9" font-family="'Dela Gothic One', sans-serif" font-size="10" fill="#141414" style="animation: cb-float 2.4s ease-out 0.8s infinite">Z</text>
+</g>
+<g opacity="{{mDizzy}}" style="transform-box: fill-box; transform-origin: center; animation: cb-spin 2.4s linear infinite">
+<path d="M32 4.5 L33 6.6 L35.3 6.9 L33.6 8.4 L34.1 10.7 L32 9.6 L29.9 10.7 L30.4 8.4 L28.7 6.9 L31 6.6 Z M22 7.5 L22.7 8.9 L24.2 9.1 L23.1 10.1 L23.4 11.6 L22 10.9 L20.6 11.6 L20.9 10.1 L19.8 9.1 L21.3 8.9 Z M42 7.5 L42.7 8.9 L44.2 9.1 L43.1 10.1 L43.4 11.6 L42 10.9 L40.6 11.6 L40.9 10.1 L39.8 9.1 L41.3 8.9 Z" fill="#FFC21A" stroke="#141414" stroke-width="0.6"></path>
+</g>
+</svg>
+</span>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"av":{"editor":null},"size":{"editor":"int","default":128,"min":20,"max":256},"bare":{"editor":"boolean","default":false},"$preview":{"width":128,"height":128}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const av = this.props.av || { hair: '#3D7BE0', eye: '#1F4E9E', tint: '#E4EDFB', model: 'opus', state: 'wait', label: 'shop-0a, Opus, attend une permission' };
+    const size = Number(this.props.size ?? 128);
+    const st = av.state;
+    const OPEN = 'M23.3 33 a2.2 3 0 1 0 4.4 0 a2.2 3 0 1 0 -4.4 0 M36.3 33 a2.2 3 0 1 0 4.4 0 a2.2 3 0 1 0 -4.4 0';
+    const WIDE = 'M22.9 33 a2.6 3.6 0 1 0 5.2 0 a2.6 3.6 0 1 0 -5.2 0 M35.9 33 a2.6 3.6 0 1 0 5.2 0 a2.6 3.6 0 1 0 -5.2 0';
+    const NONE = 'M0 0';
+    const EYES = {
+      work: [OPEN, NONE], wait: [OPEN, NONE], go: [WIDE, NONE], question: [OPEN, NONE],
+      denied: [NONE, 'M23 31 L27.5 33 L23 35 M41 31 L36.5 33 L41 35'],
+      done: [NONE, 'M23 34 Q25.5 30.5 28 34 M36 34 Q38.5 30.5 41 34'],
+      sleep: [NONE, 'M23 33.5 Q25.5 35 28 33.5 M36 33.5 Q38.5 35 41 33.5'],
+      dizzy: [NONE, 'M25.5 33 m-2.6 0 a2.6 2.6 0 1 0 2.6 -2.6 a1.6 1.6 0 1 0 1.6 1.6 M38.5 33 m-2.6 0 a2.6 2.6 0 1 0 2.6 -2.6 a1.6 1.6 0 1 0 1.6 1.6']
+    };
+    const BROWS = {
+      work: 'M22.5 28 L28 29.2 M41.5 28 L36 29.2',
+      wait: 'M22.5 29 L28 27.8 M41.5 29 L36 27.8',
+      go: 'M22.5 27 Q25.5 25.5 28 27 M36 27 Q38.5 25.5 41.5 27',
+      question: 'M22.5 27 Q25.5 25.5 28 27 M36 28.5 L41.5 28.5',
+      denied: 'M22.5 27.5 L28 29.8 M41.5 27.5 L36 29.8',
+      done: NONE, sleep: NONE,
+      dizzy: 'M22.5 28.5 Q25.5 27.5 28 28.5 M36 28.5 Q38.5 27.5 41.5 28.5'
+    };
+    const MOUTH = {
+      work: [NONE, 'M30 41.5 L34 41.5'],
+      wait: [NONE, 'M28.5 42 Q30.2 40.8 32 42 Q33.8 43.2 35.5 42'],
+      go: ['M32 39.6 a2 2.4 0 1 0 0.01 0', NONE],
+      question: [NONE, 'M30.5 42 Q32 41 33.5 42'],
+      denied: [NONE, 'M28.5 42.5 L30.2 41 L32 42.5 L33.8 41 L35.5 42.5'],
+      done: ['M27.5 40.2 Q32 40.8 36.5 40.2 Q36 45 32 45 Q28 45 27.5 40.2 Z', NONE],
+      sleep: [NONE, 'M32 41.2 a1.1 1.1 0 1 0 0.01 0'],
+      dizzy: [NONE, 'M28.5 42 Q30.2 40.8 32 42 Q33.8 43.2 35.5 42']
+    };
+    const on = (b) => (b ? '1' : '0');
+    const e = EYES[st] || EYES.work;
+    const m = MOUTH[st] || MOUTH.work;
+    return {
+      label: av.label,
+      px: size + 'px',
+      tint: av.tint,
+      bgOp: this.props.bare ? '0' : '1',
+      hair: av.hair,
+      eye: av.eye,
+      eyesFillD: e[0], eyesStrokeD: e[1],
+      shine: on(e[0] !== NONE),
+      browsD: BROWS[st] || NONE,
+      mouthFillD: m[0], mouthStrokeD: m[1],
+      blush: (st === 'wait' || st === 'done' || st === 'question') ? '0.75' : '0',
+      oGlasses: on(av.model === 'opus'),
+      oPhones: on(av.model === 'sonnet'),
+      oAhoge: on(av.model === 'haiku'),
+      mSpeed: on(st === 'work'),
+      mSweat: on(st === 'wait' || st === 'dizzy'),
+      mBang: on(st === 'go'),
+      mQ: on(st === 'question'),
+      mVein: on(st === 'denied'),
+      mSpark: on(st === 'done'),
+      mZzz: on(st === 'sleep'),
+      mDizzy: on(st === 'dizzy')
+    };
+  }
+}
+</script>
+</body>
+</html>
