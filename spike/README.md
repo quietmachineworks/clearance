@@ -19,3 +19,10 @@ A throwaway hook receiver used to settle how Claude Code behaves with blocking `
 4. Watch `claude agents --json`, then clean up with `claude stop <id>` and `claude rm <id>`.
 
 Never point these hooks at your global settings: they would answer for every open session.
+
+## Probe mod (question 6)
+
+`spike/probe-mod` reports `$.session.usage()` to `/mod/usage` every 5 s and submits any instruction
+queued with `curl "http://127.0.0.1:47800/instruct?text=..."`. Load it in one session only:
+`claude --bg ... --plugin-dir <abs path>/spike/probe-mod`. Check it with
+`claude plugin validate spike/probe-mod`.

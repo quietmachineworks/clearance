@@ -18,6 +18,8 @@ const LOG = new URL('events.jsonl', OUT)
 const mode: Record<string, string> = { permission: 'none', ask: 'none', denied: 'none' }
 
 const pending: Array<(behavior: string) => void> = []
+// Instructions queued for the probe mod (question 6), handed out once, to any session.
+const inbox: string[] = []
 
 const log = (entry: object) => appendFileSync(LOG, JSON.stringify({ t: new Date().toISOString(), ...entry }) + '\n')
 const sleep = (s: number) => new Promise((r) => setTimeout(r, s * 1000))
@@ -62,6 +64,25 @@ createServer(async (req, res) => {
     pending.splice(0).forEach((release) => release(behavior))
     log({ kind: 'release', behavior, released: n })
     res.writeHead(200, { 'content-type': 'application/json' }).end(JSON.stringify({ behavior, released: n }))
+    return
+  }
+  if (req.method === 'GET' && url.pathname === '/instruct') {
+    inbox.push(url.searchParams.get('text') ?? '')
+    log({ kind: 'instruct', queued: inbox.length })
+    res.writeHead(200).end('queued')
+    return
+  }
+  if (req.method === 'GET' && url.pathname === '/mod/inbox') {
+    const text = inbox.shift()
+    if (text) log({ kind: 'inbox', session: url.searchParams.get('session'), text })
+    res.writeHead(200, { 'content-type': 'text/plain' }).end(text ?? '')
+    return
+  }
+  if (req.method === 'POST' && url.pathname === '/mod/usage') {
+    let raw = ''
+    for await (const chunk of req) raw += chunk
+    log({ kind: 'usage', session: url.searchParams.get('session'), usage: JSON.parse(raw || '{}') })
+    res.writeHead(200).end()
     return
   }
   if (req.method !== 'POST' || !url.pathname.startsWith('/hook/')) { res.writeHead(404).end(); return }

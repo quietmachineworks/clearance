@@ -82,9 +82,10 @@ Generic, valid for any workflow and for a session without one:
 - workflow history of the project: closed, interrupted, ended without closure;
 - actions: go to the terminal, send an instruction, stop the workflow (with confirmation).
 
-### Statusline data
+### Usage data
 
-Context left and 5-hour quota, forwarded by the user's statusline command to clearance.
+Context left, 5-hour and 7-day quota, session cost: read by clearance's companion mod with
+`$.session.usage()` (ADR-0004). The same mod shows what waits for the user under every prompt.
 
 ### Later, already decided
 
@@ -138,8 +139,9 @@ Mockups: `design/`.
 | Workflows | `.../subagents/workflows/<run>/journal.jsonl`: `launched`, `started` (`label`, `phase`, `agentId`) and `result` lines; phases declared in the script's `meta.phases` | observed on 18 runs |
 | An agent's model, tools, errors | the agent's transcript: `message.model`, `tool_use`, `tool_result.is_error`, `timestamp` | observed |
 | Stop on error | `StopFailure` hook (`rate_limit`, `authentication_failed`...) | documented |
-| Context, quota | statusline stdin: `context_window.*`, `rate_limits.*` | documented |
-| Instruction to a session | cross-session messaging socket and token | wire format undocumented |
+| Context, quota, cost | companion mod: `$.session.usage()` (`context`, `rateLimits`, `cost`) | documented, tested |
+| Instruction to a session | companion mod: `$.prompt.submit({ text, asUser })` | documented, tested |
+| Session title, terminal tab | transcript `ai-title` records; Windows Terminal tabs through UI Automation | observed, tested |
 | Relay in parallel with the terminal | channels declaring `claude/channel/permission` | research preview, dev flag, organisation policy |
 
 Internal files (`~/.claude/sessions/`, transcripts) may change between versions: prefer a documented
@@ -152,6 +154,7 @@ source whenever one exists, and keep every read of internal files in a single mo
 - session state: `claude agents --json` every 2 s;
 - Claude Code hooks of type `http` to `/hook/<event>`; server stopped = connection refused = Claude
   Code behaves as usual;
+- a companion mod in every session for usage figures, instructions and the line under the prompt;
 - local append-only journal of events and decisions (JSONL);
 - page in plain HTML, CSS and JS, avatars as inline SVG;
 - risk classification (read, write, infrastructure write) in one rules module.
@@ -173,7 +176,7 @@ Security: an "Allow" button is a right to run code on the machine.
 | M0 | Technical spikes (section 8) in an isolated project | each question settled by an ADR |
 | M1 | Board, decisions, tower mode, browser notifications | a real permission approved from the page |
 | M2 | Session detail, subagents, workflows, errors and loops, diff | a multi-agent workflow followed end to end |
-| M3 | Statusline (energy, quota), asleep sessions, journal and suggested rules | quota visible, one rule suggested on real data |
+| M3 | Companion mod (energy, quota, instructions), asleep sessions, journal and suggested rules | quota visible, one rule suggested on real data |
 | M4 | Terminal (go to, start in a tab), avatar pack | start a session from the tower |
 
 ## 8. Open questions for M0
@@ -188,8 +191,8 @@ Results: ADR-0003.
 | 3 | Shape of `PermissionDenied`, retry | from the docs; real payload in M1 |
 | 4 | `AskUserQuestion` answered through `updatedInput.answers` | settled: works |
 | 5 | Channels allowed by the organisation policy; can the relay replace the hook? | open, and less needed now that hook and dialog run in parallel |
-| 6 | Wire format of the cross-session messaging socket | open |
-| 7 | Find and bring to front the terminal tab of a session (Windows Terminal first) | open |
+| 6 | Send an instruction to a session | settled another way: companion mod, `$.prompt.submit` (ADR-0004); socket format left aside |
+| 7 | Find and bring to front the terminal tab of a session (Windows Terminal first) | settled: title match and UI Automation (ADR-0004) |
 | 8 | Where the Workflow tool persists its script | settled: `<session>/workflows/<runId>.json` |
 
 ## 9. Constraints

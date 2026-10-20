@@ -6,3 +6,5 @@ node_modules/
 data/
 # spike logs: real session payloads, never committed
 spike/out/
+# types the Claude Code engine writes into a loaded mod folder
+**/.claude-plugin/types/
