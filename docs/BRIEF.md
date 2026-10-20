@@ -34,7 +34,7 @@ need you" and stages a meeting. It does not let you approve or answer anything.
 | Session mode | no | auto, ask, plan, edits |
 | Fewer interruptions | no | rules suggested from repeated approvals |
 | Finished sessions | "done" | to read, then read, then asleep |
-| Fallback | n/a | page closed = everything goes back to the terminal |
+| Fallback | n/a | the terminal dialog stays open in parallel, first answer wins |
 
 Deliberate choice: **Claude Code only**. No other agent CLI. This allows full use of hooks, modes,
 subagents, workflows and permission rules.
@@ -60,8 +60,9 @@ Possible decisions:
 - auto mode denial: allow a retry, confirm the denial, switch the session to ask;
 - session mode: auto, ask, plan, edits (no bypass).
 
-Tower mode: clearance holds a request only while the page is open. Page closed or server stopped,
-Claude Code behaves as usual in the terminal.
+Parallel with the terminal: Claude Code keeps its own dialog open while clearance holds a request;
+on timeout or with the server stopped, the dialog simply stays (ADR-0003). clearance never blocks
+anyone. The mode selector is offered on pending requests, since a mode change travels with an answer.
 
 Plan approvals become visible through one convention in the user's `CLAUDE.md`: present them with
 `AskUserQuestion` (options GO / No). The session then reports `waitingFor`, and clearance can answer.
@@ -177,16 +178,19 @@ Security: an "Allow" button is a right to run code on the machine.
 
 ## 8. Open questions for M0
 
-1. Does the terminal dialog stay visible while a `PermissionRequest` hook waits? What happens on
-   timeout? Does an empty answer hand back to the terminal?
-2. Does `updatedPermissions` with `setMode` change the session's mode?
-3. Shape of `PermissionDenied`; can a retry happen without sending a message?
-4. `AskUserQuestion` answered through `updatedInput.answers` while the hook waits.
-5. Are channels allowed by the organisation policy? If so, can the parallel relay replace the blocking
-   hook?
-6. Wire format of the cross-session messaging socket.
-7. Find and bring to front the terminal tab of a session (Windows Terminal first).
-8. Where the Workflow tool persists its script (to read `meta.phases`).
+Results: ADR-0003.
+
+| # | Question | Status |
+|---|---|---|
+| 1 | Terminal dialog while a `PermissionRequest` hook waits, timeout, empty answer | settled: dialog shown in parallel, timeout leaves it open |
+| 1b | Human answers in the terminal first: is the hook request closed, a late answer ignored? | open, one manual test |
+| 2 | `updatedPermissions` with `setMode` | settled: works, destination `session` |
+| 3 | Shape of `PermissionDenied`, retry | from the docs; real payload in M1 |
+| 4 | `AskUserQuestion` answered through `updatedInput.answers` | settled: works |
+| 5 | Channels allowed by the organisation policy; can the relay replace the hook? | open, and less needed now that hook and dialog run in parallel |
+| 6 | Wire format of the cross-session messaging socket | open |
+| 7 | Find and bring to front the terminal tab of a session (Windows Terminal first) | open |
+| 8 | Where the Workflow tool persists its script | settled: `<session>/workflows/<runId>.json` |
 
 ## 9. Constraints
 

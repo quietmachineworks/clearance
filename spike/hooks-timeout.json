@@ -1,0 +1,7 @@
+{
+  "hooks": {
+    "PermissionRequest": [{ "hooks": [{ "type": "http", "url": "http://127.0.0.1:47800/hook/PermissionRequest", "timeout": 15 }] }],
+    "Notification": [{ "hooks": [{ "type": "http", "url": "http://127.0.0.1:47800/hook/Notification" }] }],
+    "Stop": [{ "hooks": [{ "type": "http", "url": "http://127.0.0.1:47800/hook/Stop" }] }]
+  }
+}

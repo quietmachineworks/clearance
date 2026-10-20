@@ -4,3 +4,5 @@ node_modules/
 .env.*
 # local runtime state: event journal, token
 data/
+# spike logs: real session payloads, never committed
+spike/out/

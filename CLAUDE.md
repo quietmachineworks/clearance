@@ -7,8 +7,11 @@ of scope. Decisions taken outside the brief: `docs/adr/`.
 
 - **2026-10-20**: framing and UI trials done, direction chosen (manga style, chibi avatars, generic
   session detail). No application code yet.
-- **Next**: M0, the technical spikes of section 8 of the brief, in `spike/` and an isolated test
-  project. Do not start M1 before each M0 question has its ADR.
+- **M0 in progress**: questions 1, 2, 4 and 8 settled (ADR-0003): the terminal dialog stays open while
+  a hook holds a request, a timeout leaves it open, `setMode` and `AskUserQuestion` answers work. No
+  tower mode.
+- **Next**: question 1b (one manual test), then 6 and 7; 3 is checked on real events in M1, 5 is no
+  longer blocking. `spike/` holds the receiver used for M0.
 
 ## Working rules
 
@@ -34,3 +37,4 @@ of scope. Decisions taken outside the brief: `docs/adr/`.
 | `docs/BRIEF.md` | product, scope, data sources, milestones |
 | `docs/adr/` | decisions |
 | `design/` | mockups (canvas sources `.dc.html`) |
+| `spike/` | M0 hook receiver, not part of the product |

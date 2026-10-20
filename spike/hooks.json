@@ -1,0 +1,12 @@
+{
+  "hooks": {
+    "PermissionRequest": [{ "hooks": [{ "type": "http", "url": "http://127.0.0.1:47800/hook/PermissionRequest", "timeout": 60 }] }],
+    "PreToolUse": [{ "matcher": "AskUserQuestion", "hooks": [{ "type": "http", "url": "http://127.0.0.1:47800/hook/PreToolUse", "timeout": 60 }] }],
+    "PermissionDenied": [{ "hooks": [{ "type": "http", "url": "http://127.0.0.1:47800/hook/PermissionDenied" }] }],
+    "Notification": [{ "hooks": [{ "type": "http", "url": "http://127.0.0.1:47800/hook/Notification" }] }],
+    "Stop": [{ "hooks": [{ "type": "http", "url": "http://127.0.0.1:47800/hook/Stop" }] }],
+    "StopFailure": [{ "hooks": [{ "type": "http", "url": "http://127.0.0.1:47800/hook/StopFailure" }] }],
+    "SubagentStart": [{ "hooks": [{ "type": "http", "url": "http://127.0.0.1:47800/hook/SubagentStart" }] }],
+    "SubagentStop": [{ "hooks": [{ "type": "http", "url": "http://127.0.0.1:47800/hook/SubagentStop" }] }]
+  }
+}
