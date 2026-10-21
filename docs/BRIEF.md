@@ -77,12 +77,13 @@ Generic, valid for any workflow and for a session without one:
 - progress: the phases the workflow declares, the current one;
 - the current chapter: one row per step, parallel agents side by side, each with duration, tools,
   errors, result; what is still to come drawn dashed;
-- diff: `git diff` of the branch, or an agent's Edit and Write calls from its transcript;
+- diff: the Edit and Write calls of the session and its agents, from their transcripts (ADR-0006);
 - errors and loops: tools in error, the same command failing 3 times in a row, stop on error
   (`StopFailure`);
 - what ran: the session's thread, the user's prompts as speech bubbles;
 - workflow history of the project: closed, interrupted, ended without closure;
-- actions: go to the terminal, send an instruction, stop the workflow (with confirmation).
+- actions: go to the terminal (M4), send an instruction (M3). Stopping one workflow is left out: no
+  documented way to stop a run without stopping its session (ADR-0006).
 
 ### Usage data
 
@@ -138,7 +139,7 @@ Mockups: `design/`.
 | Auto mode denial | `PermissionDenied` hook | documented, real payload not seen yet |
 | End of turn, read | `Stop` hook (`last_assistant_message`), then `UserPromptSubmit` | documented |
 | Subagents | `SubagentStart` / `SubagentStop` hooks; `~/.claude/projects/<project>/<session>/subagents/agent-<id>.jsonl` and `.meta.json` (`agentType`, `workflowPhase`) | observed |
-| Workflows | `.../subagents/workflows/<run>/journal.jsonl`: `launched`, `started` (`label`, `phase`, `agentId`) and `result` lines; phases declared in the script's `meta.phases` | observed on 18 runs |
+| Workflows | `.../subagents/workflows/<run>/journal.jsonl`: `launched`, `started` (`label`, `phase`, `agentId`) and `result` lines; phases declared in the script's `meta.phases`; `toolUseResult.runId` links the `Workflow` call to its run; `<session>/workflows/<run>.json` once it ends (ADR-0006) | observed, followed live in M2 |
 | An agent's model, tools, errors | the agent's transcript: `message.model`, `tool_use`, `tool_result.is_error`, `timestamp` | observed |
 | Stop on error | `StopFailure` hook (`rate_limit`, `authentication_failed`...) | documented |
 | Context, quota, cost | companion mod: `$.session.usage()` (`context`, `rateLimits`, `cost`) | documented, tested |

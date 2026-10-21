@@ -8,3 +8,6 @@
 - M1 board: permissions, questions, plan approvals and auto mode denials answered from a local page,
   sorted by risk; done and working sessions; browser notifications; manga and robots avatar packs.
 - Questions answered through `PermissionRequest`, never a held `PreToolUse` (ADR-0005).
+- M2 session detail: workflow phases and agents side by side, subagents, errors and loops, changes made
+  by the session and its agents, what ran, workflow history (ADR-0006).
+- Avatars wear their model's accessory; a workflow permission card shows the whole script.

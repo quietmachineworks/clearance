@@ -27,6 +27,7 @@ export interface Session {
   kind?: string
   status?: string
   waitingFor?: string
+  model?: string // added by the server, from the transcript
 }
 
 export interface Done {

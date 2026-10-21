@@ -8,7 +8,7 @@ right terminal. Click a session to unfold its workflow: subagents, what ran, pro
 
 Claude Code only, local only, zero dependencies.
 
-Status: M1, the board and its decisions. See `docs/BRIEF.md` for the whole plan.
+Status: M2, the board, its decisions and the session detail. See `docs/BRIEF.md` for the whole plan.
 
 ## Try it
 

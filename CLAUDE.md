@@ -14,7 +14,10 @@ of scope. Decisions taken outside the brief: `docs/adr/`.
 - **M1 done** (ADR-0005): a real permission and a real question answered from the page; questions go
   through `PermissionRequest`, a held `PreToolUse` would hide the terminal dialog. Question 3 still
   waits for a real denial (`CLEARANCE_LOG=1` records it).
-- **Next**: M2, the session detail. `spike/` holds the M0 receiver and probe mod.
+- **M2 done** (ADR-0006): the session detail, read from transcripts, subagent and workflow files in
+  `src/claude.ts`; a live two-phase workflow followed end to end.
+- **Next**: M3, the companion mod (energy, quota, instructions), asleep sessions, journal and suggested
+  rules. `spike/` holds the M0 receiver and probe mod.
 
 ## Working rules
 
@@ -42,7 +45,7 @@ of scope. Decisions taken outside the brief: `docs/adr/`.
 | `src/server.ts` | the one process: hooks, page, SSE, token and Origin checks |
 | `src/board.ts` | board state and hook answers, pure |
 | `src/risk.ts` | read / write / infrastructure write classification |
-| `src/claude.ts` | the only reads of Claude Code itself |
+| `src/claude.ts` | the only reads of Claude Code itself: `claude agents`, transcripts, subagents, workflows |
 | `public/index.html` | the page, avatars included |
 | `test/` | `node --test` |
 | `design/` | mockups (canvas sources `.dc.html`) |

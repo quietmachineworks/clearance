@@ -5,8 +5,8 @@ import { createServer, type IncomingMessage, type ServerResponse } from 'node:ht
 import { randomBytes, timingSafeEqual } from 'node:crypto'
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import { Board, respond, type Decision } from './board.ts'
-import { agents } from './claude.ts'
+import { Board, respond, type Decision, type Session } from './board.ts'
+import { agents, detail, modelOf, transcriptOf } from './claude.ts'
 
 const HOST = '127.0.0.1'
 const PORT = Number(process.env.CLEARANCE_PORT ?? 47800)
@@ -80,9 +80,19 @@ async function json(req: IncomingMessage): Promise<any> {
   }
 }
 
+// The model of each session gives its avatar's accessory.
+function withModel(s: Session): Session {
+  try {
+    const file = transcriptOf(s.sessionId, s.cwd)
+    return file ? { ...s, model: modelOf(file) } : s
+  } catch {
+    return s
+  }
+}
+
 async function poll() {
   const list = await agents()
-  if (list) board.sync(list).forEach((id) => finish(id))
+  if (list) board.sync(list.map(withModel)).forEach((id) => finish(id))
   publish()
   setTimeout(poll, 2000)
 }
@@ -139,6 +149,16 @@ createServer(async (req, res) => {
     clients.add(res)
     req.on('close', () => clients.delete(res))
     return
+  }
+
+  if (req.method === 'GET' && url.pathname.startsWith('/api/session/')) {
+    const id = url.pathname.slice('/api/session/'.length)
+    try {
+      const d = detail(id, board.sessions.get(id)?.cwd)
+      return d ? send(res, 200, d) : send(res, 404, { error: 'No transcript for this session.' })
+    } catch (e) {
+      return send(res, 500, { error: (e as Error).message })
+    }
   }
 
   // Every write from the page: same origin only.

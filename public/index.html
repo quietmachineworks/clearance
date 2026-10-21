@@ -56,6 +56,34 @@ legend { margin-bottom: 6px; font-weight: 800 }
 .worker { width: 120px; display: grid; justify-items: center; gap: 2px; text-align: center }
 .clones { display: flex; align-items: flex-end; gap: 2px; font-size: 12px; font-weight: 800 }
 .avatar svg { display: block; overflow: visible }
+a.name { color: var(--ink); font-weight: 800; text-decoration: none; border-bottom: 2px solid var(--yellow) }
+a.name:hover { background: var(--yellow) }
+a.back { display: inline-block; margin-bottom: 14px; color: var(--ink); font-weight: 800 }
+#detail > div { display: grid; gap: 18px }
+#detail h3 { margin: 0; font-size: 13px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase }
+#detail h4 { margin: 4px 0 0; font-size: 15px }
+.head { display: flex; gap: 16px; align-items: center; flex-wrap: wrap }
+.head .grow { display: grid; gap: 6px; flex: 1 1 260px }
+.head h2 { margin: 0; padding: 0; background: none; color: var(--ink); font: 400 24px/1.2 'Dela Gothic One', sans-serif; letter-spacing: 0; text-transform: none }
+.chips { display: flex; flex-wrap: wrap; gap: 6px }
+.phases { display: flex; flex-wrap: wrap; gap: 6px 0 }
+.phase { padding: 6px 14px; margin-right: -3px; font-size: 13px; font-weight: 800; background: #FFF; border: 3px solid var(--ink) }
+.phase.past { background: var(--ink); color: #FFF }
+.phase.now { background: var(--yellow) }
+.phase.next { color: var(--muted); border-style: dashed }
+.agents { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px }
+.agent { padding: 10px; display: grid; gap: 6px; align-content: start; background: #FFF; border: 2px solid var(--ink); border-radius: 6px }
+.agent.running { box-shadow: 4px 4px 0 var(--yellow) }
+.result { margin: 0; font-size: 13px; max-height: 6em; overflow: auto; word-break: break-word }
+.bad { color: var(--red); font-weight: 800 }
+.thread { display: grid; gap: 4px }
+.bubble { justify-self: end; max-width: 80%; margin: 8px 0; padding: 8px 12px; white-space: pre-wrap; background: #FFF; border: 2px solid var(--ink); border-radius: 16px 16px 4px 16px }
+.step { margin: 0; font: 13px/1.4 ui-monospace, Consolas, monospace; color: var(--muted); word-break: break-word }
+.step.bad { color: var(--red) }
+pre.del { background: #4A1F1F } pre.add { background: #1E4A2B }
+.scroll { overflow-x: auto }
+table { width: 100%; border-collapse: collapse; font-size: 14px }
+th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--dot) }
 @keyframes cb-bob { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-1.6px) } }
 @keyframes cb-drip { 0% { transform: translateY(-2px); opacity: 0 } 25% { opacity: 1 } 100% { transform: translateY(5px); opacity: 0 } }
 @keyframes cb-throb { 0%, 100% { transform: scale(1) } 50% { transform: scale(1.28) } }
@@ -64,6 +92,7 @@ legend { margin-bottom: 6px; font-weight: 800 }
 @keyframes cb-shake { 0%, 100% { transform: translateX(0) } 25% { transform: translateX(-1.2px) } 75% { transform: translateX(1.2px) } }
 @keyframes cb-speed { 0%, 100% { opacity: .2 } 50% { opacity: .85 } }
 @keyframes cb-spin { to { transform: rotate(360deg) } }
+@keyframes cb-boing { 0%, 100% { transform: rotate(-6deg) } 50% { transform: rotate(6deg) } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important } }
 </style>
 </head>
@@ -91,6 +120,7 @@ legend { margin-bottom: 6px; font-weight: 800 }
     <p class="empty">Nobody is working.</p>
     <div class="crew"></div>
   </section>
+  <section id="detail" hidden></section>
 </main>
 <script>
 // Everything that comes from a session (commands, questions, messages) goes through h() as text,
@@ -105,7 +135,7 @@ function h(tag, attrs = {}, ...children) {
     else if (k === 'class') el.className = v
     else el.setAttribute(k, v === true ? '' : v)
   }
-  for (const c of children.flat()) if (c != null && c !== false) el.append(c instanceof Node ? c : String(c))
+  for (const c of children.flat(Infinity)) if (c != null && c !== false) el.append(c instanceof Node ? c : String(c))
   return el
 }
 
@@ -143,9 +173,17 @@ const SYMBOL = {
   done: '<path style="transform-box:fill-box;transform-origin:center;animation:cb-twinkle 1.4s ease-in-out infinite" d="M53 3 L54.3 7.7 L59 9 L54.3 10.3 L53 15 L51.7 10.3 L47 9 L51.7 7.7 Z" fill="#FFC21A" stroke="#141414" stroke-width=".8" stroke-linejoin="round"/><path style="transform-box:fill-box;transform-origin:center;animation:cb-twinkle 1.4s ease-in-out .7s infinite" d="M10 6 L10.8 8.7 L13.5 9.5 L10.8 10.3 L10 13 L9.2 10.3 L6.5 9.5 L9.2 8.7 Z" fill="#FFC21A" stroke="#141414" stroke-width=".7" stroke-linejoin="round"/>',
 }
 
-// ponytail: no model accessory yet (glasses, headphones, cowlick); the model is read from the
-// transcript in M2. Unknown states (an error stop) draw a plain face with no symbol.
-function chibi(state, cwd, size, bare) {
+// The model's accessory: glasses for Opus, headphones for Sonnet, a cowlick (or an antenna) for Haiku.
+const gearOf = (model = '') => /opus/.test(model) ? 'opus' : /sonnet/.test(model) ? 'sonnet' : /haiku/.test(model) ? 'haiku' : ''
+const CHIBI_GEAR = {
+  haiku: (hair) => `<path d="M31 11.5 Q33 2.5 40 4.5 Q35 5.5 33.5 11.5 Z" fill="${hair}" stroke="#141414" stroke-width="1.1" stroke-linejoin="round"/>`,
+  sonnet: (hair) => `<path d="M14.5 30 Q13.5 7.5 32 7.5 Q50.5 7.5 49.5 30" stroke="#141414" stroke-width="3" fill="none" stroke-linecap="round"/><rect x="10.5" y="25.5" width="6" height="10.5" rx="2.4" fill="#141414"/><rect x="47.5" y="25.5" width="6" height="10.5" rx="2.4" fill="#141414"/><rect x="11.8" y="27.5" width="3.4" height="6.5" rx="1.4" fill="${hair}"/><rect x="48.8" y="27.5" width="3.4" height="6.5" rx="1.4" fill="${hair}"/>`,
+  opus: () => '<path d="M25.5 33 m-4.8 0 a4.8 4.8 0 1 0 9.6 0 a4.8 4.8 0 1 0 -9.6 0 M38.5 33 m-4.8 0 a4.8 4.8 0 1 0 9.6 0 a4.8 4.8 0 1 0 -9.6 0" fill="rgba(255,255,255,.18)" stroke="#141414" stroke-width="1.4"/><path d="M30.3 32.5 Q32 31.5 33.7 32.5" fill="none" stroke="#141414" stroke-width="1.4"/><path d="M22 30.4 L23.6 29.2 M35 30.4 L36.6 29.2" stroke="#FFF" stroke-width="1.1" stroke-linecap="round"/>',
+}
+
+// Unknown states (an error stop, an idle session) draw a plain face with no symbol.
+function chibi(state, cwd, size, bare, model) {
+  const gear = gearOf(model)
   const [hair, eye, tint] = colours(project(cwd))
   const [eyesFill, eyesStroke] = EYES[state] || EYES.work
   const [mouthFill, mouthStroke] = MOUTH[state] || MOUTH.work
@@ -159,10 +197,12 @@ ${bare ? '' : `<rect width="64" height="64" rx="16" fill="${tint}"/>`}
 <ellipse cx="32" cy="31.5" rx="15" ry="14.5" fill="#FFF1E4" stroke="#141414" stroke-width="1.3"/>
 <path d="M19.1 38.5 a2.4 1.3 0 1 0 4.8 0 a2.4 1.3 0 1 0 -4.8 0 M40.1 38.5 a2.4 1.3 0 1 0 4.8 0 a2.4 1.3 0 1 0 -4.8 0" fill="#FF9DA8" opacity="${blush}"/>
 <path d="M16.5 31 Q14 11 32 10.5 Q50 11 47.5 31 L44.5 23 L40.5 27 L37 20.5 L32.5 26 L28 20 L24 26 L20.5 22 Z" fill="${hair}" stroke="#141414" stroke-width="1.3" stroke-linejoin="round"/>
+${gear === 'haiku' || gear === 'sonnet' ? CHIBI_GEAR[gear](hair) : ''}
 <path d="${eyesFill}" fill="${eye}"/>
 ${eyesFill === NONE ? '' : '<path d="M26.4 31.4 a.85 .85 0 1 0 .01 0 M39.4 31.4 a.85 .85 0 1 0 .01 0" fill="#FFF"/>'}
 <path d="${eyesStroke}" fill="none" stroke="#141414" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="${BROWS[state] || NONE}" fill="none" stroke="#141414" stroke-width="1.5" stroke-linecap="round"/>
+${gear === 'opus' ? CHIBI_GEAR.opus() : ''}
 <path d="${mouthFill}" fill="#141414"/>
 <path d="${mouthStroke}" fill="none" stroke="#141414" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </g>
@@ -190,7 +230,14 @@ const R_MOUTH = {
   done: ['M28 35.8 Q32 36.3 36 35.8 Q35.5 39.4 32 39.4 Q28.5 39.4 28 35.8 Z', NONE],
 }
 
-function robot(state, cwd, size, bare) {
+const ROBOT_GEAR = {
+  haiku: (paint) => `<g style="transform-box:fill-box;transform-origin:50% 100%;animation:cb-boing 1.3s ease-in-out infinite"><path d="M32 13.5 L32 11.6 Q35.2 10.8 32 9.8 Q28.8 8.8 32 7.8 Q35.2 6.8 32 5.8" stroke="#141414" stroke-width="1.3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="32" cy="3.6" r="2.4" fill="${paint}" stroke="#141414" stroke-width="1.1"/></g>`,
+  sonnet: (paint) => `<path d="M10.5 29 Q9.5 6.5 32 6.5 Q54.5 6.5 53.5 29" stroke="#141414" stroke-width="3" fill="none" stroke-linecap="round"/><rect x="7" y="23" width="7" height="13" rx="2.6" fill="#141414"/><rect x="50" y="23" width="7" height="13" rx="2.6" fill="#141414"/><rect x="8.6" y="25.2" width="3.8" height="8.6" rx="1.4" fill="${paint}"/><rect x="51.6" y="25.2" width="3.8" height="8.6" rx="1.4" fill="${paint}"/>`,
+  opus: () => '<path d="M26 30 m-5 0 a5 5 0 1 0 10 0 a5 5 0 1 0 -10 0 M38 30 m-5 0 a5 5 0 1 0 10 0 a5 5 0 1 0 -10 0" fill="rgba(255,255,255,.14)" stroke="#CFD5DF" stroke-width="1.5"/><path d="M31 29.5 Q32 28.6 33 29.5" fill="none" stroke="#CFD5DF" stroke-width="1.5"/><path d="M22.4 27.2 L24 26 M34.4 27.2 L36 26" stroke="#FFF" stroke-width="1.1" stroke-linecap="round"/>',
+}
+
+function robot(state, cwd, size, bare, model) {
+  const gear = gearOf(model)
   const [paint, , tint] = colours(project(cwd))
   const [eyesFill, eyesStroke] = R_EYES[state] || R_EYES.work
   const [mouthFill, mouthStroke] = R_MOUTH[state] || R_MOUTH.work
@@ -203,6 +250,7 @@ ${bare ? '' : `<rect width="64" height="64" rx="16" fill="${tint}"/>`}
 <circle cx="32" cy="59.5" r="2.1" fill="${paint}" stroke="#141414" stroke-width=".8"/>
 <rect x="28" y="45" width="8" height="7" fill="#A9B1BF" stroke="#141414"/>
 <path d="M28 47.5 L36 47.5 M28 49.8 L36 49.8" stroke="#141414" stroke-width=".6"/>
+${gear === 'haiku' ? ROBOT_GEAR.haiku(paint) : ''}
 <rect x="9.5" y="24" width="4.5" height="11" rx="1.6" fill="#A9B1BF" stroke="#141414" stroke-width="1.1"/>
 <rect x="50" y="24" width="4.5" height="11" rx="1.6" fill="#A9B1BF" stroke="#141414" stroke-width="1.1"/>
 <rect x="13" y="13" width="38" height="33" rx="9" fill="${paint}" stroke="#141414" stroke-width="1.3"/>
@@ -214,6 +262,7 @@ ${blush ? '<path d="M19.4 35.6 L22 35.6 M42 35.6 L44.6 35.6" stroke="#FF9DA8" st
 <path d="${R_BROWS[state] || NONE}" fill="none" stroke="${tint}" stroke-width="1.3" stroke-linecap="round"/>
 <path d="${mouthFill}" fill="${tint}"/>
 <path d="${mouthStroke}" fill="none" stroke="${tint}" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+${gear === 'opus' || gear === 'sonnet' ? ROBOT_GEAR[gear](paint) : ''}
 </g>
 ${SYMBOL[state] || ''}
 </svg>`
@@ -224,9 +273,9 @@ const PACKS = { manga: chibi, robots: robot }
 let pack = 'manga'
 try { pack = PACKS[localStorage.getItem('clearance-pack')] ? localStorage.getItem('clearance-pack') : 'manga' } catch {}
 
-function avatar(state, cwd, size, label, bare) {
+function avatar(state, cwd, size, label, bare, model) {
   const el = h('span', label ? { class: 'avatar', role: 'img', 'aria-label': label } : { class: 'avatar', 'aria-hidden': 'true' })
-  el.innerHTML = PACKS[pack](state, cwd, size, bare)
+  el.innerHTML = PACKS[pack](state, cwd, size, bare, model)
   return el
 }
 
@@ -240,7 +289,8 @@ const ago = (t) => {
   const s = Math.max(0, (Date.now() - t) / 1000)
   return s < 60 ? 'just now' : s < 3600 ? `${Math.floor(s / 60)} min ago` : `${Math.floor(s / 3600)} h ${Math.floor((s % 3600) / 60)} min ago`
 }
-const target = (input) => input.command ?? input.file_path ?? input.notebook_path ?? input.url ?? input.pattern ?? ''
+// What a request would run, shown in full on its card (a workflow: its whole script).
+const target = (input) => input.command ?? input.file_path ?? input.notebook_path ?? input.url ?? input.pattern ?? input.script ?? input.scriptPath ?? ''
 
 function describe(suggestions) {
   return suggestions.map((s) =>
@@ -251,6 +301,9 @@ function describe(suggestions) {
 
 let sessions = new Map()
 const nameOf = (session, cwd) => sessions.get(session)?.name || project(cwd || sessions.get(session)?.cwd)
+const modelFor = (session) => sessions.get(session)?.model
+// A session's name opens its detail.
+const link = (session, text) => h('a', { class: 'name', href: `#s=${encodeURIComponent(session)}` }, text)
 
 const BODY = {
   permission(r, send) {
@@ -344,8 +397,8 @@ function requestCard(r) {
   }
   card.append(
     h('div', { class: 'who' },
-      avatar(STATE[r.kind], r.cwd, 64, `${name}: ${KIND[r.kind].toLowerCase()}`),
-      h('div', {}, h('strong', {}, name), h('span', { class: 'meta' }, project(r.cwd), ' · ', h('time', { 'data-at': r.at }, ago(r.at)))),
+      avatar(STATE[r.kind], r.cwd, 64, `${name}: ${KIND[r.kind].toLowerCase()}`, false, modelFor(r.session)),
+      h('div', {}, link(r.session, name), h('span', { class: 'meta' }, project(r.cwd), ' · ', h('time', { 'data-at': r.at }, ago(r.at)))),
       h('span', { class: 'badge' }, KIND[r.kind]),
       r.kind === 'permission' || r.kind === 'denied' ? h('span', { class: `risk ${r.risk}` }, RISK[r.risk]) : null),
     ...BODY[r.kind](r, send, card).flat().filter(Boolean),
@@ -361,7 +414,7 @@ let first = true
 
 function notify(r) {
   if (first || !('Notification' in window) || Notification.permission !== 'granted') return
-  const what = target(r.input) || r.input.questions?.[0]?.question || r.tool
+  const what = (target(r.input) || r.input.questions?.[0]?.question || r.tool).slice(0, 200)
   new Notification(`${nameOf(r.session, r.cwd)}: ${KIND[r.kind].toLowerCase()}`, { body: what, tag: `clearance-${r.id}` })
 }
 
@@ -380,15 +433,15 @@ function render(snap) {
   const held = new Set(snap.requests.map((r) => r.session))
   const elsewhere = snap.sessions.filter((s) => s.status === 'waiting' && !held.has(s.sessionId))
   $('#waiting .terminal').replaceChildren(...elsewhere.map((s) => h('p', { class: 'terminal-wait' },
-    avatar('wait', s.cwd, 36), h('span', {}, h('strong', {}, s.name || project(s.cwd)), ` waits for you in its terminal${s.waitingFor ? ` (${s.waitingFor})` : ''}`))))
+    avatar('wait', s.cwd, 36, null, false, s.model), h('span', {}, link(s.sessionId, s.name || project(s.cwd)), ` waits for you in its terminal${s.waitingFor ? ` (${s.waitingFor})` : ''}`))))
   $('#waiting .empty').hidden = snap.requests.length + elsewhere.length > 0
 
   $('#done .cards').replaceChildren(...snap.done.map((d) => {
     const name = nameOf(d.session, d.cwd)
     return h('article', { class: 'card' },
       h('div', { class: 'who' },
-        avatar(d.failed ? 'stopped' : 'done', d.cwd, 56, `${name}: ${d.failed ? 'stopped on error' : 'done'}`),
-        h('div', {}, h('strong', {}, name), h('span', { class: 'meta' }, project(d.cwd), ' · ', h('time', { 'data-at': d.at }, ago(d.at)))),
+        avatar(d.failed ? 'stopped' : 'done', d.cwd, 56, `${name}: ${d.failed ? 'stopped on error' : 'done'}`, false, modelFor(d.session)),
+        h('div', {}, link(d.session, name), h('span', { class: 'meta' }, project(d.cwd), ' · ', h('time', { 'data-at': d.at }, ago(d.at)))),
         d.failed ? h('span', { class: 'risk infra' }, 'stopped on error') : null),
       d.message ? h('p', { class: 'message' }, d.message) : null,
       h('div', { class: 'actions' }, h('button', { onclick: () => post('/api/read', { session: d.session }) }, 'Mark as read')))
@@ -397,8 +450,8 @@ function render(snap) {
 
   const busy = snap.sessions.filter((s) => s.status === 'busy')
   $('#working .crew').replaceChildren(...busy.map((s) => h('div', { class: 'worker' },
-    avatar('work', s.cwd, 64, `${s.name || project(s.cwd)}: working${s.agents ? ` with ${s.agents} subagents` : ''}`),
-    h('strong', {}, s.name || project(s.cwd)),
+    avatar('work', s.cwd, 64, `${s.name || project(s.cwd)}: working${s.agents ? ` with ${s.agents} subagents` : ''}`, false, s.model),
+    link(s.sessionId, s.name || project(s.cwd)),
     h('span', { class: 'meta' }, project(s.cwd)),
     s.agents ? h('div', { class: 'clones' }, Array.from({ length: Math.min(s.agents, 5) }, () => avatar('work', s.cwd, 24, null, true)), s.agents > 5 ? `+${s.agents - 5}` : null) : null)))
   $('#working .empty').hidden = busy.length > 0
@@ -408,6 +461,122 @@ function render(snap) {
   $('#status').textContent = `live · ${snap.sessions.length} session${snap.sessions.length === 1 ? '' : 's'}`
   first = false
 }
+
+// ---- session detail (BRIEF section 3) ----
+const short = (model = '') => model.replace(/^claude-/, '').replace(/-(\d+)-(\d+)$/, ' $1.$2')
+const span = (ms) => {
+  const s = Math.round(ms / 1000)
+  return s < 60 ? `${s} s` : s < 3600 ? `${Math.round(s / 60)} min` : `${Math.floor(s / 3600)} h ${Math.round((s % 3600) / 60)} min`
+}
+const between = (a, b) => (a && b ? span(Date.parse(b) - Date.parse(a)) : '')
+const clock = (t) => (t ? new Date(t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '')
+// A path inside the session's folder, shown relative to it.
+const inside = (file = '', cwd = '') => {
+  const f = file.replace(/\\/g, '/'), c = cwd.replace(/\\/g, '/').replace(/\/$/, '')
+  return c && f.toLowerCase().startsWith(c.toLowerCase() + '/') ? f.slice(c.length + 1) : file
+}
+const RUN_STATUS = { completed: 'closed', running: 'running', interrupted: 'interrupted', ended: 'ended without closure' }
+
+function agentCard(a, cwd) {
+  const state = a.running ? 'work' : a.result !== undefined ? 'done' : 'stopped'
+  return h('div', { class: `agent${a.running ? ' running' : ''}` },
+    h('div', { class: 'who' },
+      avatar(state, cwd, 44, `${a.label}: ${a.running ? 'running' : 'finished'}`, true, a.model),
+      h('div', {}, h('strong', {}, a.label), h('span', { class: 'meta' }, [a.type, short(a.model)].filter(Boolean).join(' · ')))),
+    h('span', { class: 'meta' },
+      [a.running ? `running for ${between(a.start, new Date().toISOString())}` : between(a.start, a.end), `${a.tools} tool call${a.tools === 1 ? '' : 's'}`].filter(Boolean).join(' · '),
+      a.errors ? h('span', { class: 'bad' }, ` · ${a.errors} in error`) : null),
+    a.result ? h('p', { class: 'result' }, a.result) : null)
+}
+
+// Phases the workflow declares: done in ink, the current one in yellow, those still to come dashed.
+function runView(run, cwd) {
+  const phases = [...run.phases]
+  for (const a of run.agents) if (a.phase && !phases.includes(a.phase)) phases.push(a.phase)
+  const live = run.status === 'running'
+  const ran = new Set(run.agents.map((a) => a.phase))
+  const of = (p) => run.agents.filter((a) => a.phase === p)
+  return [
+    h('p', { class: 'meta' }, `${run.name} · ${RUN_STATUS[run.status] ?? run.status} · started ${clock(run.start)}`, run.durationMs ? ` · ${span(run.durationMs)}` : ''),
+    phases.length ? h('div', { class: 'phases' }, phases.map((p) => h('span', { class: `phase ${live && p === run.current ? 'now' : ran.has(p) ? 'past' : 'next'}` }, p))) : null,
+    h('h4', {}, run.current ? `${live ? 'Now' : 'Last'}: ${run.current}` : 'Agents'),
+    h('div', { class: 'agents' }, (run.current ? of(run.current) : run.agents).map((a) => agentCard(a, cwd))),
+    phases.filter((p) => p !== run.current && of(p).length).map((p) =>
+      h('details', {}, h('summary', {}, `${p} · ${of(p).length} agent${of(p).length === 1 ? '' : 's'}`), h('div', { class: 'agents' }, of(p).map((a) => agentCard(a, cwd))))),
+  ]
+}
+
+function renderDetail(id, d, error) {
+  const back = h('a', { class: 'back', href: '#' }, 'Back to the board')
+  if (!d) return $('#detail').replaceChildren(back, h('p', { class: 'error' }, error || 'Nothing to show.'))
+  const s = sessions.get(id)
+  const cwd = s?.cwd
+  const name = s?.name || project(cwd)
+  const state = s?.status === 'waiting' ? 'wait' : s?.status === 'busy' ? 'work' : 'idle'
+  const last = d.steps.at(-1)
+  const run = d.runs.at(-1)
+  const section = (title, ...body) => h('section', { class: 'card' }, h('h3', {}, title), body)
+  const thread = [...d.prompts.map((p) => ({ at: p.at, prompt: p.text })), ...d.steps.map((step) => ({ at: step.at, step }))]
+    .sort((a, b) => String(a.at).localeCompare(String(b.at))).slice(-80)
+  // Keep what the user unfolded across refreshes.
+  const open = new Set([...document.querySelectorAll('#detail details[open] > summary')].map((x) => x.textContent))
+  $('#detail').replaceChildren(h('div', {},
+    back,
+    h('div', { class: 'card head' },
+      avatar(state, cwd, 96, name, false, d.model),
+      h('div', { class: 'grow' },
+        h('h2', {}, d.title || name),
+        h('div', { class: 'chips' }, [name, d.branch && `branch ${d.branch}`, short(d.model), d.mode && `mode ${d.mode}`, s?.status ?? 'not running'].filter(Boolean).map((c) => h('span', { class: 'chip' }, c))),
+        last ? h('p', { class: 'meta' }, `Last: ${[last.tool, last.target, clock(last.at)].filter(Boolean).join(' · ')}`) : null)),
+    run ? section('Workflow', runView(run, cwd)) : null,
+    d.agents.length ? section('Subagents', h('div', { class: 'agents' }, d.agents.map((a) => agentCard(a, cwd)))) : null,
+    d.loops.length || d.errors.length ? section('Errors and loops',
+      d.loops.map((l) => h('p', { class: 'bad' }, `${l.count} failures in a row: ${l.tool} · ${l.target}`)),
+      d.errors.slice(-15).reverse().map((e) => h('details', {}, h('summary', {}, `${clock(e.at)} ${[e.tool, e.target].filter(Boolean).join(' · ')}`), h('pre', {}, e.error ?? '')))) : null,
+    d.edits.length ? section('Changes',
+      d.edits.slice(-30).reverse().map((e) => h('details', {},
+        h('summary', {}, `${clock(e.at)} ${inside(e.file, cwd)}${e.agent ? ` · ${e.agent}` : ''}`),
+        e.before ? h('pre', { class: 'del' }, e.before) : null,
+        e.after ? h('pre', { class: 'add' }, e.after) : null))) : null,
+    section('What ran', h('div', { class: 'thread' }, thread.map((x) => x.prompt
+      ? h('p', { class: 'bubble' }, x.prompt)
+      : h('p', { class: `step${x.step.error ? ' bad' : ''}` }, `${clock(x.at)} ${[x.step.tool, x.step.target].filter(Boolean).join(' · ')}`)))),
+    d.runs.length > 1 ? section('Workflow history', h('div', { class: 'scroll' }, h('table', {},
+      h('thead', {}, h('tr', {}, ['Workflow', 'Started', 'Duration', 'Status', 'Agents'].map((t) => h('th', {}, t)))),
+      h('tbody', {}, [...d.runs].reverse().map((r) => h('tr', {},
+        h('td', {}, r.name), h('td', {}, r.start ? new Date(r.start).toLocaleString() : ''), h('td', {}, r.durationMs ? span(r.durationMs) : ''),
+        h('td', {}, RUN_STATUS[r.status] ?? r.status), h('td', {}, r.agents.length))))))) : null))
+  document.querySelectorAll('#detail details > summary').forEach((x) => { if (open.has(x.textContent)) x.parentElement.open = true })
+}
+
+let detailTimer
+let detailKey = ''
+async function loadDetail(id) {
+  try {
+    const res = await fetch(`/api/session/${encodeURIComponent(id)}`)
+    const body = await res.json().catch(() => ({ error: res.statusText }))
+    const key = JSON.stringify([body, sessions.get(id)])
+    if (key === detailKey) return
+    detailKey = key
+    renderDetail(id, res.ok ? body : null, body.error)
+  } catch {}
+}
+
+// #s=<session id> shows that session; anything else, the board.
+function route() {
+  const id = /^#s=([\w-]+)$/.exec(location.hash)?.[1]
+  clearInterval(detailTimer)
+  detailKey = ''
+  $('#detail').hidden = !id
+  for (const sel of ['#waiting', '#done', '#working']) $(sel).hidden = !!id
+  if (!id) return
+  $('#detail').replaceChildren(h('p', { class: 'empty' }, 'Reading the session...'))
+  scrollTo(0, 0)
+  loadDetail(id)
+  detailTimer = setInterval(() => loadDetail(id), 3000)
+}
+addEventListener('hashchange', route)
+route()
 
 setInterval(() => document.querySelectorAll('time[data-at]').forEach((t) => (t.textContent = ago(Number(t.dataset.at)))), 15_000)
 
