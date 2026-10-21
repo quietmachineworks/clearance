@@ -28,6 +28,7 @@ export interface Session {
   status?: string
   waitingFor?: string
   model?: string // added by the server, from the transcript
+  lastActive?: number // added by the server: the transcript's last write, epoch ms
 }
 
 export interface Done {
@@ -36,6 +37,21 @@ export interface Done {
   at: number
   message: string
   failed?: boolean
+}
+
+// What the companion mod reports: `$.session.usage()` (ADR-0004), stamped on arrival.
+export interface Usage {
+  at: number
+  context?: { tokens?: number; window: number; percent?: number }
+  rateLimits?: { kind: string; percentUsed: number; resetsAt?: string }[]
+  cost?: { usd: number }
+}
+
+// An instruction typed in clearance, delivered once by the session's mod.
+export interface Instruction {
+  text: string
+  at: number
+  delivered?: number
 }
 
 export interface Decision {
@@ -56,7 +72,25 @@ export class Board {
   sessions = new Map<string, Session>()
   done = new Map<string, Done>()
   agents = new Map<string, Set<string>>() // session -> running subagents
+  usage = new Map<string, Usage>() // session -> last report of its companion mod
+  inbox = new Map<string, Instruction>() // session -> last instruction typed for it
   private seq = 0
+
+  report(session: string, usage: Omit<Usage, 'at'>, now = Date.now()) {
+    this.usage.set(session, { context: usage.context, rateLimits: usage.rateLimits, cost: usage.cost, at: now })
+  }
+
+  instruct(session: string, text: string, now = Date.now()) {
+    this.inbox.set(session, { text, at: now })
+  }
+
+  // The instruction waiting for this session, handed out once.
+  take(session: string, now = Date.now()): string | undefined {
+    const i = this.inbox.get(session)
+    if (!i || i.delivered) return undefined
+    i.delivered = now
+    return i.text
+  }
 
   // A hook event arrived: the request to hold, if any, and the requests it ends.
   hook(event: string, body: any, now = Date.now()): { request?: Request; ended: string[] } {
@@ -99,7 +133,7 @@ export class Board {
   sync(list: Session[]): string[] {
     const before = this.sessions
     this.sessions = new Map(list.map((s) => [s.sessionId, s]))
-    for (const map of [this.done, this.agents]) {
+    for (const map of [this.done, this.agents, this.usage, this.inbox]) {
       for (const id of map.keys()) if (before.has(id) && !this.sessions.has(id)) map.delete(id)
     }
     const ended: string[] = []
@@ -127,8 +161,15 @@ export class Board {
 
   snapshot() {
     const requests = [...this.requests.values()].sort((a, b) => RANK[b.risk] - RANK[a.risk] || a.at - b.at)
-    const sessions = [...this.sessions.values()].map((s) => ({ ...s, agents: this.agents.get(s.sessionId)?.size ?? 0 }))
-    return { requests, sessions, done: [...this.done.values()].sort((a, b) => a.at - b.at) }
+    const sessions = [...this.sessions.values()].map((s) => ({
+      ...s,
+      agents: this.agents.get(s.sessionId)?.size ?? 0,
+      usage: this.usage.get(s.sessionId),
+      instruction: this.inbox.get(s.sessionId),
+    }))
+    // The account's quota is the same for every session: the freshest report wins.
+    const quota = [...this.usage.values()].filter((u) => u.rateLimits?.length).sort((a, b) => b.at - a.at)[0]?.rateLimits
+    return { requests, sessions, done: [...this.done.values()].sort((a, b) => a.at - b.at), quota }
   }
 }
 

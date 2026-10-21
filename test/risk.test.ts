@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { classify } from '../src/risk.ts'
+import { classify, ruleOf, suggest } from '../src/risk.ts'
 
 const bash = (command: string) => classify('Bash', { command })
 
@@ -47,4 +47,46 @@ test('read-only container and remote commands stay below infra', () => {
   assert.equal(bash('docker ps'), 'write')
   assert.equal(bash('docker compose logs web'), 'write')
   assert.equal(bash('curl https://example.test/health'), 'write')
+})
+
+test('a rule prefix only for subcommands and read-only programs', () => {
+  const rule = (command: string) => ruleOf('Bash', { command })
+  assert.equal(rule('npm test -- --watch=false'), 'Bash(npm test:*)')
+  assert.equal(rule('git log --oneline -5 | head -3'), 'Bash(git log:*)')
+  assert.equal(rule('git status && ./deploy.sh prod'), null) // approved as a whole
+  assert.equal(rule('cd app; git log'), null)
+  assert.equal(rule('ls -la src'), 'Bash(ls:*)')
+  assert.equal(ruleOf('PowerShell', { command: 'Get-ChildItem -Recurse' }), 'PowerShell(Get-ChildItem:*)')
+  assert.equal(rule('npm run build -- --prod'), 'Bash(npm run build:*)')
+  for (const c of ['node scripts/build.js', 'rm build', 'python -m pytest', 'curl -s https://example.test', 'git push origin main', 'docker rm web', 'npx ./local.js', 'glab api projects/12/pipelines', 'npm run', 'gh api -X GET repos']) {
+    assert.equal(rule(c), null, c)
+  }
+  assert.equal(ruleOf('mcp__tracker__search_issues', {}), 'mcp__tracker__search_issues')
+  assert.equal(ruleOf('mcp__tracker__create_issue', {}), null)
+  assert.equal(ruleOf('mcp__mail__send_message', {}), null)
+  assert.equal(ruleOf('mcp__wiki__addCommentToPage', {}), null)
+  assert.equal(ruleOf('mcp__browser__javascript_tool', {}), null)
+  assert.equal(ruleOf('mcp__scheduler__job_runs', {}), 'mcp__scheduler__job_runs')
+  for (const c of ['git checkout -- .', 'git reset --hard', 'git clean -fd', 'git branch -D old']) assert.equal(rule(c), null, c)
+  assert.equal(ruleOf('WebFetch', { url: 'https://docs.example.test/a?b' }), 'WebFetch(domain:docs.example.test)')
+  assert.equal(ruleOf('AskUserQuestion', {}), null)
+  assert.equal(ruleOf('Edit', { file_path: 'a.ts' }), null)
+})
+
+test('suggestions need three approvals and are sorted by count', () => {
+  const a = (command: string, session: string, at: string) => ({ tool: 'Bash', input: { command }, session, at })
+  const out = suggest([
+    a('npm test', 's1', '2026-10-01'),
+    a('npm test -- --ci', 's2', '2026-10-03'),
+    a('npm test', 's2', '2026-10-02'),
+    a('git status', 's1', '2026-10-01'),
+    a('git status -s', 's1', '2026-10-02'),
+    a('git log', 's1', '2026-10-02'),
+    a('git status', 's3', '2026-10-04'),
+    a('git status', 's3', '2026-10-05'),
+  ])
+  assert.deepEqual(out.map((s) => [s.rule, s.count, s.sessions, s.last, s.example]), [
+    ['Bash(git status:*)', 4, 2, '2026-10-05', 'git status'],
+    ['Bash(npm test:*)', 3, 2, '2026-10-03', 'npm test -- --ci'],
+  ])
 })

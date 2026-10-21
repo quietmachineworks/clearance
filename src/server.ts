@@ -3,10 +3,11 @@
 //   claude --settings data/hooks.json ...   to connect a session
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http'
 import { randomBytes, timingSafeEqual } from 'node:crypto'
-import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { appendFileSync, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { Board, respond, type Decision, type Session } from './board.ts'
-import { agents, detail, modelOf, transcriptOf } from './claude.ts'
+import { agents, approvals, detail, modelOf, target, transcriptOf } from './claude.ts'
+import { suggest } from './risk.ts'
 
 const HOST = '127.0.0.1'
 const PORT = Number(process.env.CLEARANCE_PORT ?? 47800)
@@ -41,6 +42,14 @@ const settings = Object.fromEntries(
   ]),
 )
 writeFileSync(hooksFile, JSON.stringify({ hooks: settings }, null, 2), { mode: 0o600 })
+// Where the companion mod finds us (mod/hooks/register.ts reads it every tick).
+writeFileSync(new URL('endpoint.json', DATA), JSON.stringify({ url: BASE, token: TOKEN }), { mode: 0o600 })
+
+// Append-only journal of what was decided from the page (BRIEF section 6).
+const journalFile = new URL('journal.jsonl', DATA)
+const journal = (entry: object) => appendFileSync(journalFile, JSON.stringify({ at: new Date().toISOString(), ...entry }) + '\n')
+const journalTail = (n: number) =>
+  existsSync(journalFile) ? readFileSync(journalFile, 'utf8').trim().split('\n').slice(-n).flatMap((l) => { try { return [JSON.parse(l)] } catch { return [] } }) : []
 
 const board = new Board()
 const held = new Map<string, ServerResponse>() // request id -> the hook call waiting for an answer
@@ -80,11 +89,12 @@ async function json(req: IncomingMessage): Promise<any> {
   }
 }
 
-// The model of each session gives its avatar's accessory.
+// The model of each session gives its avatar's accessory; its transcript's last write, how long it
+// has been idle.
 function withModel(s: Session): Session {
   try {
     const file = transcriptOf(s.sessionId, s.cwd)
-    return file ? { ...s, model: modelOf(file) } : s
+    return file ? { ...s, model: modelOf(file), lastActive: statSync(file).mtimeMs } : s
   } catch {
     return s
   }
@@ -131,6 +141,18 @@ createServer(async (req, res) => {
     return
   }
 
+  // The companion mod, every 5 s: its session's usage in, what waits and an instruction out.
+  if (req.method === 'POST' && url.pathname === '/mod/sync') {
+    if (!same(req.headers.authorization?.replace(/^Bearer /, ''), TOKEN)) return void res.writeHead(401).end()
+    const { session, usage } = await json(req)
+    if (typeof session !== 'string' || !session) return send(res, 400, { error: 'session required' })
+    board.report(session, usage ?? {})
+    const instruction = board.take(session)
+    if (instruction) journal({ kind: 'instruction-delivered', session })
+    publish()
+    return send(res, 200, { waiting: board.requests.size, here: [...board.requests.values()].filter((r) => r.session === session).length, instruction })
+  }
+
   if (req.method === 'GET' && url.pathname === '/') {
     const token = url.searchParams.get('token')
     if (token !== null) {
@@ -161,6 +183,14 @@ createServer(async (req, res) => {
     }
   }
 
+  if (req.method === 'GET' && url.pathname === '/api/journal') {
+    try {
+      return send(res, 200, { decisions: journalTail(200).reverse(), rules: suggest(approvals()) })
+    } catch (e) {
+      return send(res, 500, { error: (e as Error).message })
+    }
+  }
+
   // Every write from the page: same origin only.
   if (req.method !== 'POST' || req.headers.origin !== `http://${host}`) return void res.writeHead(403).end()
 
@@ -176,6 +206,17 @@ createServer(async (req, res) => {
     }
     finish(request.id, out)
     publish()
+    journal({ kind: 'decision', session: request.session, cwd: request.cwd, request: request.kind, tool: request.tool, target: target(request.input), risk: request.risk, action: decision.action, mode: decision.mode })
+    return send(res, 200, { ok: true })
+  }
+
+  // An instruction for a session, handed to its companion mod on its next sync.
+  if (url.pathname === '/api/instruct') {
+    const { session, text } = await json(req)
+    if (typeof session !== 'string' || typeof text !== 'string' || !text.trim()) return send(res, 400, { error: 'An instruction needs a session and some text.' })
+    board.instruct(session, text.trim())
+    journal({ kind: 'instruction', session, text: text.trim().slice(0, 500) })
+    publish()
     return send(res, 200, { ok: true })
   }
 
@@ -190,4 +231,11 @@ createServer(async (req, res) => {
   console.log(`clearance on ${BASE}/?token=${TOKEN}`)
   console.log(`hooks for a session: claude --settings ${fileURLToPath(hooksFile)}`)
   poll()
+  // ponytail: the first scan of every transcript blocks a few seconds; done at start rather than on
+  // the first journal view. Upgrade path: a worker thread if it grows.
+  setTimeout(() => {
+    try {
+      approvals()
+    } catch {}
+  }, 3000)
 })

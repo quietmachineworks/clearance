@@ -5,6 +5,7 @@ import { closeSync, existsSync, openSync, readdirSync, readFileSync, readSync, s
 import { homedir } from 'node:os'
 import { basename, join } from 'node:path'
 import type { Session } from './board.ts'
+import type { Approval } from './risk.ts'
 
 // `claude agents --json`: every live session, its status and what it waits for. null when the reading
 // failed, so that a hiccup does not empty the board.
@@ -325,4 +326,48 @@ export function detail(id: string, cwd?: string): Detail | null {
     runs,
     agents,
   }
+}
+
+// ---- approvals given by hand, for suggested rules ----
+
+// Each tool result records how its call was allowed; `user_temporary` is a "yes, this once" in the
+// terminal dialog. Only those lines and the tool calls are parsed, once per file size.
+const approved = new Map<string, { size: number; value: Approval[] }>()
+function approvalsIn(file: string): Approval[] {
+  const size = statSync(file).size
+  const hit = approved.get(file)
+  if (hit?.size === size) return hit.value
+  const session = basename(file, '.jsonl')
+  const calls = new Map<string, { tool: string; input: any }>()
+  const value: Approval[] = []
+  for (const line of readFileSync(file, 'utf8').split('\n')) {
+    if (!line.includes('"tool_use"') && !line.includes('user_temporary')) continue
+    let e: any
+    try {
+      e = JSON.parse(line)
+    } catch {
+      continue
+    }
+    for (const c of e.type === 'assistant' ? (e.message?.content ?? []) : []) {
+      if (c.type === 'tool_use') calls.set(c.id, { tool: c.name, input: { command: c.input?.command, url: c.input?.url } })
+    }
+    const d = e.permissionDecision
+    if (e.type !== 'user' || d?.decision !== 'accept' || d?.source !== 'user_temporary') continue
+    for (const r of e.message?.content ?? []) {
+      const call = r.type === 'tool_result' ? calls.get(r.tool_use_id) : undefined
+      if (call) value.push({ ...call, at: e.timestamp, session })
+    }
+  }
+  approved.set(file, { size, value })
+  return value
+}
+
+// Every main transcript of every project.
+// ponytail: subagent transcripts are left out; approvals mostly happen in the main thread.
+export function approvals(): Approval[] {
+  return list(projects()).flatMap((dir) =>
+    list(join(projects(), dir))
+      .filter((f) => f.endsWith('.jsonl'))
+      .flatMap((f) => approvalsIn(join(projects(), dir, f))),
+  )
 }

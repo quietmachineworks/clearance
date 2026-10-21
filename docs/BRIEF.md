@@ -49,7 +49,7 @@ Four areas, in this order:
    A card opens in place and carries the decision.
 2. **Done**: turn finished, not read yet. Read when you type a prompt in that session, or on click.
 3. **Working**: in progress, with their clones (subagents) and energy (context left).
-4. **Asleep**: idle for several hours, candidates to close.
+4. **Asleep**: idle for 3 hours with nothing left to read, candidates to close.
 
 Possible decisions:
 
@@ -143,6 +143,7 @@ Mockups: `design/`.
 | An agent's model, tools, errors | the agent's transcript: `message.model`, `tool_use`, `tool_result.is_error`, `timestamp` | observed |
 | Stop on error | `StopFailure` hook (`rate_limit`, `authentication_failed`...) | documented |
 | Context, quota, cost | companion mod: `$.session.usage()` (`context`, `rateLimits`, `cost`) | documented, tested |
+| Approvals given by hand | transcript `permissionDecision` on tool results, `source: "user_temporary"` (ADR-0007) | observed |
 | Instruction to a session | companion mod: `$.prompt.submit({ text, asUser })` | documented, tested |
 | Session title, terminal tab | transcript `ai-title` records; Windows Terminal tabs through UI Automation | observed, tested |
 | Relay in parallel with the terminal | channels declaring `claude/channel/permission` | research preview, dev flag, organisation policy |

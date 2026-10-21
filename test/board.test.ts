@@ -104,3 +104,21 @@ test('auto mode denials can be retried', () => {
   assert.deepEqual(respond(r, { id: r.id, action: 'retry' }), { hookSpecificOutput: { hookEventName: 'PermissionDenied', retry: true } })
   assert.throws(() => respond(r, { id: r.id, action: 'allow' }))
 })
+
+test('companion mod: usage per session, freshest quota, instructions delivered once', () => {
+  const b = new Board()
+  b.sync([{ sessionId: S, status: 'busy' }, { sessionId: 'sess-quarry', status: 'idle' }])
+  b.report(S, { context: { window: 200_000, percent: 91 }, rateLimits: [{ kind: 'five_hour', percentUsed: 40 }], cost: { usd: 1.5 } }, 100)
+  b.report('sess-quarry', { context: { window: 200_000, percent: 10 }, rateLimits: [{ kind: 'five_hour', percentUsed: 42 }] }, 200)
+  const snap = b.snapshot()
+  assert.equal(snap.sessions.find((s) => s.sessionId === S)?.usage?.context?.percent, 91)
+  assert.deepEqual(snap.quota, [{ kind: 'five_hour', percentUsed: 42 }])
+  assert.equal(b.take(S), undefined)
+  b.instruct(S, 'Run the linter too.', 300)
+  assert.equal(b.take(S, 310), 'Run the linter too.')
+  assert.equal(b.take(S, 320), undefined)
+  assert.equal(b.snapshot().sessions.find((s) => s.sessionId === S)?.instruction?.delivered, 310)
+  b.sync([{ sessionId: 'sess-quarry', status: 'idle' }]) // the session ended
+  assert.equal(b.usage.has(S), false)
+  assert.equal(b.inbox.has(S), false)
+})

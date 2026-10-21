@@ -11,3 +11,6 @@
 - M2 session detail: workflow phases and agents side by side, subagents, errors and loops, changes made
   by the session and its agents, what ran, workflow history (ADR-0006).
 - Avatars wear their model's accessory; a workflow permission card shows the whole script.
+- M3 companion mod: context, cost and quota on the page, energy bars, instructions sent to a session,
+  a line under the prompt; asleep sessions; a journal of decisions; permission rules suggested from
+  approvals given by hand (ADR-0007).

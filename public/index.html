@@ -56,10 +56,19 @@ legend { margin-bottom: 6px; font-weight: 800 }
 .worker { width: 120px; display: grid; justify-items: center; gap: 2px; text-align: center }
 .clones { display: flex; align-items: flex-end; gap: 2px; font-size: 12px; font-weight: 800 }
 .avatar svg { display: block; overflow: visible }
+a.button { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; font-weight: 800; font-size: 14px; color: var(--ink); text-decoration: none; background: #FFF; border: 2px solid var(--ink); border-radius: 999px }
+.energy { display: block; width: 64px; height: 6px; background: #FFF; border: 1.5px solid var(--ink); border-radius: 3px; overflow: hidden }
+.energy > span { display: block; height: 100%; background: var(--ink) }
+.energy.low > span { background: var(--red) }
+.rule { display: grid; gap: 4px; padding: 10px 0; border-bottom: 1px solid var(--dot) }
+.rule code { font: 800 14px ui-monospace, Consolas, monospace }
+#journal > div, #detail-body > div { display: grid; gap: 18px }
+form.instruct { display: grid; gap: 8px }
 a.name { color: var(--ink); font-weight: 800; text-decoration: none; border-bottom: 2px solid var(--yellow) }
 a.name:hover { background: var(--yellow) }
 a.back { display: inline-block; margin-bottom: 14px; color: var(--ink); font-weight: 800 }
-#detail > div { display: grid; gap: 18px }
+#detail { display: grid; gap: 18px }
+#detail[hidden], #journal[hidden] { display: none }
 #detail h3 { margin: 0; font-size: 13px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase }
 #detail h4 { margin: 4px 0 0; font-size: 15px }
 .head { display: flex; gap: 16px; align-items: center; flex-wrap: wrap }
@@ -100,6 +109,8 @@ th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--dot)
 <header>
   <h1>clearance</h1>
   <span id="status" role="status">connecting...</span>
+  <span id="quota" class="chip" hidden></span>
+  <a id="journal-link" class="button" href="#journal">Journal</a>
   <button id="notify" hidden>Turn on notifications</button>
   <button id="pack"></button>
 </header>
@@ -120,7 +131,12 @@ th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--dot)
     <p class="empty">Nobody is working.</p>
     <div class="crew"></div>
   </section>
+  <section id="asleep" aria-labelledby="h-asleep" hidden>
+    <h2 id="h-asleep">Asleep</h2>
+    <div class="crew"></div>
+  </section>
   <section id="detail" hidden></section>
+  <section id="journal" hidden></section>
 </main>
 <script>
 // Everything that comes from a session (commands, questions, messages) goes through h() as text,
@@ -152,8 +168,11 @@ const EYES = {
   work: [OPEN, NONE], wait: [OPEN, NONE], go: [WIDE, NONE], question: [OPEN, NONE],
   denied: [NONE, 'M23 31 L27.5 33 L23 35 M41 31 L36.5 33 L41 35'],
   done: [NONE, 'M23 34 Q25.5 30.5 28 34 M36 34 Q38.5 30.5 41 34'],
+  sleep: [NONE, 'M23 33.5 Q25.5 35 28 33.5 M36 33.5 Q38.5 35 41 33.5'],
+  dizzy: [NONE, 'M25.5 33 m-2.6 0 a2.6 2.6 0 1 0 2.6 -2.6 a1.6 1.6 0 1 0 1.6 1.6 M38.5 33 m-2.6 0 a2.6 2.6 0 1 0 2.6 -2.6 a1.6 1.6 0 1 0 1.6 1.6'],
 }
 const BROWS = {
+  dizzy: 'M22.5 28.5 Q25.5 27.5 28 28.5 M36 28.5 Q38.5 27.5 41.5 28.5',
   work: 'M22.5 28 L28 29.2 M41.5 28 L36 29.2', wait: 'M22.5 29 L28 27.8 M41.5 29 L36 27.8',
   go: 'M22.5 27 Q25.5 25.5 28 27 M36 27 Q38.5 25.5 41.5 27', question: 'M22.5 27 Q25.5 25.5 28 27 M36 28.5 L41.5 28.5',
   denied: 'M22.5 27.5 L28 29.8 M41.5 27.5 L36 29.8',
@@ -163,10 +182,15 @@ const MOUTH = {
   go: ['M32 39.6 a2 2.4 0 1 0 0.01 0', NONE], question: [NONE, 'M30.5 42 Q32 41 33.5 42'],
   denied: [NONE, 'M28.5 42.5 L30.2 41 L32 42.5 L33.8 41 L35.5 42.5'],
   done: ['M27.5 40.2 Q32 40.8 36.5 40.2 Q36 45 32 45 Q28 45 27.5 40.2 Z', NONE],
+  sleep: [NONE, 'M32 41.2 a1.1 1.1 0 1 0 0.01 0'],
+  dizzy: [NONE, 'M28.5 42 Q30.2 40.8 32 42 Q33.8 43.2 35.5 42'],
 }
+const SWEAT = '<g style="transform-box:fill-box;animation:cb-drip 1.8s ease-in infinite"><path d="M51 14.5 Q48.2 19.6 51 21.9 Q53.8 19.6 51 14.5 Z" fill="#8FD0F7" stroke="#2A6F9E"/></g>'
 const SYMBOL = {
+  sleep: '<text x="47" y="15" font-family="\'Dela Gothic One\', sans-serif" font-size="7" fill="#141414" style="animation:cb-float 2.4s ease-out infinite">z</text><text x="52" y="9" font-family="\'Dela Gothic One\', sans-serif" font-size="10" fill="#141414" style="animation:cb-float 2.4s ease-out .8s infinite">Z</text>',
+  dizzy: SWEAT + '<g style="transform-box:fill-box;transform-origin:center;animation:cb-spin 2.4s linear infinite"><path d="M32 4.5 L33 6.6 L35.3 6.9 L33.6 8.4 L34.1 10.7 L32 9.6 L29.9 10.7 L30.4 8.4 L28.7 6.9 L31 6.6 Z M22 7.5 L22.7 8.9 L24.2 9.1 L23.1 10.1 L23.4 11.6 L22 10.9 L20.6 11.6 L20.9 10.1 L19.8 9.1 L21.3 8.9 Z M42 7.5 L42.7 8.9 L44.2 9.1 L43.1 10.1 L43.4 11.6 L42 10.9 L40.6 11.6 L40.9 10.1 L39.8 9.1 L41.3 8.9 Z" fill="#FFC21A" stroke="#141414" stroke-width=".6"/></g>',
   work: '<g style="animation:cb-speed .9s ease-in-out infinite"><path d="M2.5 22 L10.5 24 M1.5 32 L9.5 32 M2.5 42 L10.5 40 M61.5 22 L53.5 24 M62.5 32 L54.5 32 M61.5 42 L53.5 40" stroke="#141414" stroke-width="1.4" stroke-linecap="round"/></g>',
-  wait: '<g style="transform-box:fill-box;animation:cb-drip 1.8s ease-in infinite"><path d="M51 14.5 Q48.2 19.6 51 21.9 Q53.8 19.6 51 14.5 Z" fill="#8FD0F7" stroke="#2A6F9E"/></g>',
+  wait: SWEAT,
   go: '<g style="animation:cb-shake .45s ease-in-out infinite"><path d="M52 2 L57.6 2 L55.9 14.6 L53.7 14.6 Z" fill="#E8341C" stroke="#141414" stroke-linejoin="round"/><circle cx="54.8" cy="17.4" r="1.9" fill="#E8341C" stroke="#141414"/></g>',
   question: '<g style="animation:cb-bob 1.6s ease-in-out infinite"><text x="55" y="16.5" text-anchor="middle" font-family="\'Dela Gothic One\', sans-serif" font-size="16" fill="#2F6FE0" stroke="#141414" stroke-width=".8">?</text></g>',
   denied: '<g style="transform-box:fill-box;transform-origin:center;animation:cb-throb .9s ease-in-out infinite"><path d="M47.5 10 Q50 12.5 47.5 15 M49.5 8 Q52 10.5 54.5 8 M56.5 10 Q54 12.5 56.5 15 M49.5 17 Q52 14.5 54.5 17" stroke="#E8341C" stroke-width="2.3" fill="none" stroke-linecap="round"/></g>',
@@ -217,8 +241,11 @@ const R_EYES = {
   go: ['M23.4 30 a2.6 3.3 0 1 0 5.2 0 a2.6 3.3 0 1 0 -5.2 0 M35.4 30 a2.6 3.3 0 1 0 5.2 0 a2.6 3.3 0 1 0 -5.2 0', NONE],
   denied: [NONE, 'M23.5 28 L28 30 L23.5 32 M40.5 28 L36 30 L40.5 32'],
   done: [NONE, 'M23.5 31 Q26 27.5 28.5 31 M35.5 31 Q38 27.5 40.5 31'],
+  sleep: [NONE, 'M23.5 30.5 L28.5 30.5 M35.5 30.5 L40.5 30.5'],
+  dizzy: [NONE, 'M26 30 m-2.4 0 a2.4 2.4 0 1 0 2.4 -2.4 a1.4 1.4 0 1 0 1.4 1.4 M38 30 m-2.4 0 a2.4 2.4 0 1 0 2.4 -2.4 a1.4 1.4 0 1 0 1.4 1.4'],
 }
 const R_BROWS = {
+  dizzy: 'M23.5 25.4 Q26 24.6 28.5 25.4 M35.5 25.4 Q38 24.6 40.5 25.4',
   work: 'M23.5 25.2 L28.5 26 M40.5 25.2 L35.5 26', wait: 'M23.5 26 L28.5 25 M40.5 26 L35.5 25',
   go: 'M23.5 25 Q26 23.8 28.5 25 M35.5 25 Q38 23.8 40.5 25', question: 'M23.5 25 Q26 23.8 28.5 25 M35.5 25.6 L40.5 25.6',
   denied: 'M23.5 24.6 L28.5 26.4 M40.5 24.6 L35.5 26.4',
@@ -228,6 +255,8 @@ const R_MOUTH = {
   go: ['M32 35.2 a1.8 2 0 1 0 0.01 0', NONE], question: [NONE, 'M30.5 37.4 Q32 36.6 33.5 37.4'],
   denied: [NONE, 'M28.5 38 L30.2 36.6 L32 38 L33.8 36.6 L35.5 38'],
   done: ['M28 35.8 Q32 36.3 36 35.8 Q35.5 39.4 32 39.4 Q28.5 39.4 28 35.8 Z', NONE],
+  sleep: [NONE, 'M32 37 a0.9 0.9 0 1 0 0.01 0'],
+  dizzy: [NONE, 'M28.5 37.4 Q30.2 36.2 32 37.4 Q33.8 38.6 35.5 37.4'],
 }
 
 const ROBOT_GEAR = {
@@ -408,6 +437,18 @@ function requestCard(r) {
   return card
 }
 
+// ---- energy and quota (companion mod, ADR-0004) ----
+const ASLEEP_MS = 3 * 3600_000
+const QUOTA = { five_hour: '5 h', seven_day: '7 d' }
+const used = (s) => s?.usage?.context?.percent ?? 0
+// Energy is the context left; below 10 % it turns red.
+function energy(s) {
+  if (s?.usage?.context?.percent == null) return null
+  const left = Math.max(0, Math.round(100 - s.usage.context.percent))
+  return h('span', { class: `energy${left < 10 ? ' low' : ''}`, role: 'meter', 'aria-valuemin': 0, 'aria-valuemax': 100, 'aria-valuenow': left, 'aria-label': `context left: ${left} %`, title: `context left: ${left} %` },
+    h('span', { style: `width:${left}%` }))
+}
+
 // ---- board ----
 const cards = new Map() // request id -> card, kept so a half-typed answer survives updates
 let first = true
@@ -450,11 +491,26 @@ function render(snap) {
 
   const busy = snap.sessions.filter((s) => s.status === 'busy')
   $('#working .crew').replaceChildren(...busy.map((s) => h('div', { class: 'worker' },
-    avatar('work', s.cwd, 64, `${s.name || project(s.cwd)}: working${s.agents ? ` with ${s.agents} subagents` : ''}`, false, s.model),
+    avatar(used(s) >= 90 ? 'dizzy' : 'work', s.cwd, 64, `${s.name || project(s.cwd)}: working${s.agents ? ` with ${s.agents} subagents` : ''}`, false, s.model),
+    energy(s),
     link(s.sessionId, s.name || project(s.cwd)),
     h('span', { class: 'meta' }, project(s.cwd)),
     s.agents ? h('div', { class: 'clones' }, Array.from({ length: Math.min(s.agents, 5) }, () => avatar('work', s.cwd, 24, null, true)), s.agents > 5 ? `+${s.agents - 5}` : null) : null)))
   $('#working .empty').hidden = busy.length > 0
+
+  // Idle for hours and not waiting to be read: candidates to close.
+  const unread = new Set(snap.done.map((d) => d.session))
+  const asleep = snap.sessions.filter((s) => s.status === 'idle' && !unread.has(s.sessionId) && s.lastActive && Date.now() - s.lastActive > ASLEEP_MS)
+  $('#asleep .crew').replaceChildren(...asleep.map((s) => h('div', { class: 'worker' },
+    avatar('sleep', s.cwd, 56, `${s.name || project(s.cwd)}: asleep`, false, s.model),
+    link(s.sessionId, s.name || project(s.cwd)),
+    h('span', { class: 'meta' }, `idle ${span(Date.now() - s.lastActive)}`))))
+  $('#asleep').hidden = asleep.length === 0 || location.hash.length > 1
+
+  const q = (snap.quota ?? []).filter((r) => QUOTA[r.kind])
+  $('#quota').hidden = q.length === 0
+  $('#quota').textContent = q.map((r) => `${QUOTA[r.kind]} ${Math.round(r.percentUsed)} %`).join(' · ')
+  $('#quota').title = q.map((r) => `${QUOTA[r.kind]} window resets ${r.resetsAt ? new Date(r.resetsAt).toLocaleString() : 'later'}`).join('\n')
 
   const waiting = snap.requests.length
   document.title = waiting ? `(${waiting}) clearance` : 'clearance'
@@ -508,11 +564,12 @@ function runView(run, cwd) {
 
 function renderDetail(id, d, error) {
   const back = h('a', { class: 'back', href: '#' }, 'Back to the board')
-  if (!d) return $('#detail').replaceChildren(back, h('p', { class: 'error' }, error || 'Nothing to show.'))
+  if (!d) return $('#detail-body').replaceChildren(back, h('p', { class: 'error' }, error || 'Nothing to show.'))
   const s = sessions.get(id)
   const cwd = s?.cwd
   const name = s?.name || project(cwd)
-  const state = s?.status === 'waiting' ? 'wait' : s?.status === 'busy' ? 'work' : 'idle'
+  const state = s?.status === 'waiting' ? 'wait' : s?.status === 'busy' ? (used(s) >= 90 ? 'dizzy' : 'work') : 'idle'
+  instructState(s)
   const last = d.steps.at(-1)
   const run = d.runs.at(-1)
   const section = (title, ...body) => h('section', { class: 'card' }, h('h3', {}, title), body)
@@ -520,13 +577,18 @@ function renderDetail(id, d, error) {
     .sort((a, b) => String(a.at).localeCompare(String(b.at))).slice(-80)
   // Keep what the user unfolded across refreshes.
   const open = new Set([...document.querySelectorAll('#detail details[open] > summary')].map((x) => x.textContent))
-  $('#detail').replaceChildren(h('div', {},
+  const usage = s?.usage
+  $('#detail-body').replaceChildren(h('div', {},
     back,
     h('div', { class: 'card head' },
-      avatar(state, cwd, 96, name, false, d.model),
+      h('div', {}, avatar(state, cwd, 96, name, false, d.model), energy(s)),
       h('div', { class: 'grow' },
         h('h2', {}, d.title || name),
-        h('div', { class: 'chips' }, [name, d.branch && `branch ${d.branch}`, short(d.model), d.mode && `mode ${d.mode}`, s?.status ?? 'not running'].filter(Boolean).map((c) => h('span', { class: 'chip' }, c))),
+        h('div', { class: 'chips' }, [
+          name, d.branch && `branch ${d.branch}`, short(d.model), d.mode && `mode ${d.mode}`, s?.status ?? 'not running',
+          usage?.context?.percent != null && `context ${Math.round(usage.context.percent)} % used`,
+          usage?.cost && `$${usage.cost.usd.toFixed(2)}`,
+        ].filter(Boolean).map((c) => h('span', { class: 'chip' }, c))),
         last ? h('p', { class: 'meta' }, `Last: ${[last.tool, last.target, clock(last.at)].filter(Boolean).join(' · ')}`) : null)),
     run ? section('Workflow', runView(run, cwd)) : null,
     d.agents.length ? section('Subagents', h('div', { class: 'agents' }, d.agents.map((a) => agentCard(a, cwd)))) : null,
@@ -562,16 +624,70 @@ async function loadDetail(id) {
   } catch {}
 }
 
-// #s=<session id> shows that session; anything else, the board.
+// Kept outside the refreshed part of the detail, so that typing survives updates.
+function instructForm(id) {
+  const text = h('textarea', { rows: 2, 'aria-label': 'Instruction for this session', placeholder: 'Sent to the session as if you typed it' })
+  const status = h('p', { class: 'meta', id: 'instruct-status', role: 'status' })
+  return h('form', {
+    class: 'card instruct',
+    onsubmit: async (e) => {
+      e.preventDefault()
+      const error = await post('/api/instruct', { session: id, text: text.value })
+      if (error) return void (status.textContent = error)
+      text.value = ''
+    },
+  }, h('h3', {}, 'Send an instruction'), text, h('div', { class: 'actions' }, h('button', { class: 'primary', type: 'submit' }, 'Send')), status)
+}
+
+// What the companion mod did with the last instruction, or why one would wait.
+function instructState(s) {
+  const status = $('#instruct-status')
+  if (!status) return
+  const fresh = s?.usage && Date.now() - s.usage.at < 30_000
+  const i = s?.instruction
+  status.textContent = i?.delivered ? `Last instruction delivered at ${clock(i.delivered)}.`
+    : i ? `Queued at ${clock(i.at)}${fresh ? ', delivered within 5 s.' : ': no companion mod is running in this session.'}`
+    : fresh ? 'The companion mod runs in this session: an instruction arrives within 5 s.'
+    : 'No companion mod runs in this session: an instruction would wait for one.'
+}
+
+async function loadJournal() {
+  $('#journal').replaceChildren(h('p', { class: 'empty' }, 'Reading the journal and your approvals...'))
+  const res = await fetch('/api/journal')
+  const j = await res.json().catch(() => ({ error: res.statusText }))
+  if (!res.ok) return $('#journal').replaceChildren(h('p', { class: 'error' }, j.error))
+  const copy = (rule) => (e) => navigator.clipboard?.writeText(JSON.stringify(rule)).then(() => (e.target.textContent = 'Copied'))
+  const what = (d) => d.kind === 'decision' ? [d.request, d.tool, d.target].filter(Boolean).join(' · ') : d.kind === 'instruction' ? `instruction: ${d.text}` : 'instruction delivered'
+  $('#journal').replaceChildren(h('div', {},
+    h('a', { class: 'back', href: '#' }, 'Back to the board'),
+    h('section', { class: 'card' }, h('h3', {}, 'Suggested rules'),
+      h('p', { class: 'desc' }, 'What you approved by hand at least three times, from your transcripts. Copy the rules you want into permissions.allow in your settings: clearance never writes them, and never suggests one for an infrastructure write.'),
+      j.rules.length ? j.rules.map((r) => h('div', { class: 'rule' },
+        h('div', { class: 'actions' }, h('code', {}, r.rule), h('button', { onclick: copy(r.rule) }, 'Copy')),
+        h('span', { class: 'meta' }, `${r.count} approvals in ${r.sessions} session${r.sessions === 1 ? '' : 's'}, last on ${new Date(r.last).toLocaleDateString()}`),
+        h('pre', {}, r.example))) : h('p', { class: 'empty' }, 'Nothing approved often enough yet.')),
+    h('section', { class: 'card' }, h('h3', {}, 'Decisions taken here'),
+      j.decisions.length ? h('div', { class: 'scroll' }, h('table', {},
+        h('thead', {}, h('tr', {}, ['When', 'Session', 'What', 'Risk', 'Answer'].map((t) => h('th', {}, t)))),
+        h('tbody', {}, j.decisions.map((d) => h('tr', {},
+          h('td', {}, new Date(d.at).toLocaleString()), h('td', {}, nameOf(d.session, d.cwd)), h('td', {}, what(d)), h('td', {}, d.risk ?? ''), h('td', {}, d.action ?? ''))))))
+        : h('p', { class: 'empty' }, 'No decision taken from this page yet.'))))
+}
+
+// #s=<session id> shows that session, #journal the journal; anything else, the board.
+let lastSnap
 function route() {
   const id = /^#s=([\w-]+)$/.exec(location.hash)?.[1]
+  const journalView = location.hash === '#journal'
   clearInterval(detailTimer)
   detailKey = ''
   $('#detail').hidden = !id
-  for (const sel of ['#waiting', '#done', '#working']) $(sel).hidden = !!id
-  if (!id) return
-  $('#detail').replaceChildren(h('p', { class: 'empty' }, 'Reading the session...'))
+  $('#journal').hidden = !journalView
+  for (const sel of ['#waiting', '#done', '#working', '#asleep']) $(sel).hidden = !!(id || journalView)
   scrollTo(0, 0)
+  if (journalView) return void loadJournal()
+  if (!id) return lastSnap && render(lastSnap)
+  $('#detail').replaceChildren(h('div', { id: 'detail-body' }, h('p', { class: 'empty' }, 'Reading the session...')), instructForm(id))
   loadDetail(id)
   detailTimer = setInterval(() => loadDetail(id), 3000)
 }
@@ -595,7 +711,7 @@ $('#pack').onclick = () => {
 }
 
 const events = new EventSource('/events')
-events.onmessage = (e) => render(JSON.parse(e.data))
+events.onmessage = (e) => render((lastSnap = JSON.parse(e.data)))
 events.onerror = () => ($('#status').textContent = 'connection lost, retrying...')
 </script>
 </body>

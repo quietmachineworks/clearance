@@ -16,8 +16,10 @@ of scope. Decisions taken outside the brief: `docs/adr/`.
   waits for a real denial (`CLEARANCE_LOG=1` records it).
 - **M2 done** (ADR-0006): the session detail, read from transcripts, subagent and workflow files in
   `src/claude.ts`; a live two-phase workflow followed end to end.
-- **Next**: M3, the companion mod (energy, quota, instructions), asleep sessions, journal and suggested
-  rules. `spike/` holds the M0 receiver and probe mod.
+- **M3 done** (ADR-0007): the companion mod in `mod/` (usage, quota, instructions, status line), asleep
+  sessions, the journal and rules suggested from approvals by hand in the transcripts.
+- **Next**: M4, go to a session's terminal, start a session in a real tab, avatar pack. `spike/` holds
+  the M0 receiver and probe mod.
 
 ## Working rules
 
@@ -47,6 +49,7 @@ of scope. Decisions taken outside the brief: `docs/adr/`.
 | `src/risk.ts` | read / write / infrastructure write classification |
 | `src/claude.ts` | the only reads of Claude Code itself: `claude agents`, transcripts, subagents, workflows |
 | `public/index.html` | the page, avatars included |
+| `mod/` | the companion mod, loaded with `--plugin-dir` |
 | `test/` | `node --test` |
 | `design/` | mockups (canvas sources `.dc.html`) |
 | `spike/` | M0 hook receiver, not part of the product |
