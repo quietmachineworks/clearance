@@ -92,9 +92,10 @@ Context left, 5-hour and 7-day quota, session cost: read by clearance's companio
 
 ### Later, already decided
 
-- go to a session's terminal, start a session in a **real terminal tab** (not `--bg`);
+- go to a session's terminal, start a session in a **real terminal tab** (not `--bg`): done in M4
+  (ADR-0008);
 - decision journal and suggested rules;
-- more avatar packs (robots ships with M1; next candidate: Halloween);
+- avatar packs: robots (M1) and Halloween (M4) ship; more later;
 - keyboard shortcuts.
 
 ### Out of scope

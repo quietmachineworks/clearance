@@ -8,7 +8,7 @@ right terminal. Click a session to unfold its workflow: subagents, what ran, pro
 
 Claude Code only, local only, zero dependencies.
 
-Status: M3, the board, its decisions, the session detail and the companion mod. See `docs/BRIEF.md` for the whole plan.
+Status: V1 milestones done (M0 to M4). See `docs/BRIEF.md` for the whole plan. See `docs/BRIEF.md` for the whole plan.
 
 ## Try it
 
@@ -34,6 +34,9 @@ from the page:
 ```sh
 claude --settings /absolute/path/to/clearance/data/hooks.json --plugin-dir /absolute/path/to/clearance/mod
 ```
+
+On Windows, the page can also start a session in a new Windows Terminal tab, connected to clearance,
+and bring a session's tab to the front.
 
 Installing the hooks and the mod in your user settings, for every session, is a step to take once you
 trust the tool. The Journal page suggests permission rules from what you approved by hand; clearance

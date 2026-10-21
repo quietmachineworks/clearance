@@ -64,6 +64,15 @@ a.button { display: inline-flex; align-items: center; min-height: 44px; padding:
 .rule code { font: 800 14px ui-monospace, Consolas, monospace }
 #journal > div, #detail-body > div { display: grid; gap: 18px }
 form.instruct { display: grid; gap: 8px }
+form.start { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; align-items: end }
+form.start label { display: grid; gap: 4px; font-size: 13px; font-weight: 700 }
+form.start label.check { display: flex; align-items: center; gap: 8px; min-height: 44px }
+form.start > .actions:last-of-type, form.start [role=status], .picker { grid-column: 1 / -1 }
+.picker { display: grid; gap: 8px; padding: 12px; border: 2px dashed var(--ink); border-radius: 6px }
+.picker[hidden] { display: none }
+.picker .folders { display: flex; flex-wrap: wrap; gap: 6px; max-height: 260px; overflow: auto }
+.picker .folders button { min-height: 36px; font-weight: 700 }
+.picker code { font: 700 13px ui-monospace, Consolas, monospace; word-break: break-all }
 a.name { color: var(--ink); font-weight: 800; text-decoration: none; border-bottom: 2px solid var(--yellow) }
 a.name:hover { background: var(--yellow) }
 a.back { display: inline-block; margin-bottom: 14px; color: var(--ink); font-weight: 800 }
@@ -134,6 +143,24 @@ th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--dot)
   <section id="asleep" aria-labelledby="h-asleep" hidden>
     <h2 id="h-asleep">Asleep</h2>
     <div class="crew"></div>
+  </section>
+  <section id="start" aria-labelledby="h-start">
+    <h2 id="h-start">Start a session</h2>
+    <form class="card start">
+      <label>Folder <input type="text" name="cwd" required placeholder="The project's folder, full path"></label>
+      <div class="actions"><button type="button" id="browse">Browse...</button></div>
+      <div class="picker" hidden></div>
+      <label>Name <input type="text" name="name" required pattern="[\w.\-]{1,40}" placeholder="also the tab's title"></label>
+      <label>Model
+        <select name="model"><option value="">default</option><option value="opus">Opus</option><option value="sonnet">Sonnet</option><option value="haiku">Haiku</option></select>
+      </label>
+      <label>Mode
+        <select name="mode"><option value="">default</option><option value="default">ask</option><option value="acceptEdits">edits</option><option value="plan">plan</option><option value="auto">auto</option></select>
+      </label>
+      <label class="check"><input type="checkbox" name="connect" checked> Connect to clearance (hooks and companion mod)</label>
+      <div class="actions"><button class="primary" type="submit">Start in a new tab</button></div>
+      <p class="meta" role="status"></p>
+    </form>
   </section>
   <section id="detail" hidden></section>
   <section id="journal" hidden></section>
@@ -206,8 +233,13 @@ const CHIBI_GEAR = {
 }
 
 // Unknown states (an error stop, an idle session) draw a plain face with no symbol.
-function chibi(state, cwd, size, bare, model) {
+// The Halloween pack: a witch's hat and a cape over the same chibi. The hair still shows the project.
+const HAT = '<path d="M20 13 Q24 -2 37 -6 Q35 2 44 13 Z" fill="#3B2A5A" stroke="#141414" stroke-width="1.3" stroke-linejoin="round"/><ellipse cx="32" cy="13.5" rx="21" ry="3.6" fill="#3B2A5A" stroke="#141414" stroke-width="1.3"/><path d="M21.6 10.6 Q32 13 42.4 10.6 L42.9 12.6 Q32 15 21.1 12.6 Z" fill="#F08A24" stroke="#141414" stroke-width=".8"/>'
+const CAPE = '<path d="M21.5 48.6 L25.8 55.5 L32 50.2 L38.2 55.5 L42.5 48.6" fill="#F08A24" stroke="#141414" stroke-width=".9" stroke-linejoin="round"/>'
+
+function chibi(state, cwd, size, bare, model, costume) {
   const gear = gearOf(model)
+  const witch = costume === 'halloween'
   const [hair, eye, tint] = colours(project(cwd))
   const [eyesFill, eyesStroke] = EYES[state] || EYES.work
   const [mouthFill, mouthStroke] = MOUTH[state] || MOUTH.work
@@ -215,13 +247,14 @@ function chibi(state, cwd, size, bare, model) {
   return `<svg width="${size}" height="${size}" viewBox="0 0 64 64" aria-hidden="true">
 ${bare ? '' : `<rect width="64" height="64" rx="16" fill="${tint}"/>`}
 <g style="transform-box:fill-box;transform-origin:50% 100%;animation:cb-bob 2.6s ease-in-out infinite">
-<path d="M13 64 Q14 49 32 48 Q50 49 51 64 Z" fill="#2B2A33"/>
-<path d="M26.5 49 L32 55.5 L37.5 49" stroke="#FFF" stroke-width="1.6" fill="none" stroke-linejoin="round"/>
+<path d="M13 64 Q14 49 32 48 Q50 49 51 64 Z" fill="${witch ? '#4A2370' : '#2B2A33'}"/>
+${witch ? CAPE : '<path d="M26.5 49 L32 55.5 L37.5 49" stroke="#FFF" stroke-width="1.6" fill="none" stroke-linejoin="round"/>'}
 <rect x="29" y="43" width="6" height="6" fill="#FFF1E4"/>
 <ellipse cx="32" cy="31.5" rx="15" ry="14.5" fill="#FFF1E4" stroke="#141414" stroke-width="1.3"/>
 <path d="M19.1 38.5 a2.4 1.3 0 1 0 4.8 0 a2.4 1.3 0 1 0 -4.8 0 M40.1 38.5 a2.4 1.3 0 1 0 4.8 0 a2.4 1.3 0 1 0 -4.8 0" fill="#FF9DA8" opacity="${blush}"/>
 <path d="M16.5 31 Q14 11 32 10.5 Q50 11 47.5 31 L44.5 23 L40.5 27 L37 20.5 L32.5 26 L28 20 L24 26 L20.5 22 Z" fill="${hair}" stroke="#141414" stroke-width="1.3" stroke-linejoin="round"/>
 ${gear === 'haiku' || gear === 'sonnet' ? CHIBI_GEAR[gear](hair) : ''}
+${witch ? HAT : ''}
 <path d="${eyesFill}" fill="${eye}"/>
 ${eyesFill === NONE ? '' : '<path d="M26.4 31.4 a.85 .85 0 1 0 .01 0 M39.4 31.4 a.85 .85 0 1 0 .01 0" fill="#FFF"/>'}
 <path d="${eyesStroke}" fill="none" stroke="#141414" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
@@ -298,7 +331,7 @@ ${SYMBOL[state] || ''}
 }
 
 // An avatar pack changes the costume, never the symbols (BRIEF section 4).
-const PACKS = { manga: chibi, robots: robot }
+const PACKS = { manga: chibi, robots: robot, halloween: (state, cwd, size, bare, model) => chibi(state, cwd, size, bare, model, 'halloween') }
 let pack = 'manga'
 try { pack = PACKS[localStorage.getItem('clearance-pack')] ? localStorage.getItem('clearance-pack') : 'manga' } catch {}
 
@@ -589,7 +622,8 @@ function renderDetail(id, d, error) {
           usage?.context?.percent != null && `context ${Math.round(usage.context.percent)} % used`,
           usage?.cost && `$${usage.cost.usd.toFixed(2)}`,
         ].filter(Boolean).map((c) => h('span', { class: 'chip' }, c))),
-        last ? h('p', { class: 'meta' }, `Last: ${[last.tool, last.target, clock(last.at)].filter(Boolean).join(' · ')}`) : null)),
+        last ? h('p', { class: 'meta' }, `Last: ${[last.tool, last.target, clock(last.at)].filter(Boolean).join(' · ')}`) : null,
+        s ? h('div', { class: 'actions' }, h('button', { onclick: goTo(id) }, 'Go to terminal'), h('span', { class: 'meta', id: 'focus-status', role: 'status' })) : null)),
     run ? section('Workflow', runView(run, cwd)) : null,
     d.agents.length ? section('Subagents', h('div', { class: 'agents' }, d.agents.map((a) => agentCard(a, cwd)))) : null,
     d.loops.length || d.errors.length ? section('Errors and loops',
@@ -620,8 +654,18 @@ async function loadDetail(id) {
     const key = JSON.stringify([body, sessions.get(id)])
     if (key === detailKey) return
     detailKey = key
-    renderDetail(id, res.ok ? body : null, body.error)
+    // A session that has not run a turn yet has no transcript: show what the board knows.
+    const fresh = res.status === 404 && sessions.has(id) ? { prompts: [], steps: [], edits: [], errors: [], loops: [], runs: [], agents: [], model: sessions.get(id).model } : null
+    renderDetail(id, res.ok ? body : fresh, body.error)
   } catch {}
+}
+
+// Brings the session's Windows Terminal tab to the front, or says which tab to look for.
+const goTo = (id) => async (e) => {
+  const res = await fetch('/api/focus', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ session: id }) })
+  const body = await res.json().catch(() => ({}))
+  const status = $('#focus-status')
+  if (status) status.textContent = !res.ok ? (body.error ?? res.statusText) : body.found ? 'Tab brought to the front.' : `Tab not found: look for "${body.titles?.join('" or "')}".`
 }
 
 // Kept outside the refreshed part of the detail, so that typing survives updates.
@@ -683,7 +727,7 @@ function route() {
   detailKey = ''
   $('#detail').hidden = !id
   $('#journal').hidden = !journalView
-  for (const sel of ['#waiting', '#done', '#working', '#asleep']) $(sel).hidden = !!(id || journalView)
+  for (const sel of ['#waiting', '#done', '#working', '#asleep', '#start']) $(sel).hidden = !!(id || journalView)
   scrollTo(0, 0)
   if (journalView) return void loadJournal()
   if (!id) return lastSnap && render(lastSnap)
@@ -703,11 +747,45 @@ if ('Notification' in window && Notification.permission === 'default') {
 }
 
 // ponytail: switching packs reloads the page rather than redrawing the cards in place.
-const other = pack === 'manga' ? 'robots' : 'manga'
+const names = Object.keys(PACKS)
+const other = names[(names.indexOf(pack) + 1) % names.length]
 $('#pack').textContent = `Avatars: ${other}`
 $('#pack').onclick = () => {
   try { localStorage.setItem('clearance-pack', other) } catch {}
   location.reload()
+}
+
+// Start a session in a new Windows Terminal tab; the folder is remembered in this browser.
+const startForm = $('form.start')
+const field = startForm.elements // form.name would be the form's own name
+try { field.cwd.value = localStorage.getItem('clearance-cwd') ?? '' } catch {}
+
+// Folder picker: the server lists sub-folders; recent folders are those of the live sessions and the
+// last one started from here.
+const picker = $('.picker', startForm)
+async function browse(path) {
+  const res = await fetch(`/api/folders?path=${encodeURIComponent(path ?? '')}`)
+  const at = await res.json().catch(() => ({ error: res.statusText }))
+  if (!res.ok) return picker.replaceChildren(h('p', { class: 'error' }, at.error), h('button', { type: 'button', onclick: () => browse('') }, 'Home'))
+  const go = (label, to, title) => h('button', { type: 'button', title, onclick: () => browse(to) }, label)
+  const recent = [...new Set([field.cwd.value, ...[...sessions.values()].map((s) => s.cwd)].filter(Boolean))]
+  picker.replaceChildren(
+    recent.length ? h('div', { class: 'actions' }, h('span', { class: 'meta' }, 'Recent'), recent.map((p) => go(project(p), p, p))) : null,
+    h('div', { class: 'actions' }, at.drives.map((d) => go(d, d)), at.parent ? go('Up', at.parent, at.parent) : null, h('code', {}, at.path)),
+    h('div', { class: 'folders' }, at.folders.length ? at.folders.map((f) => go(f, `${at.path.replace(/[\\/]$/, '')}${at.path.includes('\\') ? '\\' : '/'}${f}`)) : h('span', { class: 'meta' }, 'No folder here.')),
+    h('div', { class: 'actions' }, h('button', { type: 'button', class: 'primary', onclick: () => { field.cwd.value = at.path; picker.hidden = true } }, 'Use this folder')))
+}
+$('#browse').onclick = () => {
+  picker.hidden = !picker.hidden
+  if (!picker.hidden) browse(field.cwd.value.trim())
+}
+startForm.onsubmit = async (e) => {
+  e.preventDefault()
+  const status = $('[role=status]', startForm)
+  const name = field.name.value.trim()
+  const error = await post('/api/start', { cwd: field.cwd.value.trim(), name, model: field.model.value, mode: field.mode.value, connect: field.connect.checked })
+  status.textContent = error ?? `Started: the tab "${name}" opened in Windows Terminal.`
+  if (!error) try { localStorage.setItem('clearance-cwd', field.cwd.value.trim()) } catch {}
 }
 
 const events = new EventSource('/events')

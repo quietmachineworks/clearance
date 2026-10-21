@@ -18,8 +18,10 @@ of scope. Decisions taken outside the brief: `docs/adr/`.
   `src/claude.ts`; a live two-phase workflow followed end to end.
 - **M3 done** (ADR-0007): the companion mod in `mod/` (usage, quota, instructions, status line), asleep
   sessions, the journal and rules suggested from approvals by hand in the transcripts.
-- **Next**: M4, go to a session's terminal, start a session in a real tab, avatar pack. `spike/` holds
-  the M0 receiver and probe mod.
+- **M4 done** (ADR-0008): sessions started in a real Windows Terminal tab from the page (folder
+  picker, session markers removed from the tab's environment), go to a session's tab, Halloween pack.
+- **Next**: V1 is complete; keyboard shortcuts and installing for every session (an explicit step) are
+  what the brief leaves. `spike/` holds the M0 receiver and probe mod.
 
 ## Working rules
 
@@ -48,6 +50,7 @@ of scope. Decisions taken outside the brief: `docs/adr/`.
 | `src/board.ts` | board state and hook answers, pure |
 | `src/risk.ts` | read / write / infrastructure write classification |
 | `src/claude.ts` | the only reads of Claude Code itself: `claude agents`, transcripts, subagents, workflows |
+| `src/terminal.ts` | Windows Terminal: start a tab, bring one to the front |
 | `public/index.html` | the page, avatars included |
 | `mod/` | the companion mod, loaded with `--plugin-dir` |
 | `test/` | `node --test` |

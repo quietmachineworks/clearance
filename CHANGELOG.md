@@ -14,3 +14,5 @@
 - M3 companion mod: context, cost and quota on the page, energy bars, instructions sent to a session,
   a line under the prompt; asleep sessions; a journal of decisions; permission rules suggested from
   approvals given by hand (ADR-0007).
+- M4: start a session in a new Windows Terminal tab from the page, with a folder picker; bring a
+  session's tab to the front; Halloween avatar pack (ADR-0008).

@@ -3,11 +3,14 @@
 //   claude --settings data/hooks.json ...   to connect a session
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http'
 import { randomBytes, timingSafeEqual } from 'node:crypto'
-import { appendFileSync, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
+import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
+import { homedir } from 'node:os'
+import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { Board, respond, type Decision, type Session } from './board.ts'
-import { agents, approvals, detail, modelOf, target, transcriptOf } from './claude.ts'
+import { agents, approvals, detail, modelOf, readTranscript, target, transcriptOf } from './claude.ts'
 import { suggest } from './risk.ts'
+import { focus, start, startArgs } from './terminal.ts'
 
 const HOST = '127.0.0.1'
 const PORT = Number(process.env.CLEARANCE_PORT ?? 47800)
@@ -107,6 +110,11 @@ async function poll() {
   setTimeout(poll, 2000)
 }
 
+// Windows drive roots, once; elsewhere, the root.
+let driveList: string[] | undefined
+const drives = () =>
+  (driveList ??= process.platform === 'win32' ? [...'CDEFGHIJKLMNOPQRSTUVWXYZ'].map((l) => `${l}:\\`).filter((d) => existsSync(d)) : ['/'])
+
 const PAGE_HEADERS = {
   'content-type': 'text/html; charset=utf-8',
   'cache-control': 'no-store',
@@ -183,6 +191,20 @@ createServer(async (req, res) => {
     }
   }
 
+  // The folder picker of the start form: a browser never hands a page a folder's full path.
+  if (req.method === 'GET' && url.pathname === '/api/folders') {
+    const path = resolve(url.searchParams.get('path') || homedir())
+    try {
+      const folders = readdirSync(path, { withFileTypes: true })
+        .filter((d) => d.isDirectory() && !/^[.$]/.test(d.name))
+        .map((d) => d.name)
+        .sort((a, b) => a.localeCompare(b))
+      return send(res, 200, { path, parent: dirname(path) === path ? null : dirname(path), folders, drives: drives() })
+    } catch (e) {
+      return send(res, 400, { error: `Cannot list ${path}: ${(e as NodeJS.ErrnoException).code ?? (e as Error).message}` })
+    }
+  }
+
   if (req.method === 'GET' && url.pathname === '/api/journal') {
     try {
       return send(res, 200, { decisions: journalTail(200).reverse(), rules: suggest(approvals()) })
@@ -208,6 +230,26 @@ createServer(async (req, res) => {
     publish()
     journal({ kind: 'decision', session: request.session, cwd: request.cwd, request: request.kind, tool: request.tool, target: target(request.input), risk: request.risk, action: decision.action, mode: decision.mode })
     return send(res, 200, { ok: true })
+  }
+
+  // A new session in a real Windows Terminal tab, connected to clearance unless asked otherwise.
+  if (url.pathname === '/api/start') {
+    const body = await json(req)
+    const args = startArgs(body, { settings: fileURLToPath(hooksFile), mod: fileURLToPath(new URL('../mod', import.meta.url)) })
+    if (typeof args === 'string') return send(res, 400, { error: args })
+    const error = await start(args)
+    journal({ kind: 'start', name: body.name, cwd: body.cwd, model: body.model, mode: body.mode, error })
+    return error ? send(res, 500, { error }) : send(res, 200, { ok: true })
+  }
+
+  // Bring a session's tab to the front: its title from the transcript, or its name.
+  if (url.pathname === '/api/focus') {
+    const { session } = await json(req)
+    const s = board.sessions.get(String(session))
+    const file = s && transcriptOf(s.sessionId, s.cwd)
+    const titles = [file ? readTranscript(file).title : undefined, s?.name].filter((t): t is string => !!t)
+    if (!titles.length) return send(res, 404, { error: 'This session is not running.' })
+    return send(res, 200, { found: await focus(titles), titles })
   }
 
   // An instruction for a session, handed to its companion mod on its next sync.
