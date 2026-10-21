@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>clearance · pack robots</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&amp;family=M+PLUS+Rounded+1c:wght@400;500;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1240px; height: 940px; box-sizing: border-box; padding: 28px 32px; background: #FFFFFF; color: #141414; font-family: 'M PLUS Rounded 1c', sans-serif; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap">
+<div>
+<h1 style="margin: 0; font-family: 'Dela Gothic One', sans-serif; font-weight: 400; font-size: 40px; line-height: 1.05; text-shadow: 3px 3px 0 #FFC21A">clearance</h1>
+<p style="margin: 6px 0 0; font-size: 16px; font-weight: 500">Même grammaire que les chibis, autre costume. Le symbole dit l'état, la peinture le projet, l'accessoire le modèle.</p>
+</div>
+<span style="padding: 6px 12px; background: #141414; color: #FFFFFF; font-weight: 800; font-size: 13px; letter-spacing: 0.08em">TOME 1 BIS · PACK ROBOTS</span>
+</div>
+
+<section style="border: 3px solid #141414; border-radius: 6px; padding: 14px 18px 16px; display: flex; flex-direction: column; gap: 10px; background-color: #FFFFFF; background-image: linear-gradient(rgba(20,20,20,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(20,20,20,0.05) 1px, transparent 1px); background-size: 12px 12px">
+<span style="align-self: flex-start; padding: 4px 10px; background: #141414; color: #FFFFFF; font-weight: 800; font-size: 13px; letter-spacing: 0.08em">ÉTATS · LES SYMBOLES NE CHANGENT PAS, L'ÉCRAN SUIT</span>
+<div style="display: flex; gap: 10px; justify-content: space-between">
+<sc-for list="{{states}}" as="a" hint-placeholder-count="8">
+<div style="width: 132px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center">
+<dc-import name="Robot" av="{{a.av}}" size="96" hint-size="96px,96px"></dc-import>
+<span style="font-weight: 800; font-size: 14px; line-height: 1.2">{{a.title}}</span>
+<span style="font-size: 12.5px; line-height: 1.3; color: #4A4A4A">{{a.sign}}</span>
+</div>
+</sc-for>
+</div>
+</section>
+
+<div style="display: flex; gap: 16px; align-items: stretch">
+<section style="flex: 0 0 auto; border: 3px solid #141414; border-radius: 6px; padding: 14px 18px 16px; display: flex; flex-direction: column; gap: 10px">
+<span style="align-self: flex-start; padding: 4px 10px; background: #141414; color: #FFFFFF; font-weight: 800; font-size: 13px; letter-spacing: 0.08em">MODÈLES · L'ÉQUIPEMENT</span>
+<div style="display: flex; gap: 14px">
+<sc-for list="{{models}}" as="a" hint-placeholder-count="3">
+<div style="width: 112px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center">
+<dc-import name="Robot" av="{{a.av}}" size="88" hint-size="88px,88px"></dc-import>
+<span style="font-weight: 800; font-size: 14px">{{a.title}}</span>
+<span style="font-size: 12.5px; color: #4A4A4A">{{a.sign}}</span>
+</div>
+</sc-for>
+</div>
+</section>
+<section style="flex: 1 1 auto; border: 3px solid #141414; border-radius: 6px; padding: 14px 18px 16px; display: flex; flex-direction: column; gap: 10px">
+<span style="align-self: flex-start; padding: 4px 10px; background: #141414; color: #FFFFFF; font-weight: 800; font-size: 13px; letter-spacing: 0.08em">PROJETS · LA COULEUR DE LA PEINTURE</span>
+<div style="display: flex; gap: 8px; justify-content: space-between">
+<sc-for list="{{projects}}" as="a" hint-placeholder-count="7">
+<div style="width: 76px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center">
+<dc-import name="Robot" av="{{a.av}}" size="64" hint-size="64px,64px"></dc-import>
+<span style="font-weight: 700; font-size: 12.5px; line-height: 1.2">{{a.title}}</span>
+</div>
+</sc-for>
+</div>
+</section>
+</div>
+
+<section style="border: 3px solid #141414; border-radius: 6px; padding: 14px 18px 16px; display: flex; gap: 28px; align-items: center; background-color: #FFFFFF; background-image: repeating-linear-gradient(180deg, transparent 0 11px, rgba(20,20,20,0.06) 11px 12px)">
+<div style="display: flex; flex-direction: column; gap: 8px; flex: 0 0 300px">
+<span style="align-self: flex-start; padding: 4px 10px; background: #141414; color: #FFFFFF; font-weight: 800; font-size: 13px; letter-spacing: 0.08em">SOUS-AGENTS · LES DRONES</span>
+<span style="font-size: 14.5px; line-height: 1.45">Un sous-agent est un petit robot de la même série : même peinture, plus petit, avec l'équipement de son propre modèle. Quand il finit, son écran sourit puis il disparaît.</span>
+</div>
+<div style="display: flex; align-items: flex-end; gap: 18px">
+<dc-import name="Robot" av="{{parent}}" size="104" hint-size="104px,104px"></dc-import>
+<sc-for list="{{clones}}" as="a" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 4px">
+<dc-import name="Robot" av="{{a.av}}" size="48" bare="{{true}}" hint-size="48px,48px"></dc-import>
+<span style="font-family: 'M PLUS Rounded 1c', sans-serif; font-weight: 700; font-size: 12px; padding: 2px 8px; border: 2px solid #141414; border-radius: 999px; background: #FFFFFF">{{a.title}}</span>
+</div>
+</sc-for>
+</div>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1240,"height":940}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const P = {
+      'shop': ['#3D7BE0', '#1F4E9E', '#E4EDFB'],
+      'infra': ['#8B5CF6', '#5B2FC0', '#EFE8FE'],
+      'mcp-server': ['#13A3A3', '#0B6B6B', '#DDF4F4'],
+      'inbox': ['#F06292', '#B0305C', '#FDE6EE'],
+      'newsletter': ['#3BAA5C', '#22743A', '#E2F4E7'],
+      'perso': ['#F08A24', '#A85A0C', '#FDEEDC'],
+      'qmw': ['#8A94A6', '#4F5869', '#ECEEF2']
+    };
+    const av = (proj, model, state, label) => ({ hair: P[proj][0], eye: P[proj][1], tint: P[proj][2], model, state, label: label || (proj + ', ' + model + ', ' + state) });
+    return {
+      states: [
+        { title: 'Au travail', sign: 'traits de vitesse, regard concentré', av: av('shop', 'opus', 'work') },
+        { title: 'Attend une permission', sign: 'goutte, sourcils inquiets', av: av('shop', 'opus', 'wait') },
+        { title: 'Attend ton GO', sign: 'point d\'exclamation, yeux grands ouverts', av: av('shop', 'opus', 'go') },
+        { title: 'Te pose une question', sign: 'point d\'interrogation', av: av('shop', 'opus', 'question') },
+        { title: 'Bloqué par le mode auto', sign: 'veine de colère, yeux > <', av: av('shop', 'opus', 'denied') },
+        { title: 'A fini, à relire', sign: 'étincelles, écran qui sourit', av: av('shop', 'opus', 'done') },
+        { title: 'Dort depuis des heures', sign: 'Zzz, écran en veille', av: av('shop', 'opus', 'sleep') },
+        { title: 'Contexte presque plein', sign: 'yeux en spirale', av: av('shop', 'opus', 'dizzy') }
+      ],
+      models: [
+        { title: 'Opus', sign: 'lentilles, le sensei', av: av('infra', 'opus', 'work') },
+        { title: 'Sonnet', sign: 'casque, le senpai', av: av('infra', 'sonnet', 'work') },
+        { title: 'Haiku', sign: 'antenne ressort, le kohai', av: av('infra', 'haiku', 'work') }
+      ],
+      projects: Object.keys(P).map((k, i) => ({ title: k, av: av(k, ['opus', 'sonnet', 'haiku'][i % 3], 'work') })),
+      parent: av('shop', 'opus', 'work', 'shop-7b, Opus, au travail avec 3 drones'),
+      clones: [
+        { title: 'Explore', av: av('shop', 'haiku', 'work') },
+        { title: 'Plan', av: av('shop', 'opus', 'work') },
+        { title: 'reviewer', av: av('shop', 'opus', 'done') }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

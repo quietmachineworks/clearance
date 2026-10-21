@@ -11,7 +11,10 @@ of scope. Decisions taken outside the brief: `docs/adr/`.
   terminal answer wins, `setMode` and `AskUserQuestion` answers work; a companion mod carries usage
   figures and instructions; terminal tabs are found by title. Question 3 (`PermissionDenied`) is checked
   on real events in M1; 5 (channels) is no longer needed.
-- **Next**: M1, the board and decisions. `spike/` holds the M0 receiver and probe mod.
+- **M1 done** (ADR-0005): a real permission and a real question answered from the page; questions go
+  through `PermissionRequest`, a held `PreToolUse` would hide the terminal dialog. Question 3 still
+  waits for a real denial (`CLEARANCE_LOG=1` records it).
+- **Next**: M2, the session detail. `spike/` holds the M0 receiver and probe mod.
 
 ## Working rules
 
@@ -36,5 +39,11 @@ of scope. Decisions taken outside the brief: `docs/adr/`.
 |---|---|
 | `docs/BRIEF.md` | product, scope, data sources, milestones |
 | `docs/adr/` | decisions |
+| `src/server.ts` | the one process: hooks, page, SSE, token and Origin checks |
+| `src/board.ts` | board state and hook answers, pure |
+| `src/risk.ts` | read / write / infrastructure write classification |
+| `src/claude.ts` | the only reads of Claude Code itself |
+| `public/index.html` | the page, avatars included |
+| `test/` | `node --test` |
 | `design/` | mockups (canvas sources `.dc.html`) |
 | `spike/` | M0 hook receiver, not part of the product |

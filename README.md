@@ -8,7 +8,28 @@ right terminal. Click a session to unfold its workflow: subagents, what ran, pro
 
 Claude Code only, local only, zero dependencies.
 
-Status: design done, no code yet. See `docs/BRIEF.md`.
+Status: M1, the board and its decisions. See `docs/BRIEF.md` for the whole plan.
+
+## Try it
+
+Node 24 or later.
+
+```sh
+node src/server.ts
+```
+
+It prints the page address, with a one-time token, and writes `data/hooks.json`. Connect a session by
+passing those hooks to it:
+
+```sh
+claude --settings /absolute/path/to/clearance/data/hooks.json
+```
+
+Requests from that session now show on the page as well as in its terminal; the first answer wins. With
+clearance stopped, the session behaves as usual. Installing the hooks in your user settings, for every
+session, is a step to take once you trust the tool.
+
+Tests: `node --test`.
 
 ## License
 

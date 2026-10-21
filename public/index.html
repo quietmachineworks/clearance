@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>clearance</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap">
+<style>
+:root { --ink: #141414; --paper: #FFFFFF; --dot: #E3E3E3; --muted: #4A4A4A; --red: #E8341C; --yellow: #FFC21A; --blue: #2F6FE0; --screen: #1C1F2B }
+* { box-sizing: border-box }
+body { margin: 0; color: var(--ink); background: var(--paper) radial-gradient(var(--dot) 1px, transparent 1px) 0 0 / 7px 7px; font: 500 15px/1.45 'M PLUS Rounded 1c', system-ui, sans-serif }
+header { max-width: 1100px; margin: 0 auto; padding: 20px 16px 8px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap }
+h1 { margin: 0; font: 400 36px/1 'Dela Gothic One', sans-serif; text-shadow: 3px 3px 0 var(--yellow) }
+#status { font-size: 13px; font-weight: 700; padding: 4px 10px; border: 2px solid var(--ink); border-radius: 999px; background: #FFF }
+main { max-width: 1100px; margin: 0 auto; padding: 8px 16px 48px; display: grid; gap: 28px }
+h2 { display: inline-block; margin: 0 0 12px; padding: 4px 12px; background: var(--ink); color: #FFF; font-size: 13px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase }
+.cards { display: grid; gap: 16px }
+.card { background: #FFF; border: 3px solid var(--ink); border-radius: 6px; box-shadow: 5px 5px 0 var(--ink); padding: 14px 16px; display: grid; gap: 10px }
+.card.risk-infra { box-shadow: 5px 5px 0 var(--red) }
+.who { display: flex; align-items: center; gap: 12px; flex-wrap: wrap }
+.who > div { display: grid; flex: 1 1 160px }
+.meta { color: var(--muted); font-size: 13px }
+.badge, .risk, .chip { font-size: 12px; font-weight: 800; padding: 2px 8px; border: 2px solid var(--ink); border-radius: 999px; letter-spacing: .04em; white-space: nowrap }
+.risk.read { background: #ECEEF2 } .risk.write { background: var(--yellow) } .risk.infra { background: var(--red); color: #FFF }
+pre { margin: 0; padding: 10px 12px; background: var(--screen); color: #F4F4F4; border-radius: 4px; font: 13px/1.5 ui-monospace, Consolas, monospace; white-space: pre-wrap; word-break: break-word; max-height: 320px; overflow: auto }
+.cmd { font-size: 14px }
+.tool, .desc { margin: 0; color: var(--muted) }
+.question { margin: 0; font-weight: 700 }
+details summary { cursor: pointer; font-size: 13px; color: var(--muted) }
+details pre { margin-top: 6px }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center }
+button { min-height: 44px; padding: 0 16px; font: 800 14px 'M PLUS Rounded 1c', system-ui, sans-serif; color: var(--ink); background: #FFF; border: 2px solid var(--ink); border-radius: 999px; cursor: pointer }
+button.primary { background: var(--ink); color: #FFF }
+button.quiet { border-color: transparent; background: transparent; text-decoration: underline }
+button:disabled { opacity: .4; cursor: not-allowed }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px }
+input[type=text], textarea, select { min-height: 44px; padding: 8px 12px; font: inherit; color: var(--ink); background: #FFF; border: 2px solid var(--ink); border-radius: 6px }
+input[type=text] { flex: 1 1 220px }
+input[name=go] { flex: 0 0 120px; font-weight: 800; text-align: center; letter-spacing: .1em }
+textarea { width: 100%; resize: vertical }
+label.mode { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 13px }
+fieldset { margin: 0; padding: 0; border: 0; display: grid; gap: 6px }
+legend { margin-bottom: 6px; font-weight: 800 }
+.option { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; border: 2px solid var(--ink); border-radius: 6px; cursor: pointer }
+.option input { margin-top: 4px }
+.option small { display: block; color: var(--muted) }
+.option:has(input:checked) { background: #E4EDFB }
+.error { margin: 0; color: var(--red); font-weight: 700 }
+.error:empty { display: none }
+.empty { margin: 0; color: var(--muted) }
+.terminal { display: grid; gap: 6px; margin-top: 12px }
+.terminal-wait { display: flex; align-items: center; gap: 10px; color: var(--muted) }
+.message { margin: 0; white-space: pre-wrap; max-height: 9em; overflow: auto }
+.crew { display: flex; flex-wrap: wrap; gap: 18px }
+.worker { width: 120px; display: grid; justify-items: center; gap: 2px; text-align: center }
+.clones { display: flex; align-items: flex-end; gap: 2px; font-size: 12px; font-weight: 800 }
+.avatar svg { display: block; overflow: visible }
+@keyframes cb-bob { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-1.6px) } }
+@keyframes cb-drip { 0% { transform: translateY(-2px); opacity: 0 } 25% { opacity: 1 } 100% { transform: translateY(5px); opacity: 0 } }
+@keyframes cb-throb { 0%, 100% { transform: scale(1) } 50% { transform: scale(1.28) } }
+@keyframes cb-twinkle { 0%, 100% { transform: scale(.7); opacity: .6 } 50% { transform: scale(1.15); opacity: 1 } }
+@keyframes cb-float { 0% { transform: translate(0, 3px); opacity: 0 } 30% { opacity: 1 } 100% { transform: translate(3px, -5px); opacity: 0 } }
+@keyframes cb-shake { 0%, 100% { transform: translateX(0) } 25% { transform: translateX(-1.2px) } 75% { transform: translateX(1.2px) } }
+@keyframes cb-speed { 0%, 100% { opacity: .2 } 50% { opacity: .85 } }
+@keyframes cb-spin { to { transform: rotate(360deg) } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important } }
+</style>
+</head>
+<body>
+<header>
+  <h1>clearance</h1>
+  <span id="status" role="status">connecting...</span>
+  <button id="notify" hidden>Turn on notifications</button>
+  <button id="pack"></button>
+</header>
+<main>
+  <section id="waiting" aria-labelledby="h-waiting">
+    <h2 id="h-waiting">Waiting for you</h2>
+    <p class="empty">Nobody is waiting for you.</p>
+    <div class="cards"></div>
+    <div class="terminal"></div>
+  </section>
+  <section id="done" aria-labelledby="h-done">
+    <h2 id="h-done">Done</h2>
+    <p class="empty">Nothing left to read.</p>
+    <div class="cards"></div>
+  </section>
+  <section id="working" aria-labelledby="h-working">
+    <h2 id="h-working">Working</h2>
+    <p class="empty">Nobody is working.</p>
+    <div class="crew"></div>
+  </section>
+</main>
+<script>
+// Everything that comes from a session (commands, questions, messages) goes through h() as text,
+// never through innerHTML. The avatar SVG is built from constants only.
+const $ = (sel, root = document) => root.querySelector(sel)
+
+function h(tag, attrs = {}, ...children) {
+  const el = document.createElement(tag)
+  for (const [k, v] of Object.entries(attrs)) {
+    if (v == null || v === false) continue
+    if (k.startsWith('on')) el.addEventListener(k.slice(2), v)
+    else if (k === 'class') el.className = v
+    else el.setAttribute(k, v === true ? '' : v)
+  }
+  for (const c of children.flat()) if (c != null && c !== false) el.append(c instanceof Node ? c : String(c))
+  return el
+}
+
+// ---- avatars (design/canvas/Chibi.dc.html, BRIEF section 4) ----
+// Hair colour: the project, from its folder name.
+const PALETTE = [['#3D7BE0', '#1F4E9E', '#E4EDFB'], ['#8B5CF6', '#5B2FC0', '#EFE8FE'], ['#13A3A3', '#0B6B6B', '#DDF4F4'], ['#F06292', '#B0305C', '#FDE6EE'], ['#3BAA5C', '#22743A', '#E2F4E7'], ['#F08A24', '#A85A0C', '#FDEEDC'], ['#8A94A6', '#4F5869', '#ECEEF2']]
+const project = (cwd = '') => cwd.split(/[\\/]/).filter(Boolean).pop() || 'unknown'
+const colours = (name) => PALETTE[[...name].reduce((n, c) => (n * 31 + c.charCodeAt(0)) >>> 0, 7) % PALETTE.length]
+
+const NONE = 'M0 0'
+const OPEN = 'M23.3 33 a2.2 3 0 1 0 4.4 0 a2.2 3 0 1 0 -4.4 0 M36.3 33 a2.2 3 0 1 0 4.4 0 a2.2 3 0 1 0 -4.4 0'
+const WIDE = 'M22.9 33 a2.6 3.6 0 1 0 5.2 0 a2.6 3.6 0 1 0 -5.2 0 M35.9 33 a2.6 3.6 0 1 0 5.2 0 a2.6 3.6 0 1 0 -5.2 0'
+const EYES = {
+  work: [OPEN, NONE], wait: [OPEN, NONE], go: [WIDE, NONE], question: [OPEN, NONE],
+  denied: [NONE, 'M23 31 L27.5 33 L23 35 M41 31 L36.5 33 L41 35'],
+  done: [NONE, 'M23 34 Q25.5 30.5 28 34 M36 34 Q38.5 30.5 41 34'],
+}
+const BROWS = {
+  work: 'M22.5 28 L28 29.2 M41.5 28 L36 29.2', wait: 'M22.5 29 L28 27.8 M41.5 29 L36 27.8',
+  go: 'M22.5 27 Q25.5 25.5 28 27 M36 27 Q38.5 25.5 41.5 27', question: 'M22.5 27 Q25.5 25.5 28 27 M36 28.5 L41.5 28.5',
+  denied: 'M22.5 27.5 L28 29.8 M41.5 27.5 L36 29.8',
+}
+const MOUTH = {
+  work: [NONE, 'M30 41.5 L34 41.5'], wait: [NONE, 'M28.5 42 Q30.2 40.8 32 42 Q33.8 43.2 35.5 42'],
+  go: ['M32 39.6 a2 2.4 0 1 0 0.01 0', NONE], question: [NONE, 'M30.5 42 Q32 41 33.5 42'],
+  denied: [NONE, 'M28.5 42.5 L30.2 41 L32 42.5 L33.8 41 L35.5 42.5'],
+  done: ['M27.5 40.2 Q32 40.8 36.5 40.2 Q36 45 32 45 Q28 45 27.5 40.2 Z', NONE],
+}
+const SYMBOL = {
+  work: '<g style="animation:cb-speed .9s ease-in-out infinite"><path d="M2.5 22 L10.5 24 M1.5 32 L9.5 32 M2.5 42 L10.5 40 M61.5 22 L53.5 24 M62.5 32 L54.5 32 M61.5 42 L53.5 40" stroke="#141414" stroke-width="1.4" stroke-linecap="round"/></g>',
+  wait: '<g style="transform-box:fill-box;animation:cb-drip 1.8s ease-in infinite"><path d="M51 14.5 Q48.2 19.6 51 21.9 Q53.8 19.6 51 14.5 Z" fill="#8FD0F7" stroke="#2A6F9E"/></g>',
+  go: '<g style="animation:cb-shake .45s ease-in-out infinite"><path d="M52 2 L57.6 2 L55.9 14.6 L53.7 14.6 Z" fill="#E8341C" stroke="#141414" stroke-linejoin="round"/><circle cx="54.8" cy="17.4" r="1.9" fill="#E8341C" stroke="#141414"/></g>',
+  question: '<g style="animation:cb-bob 1.6s ease-in-out infinite"><text x="55" y="16.5" text-anchor="middle" font-family="\'Dela Gothic One\', sans-serif" font-size="16" fill="#2F6FE0" stroke="#141414" stroke-width=".8">?</text></g>',
+  denied: '<g style="transform-box:fill-box;transform-origin:center;animation:cb-throb .9s ease-in-out infinite"><path d="M47.5 10 Q50 12.5 47.5 15 M49.5 8 Q52 10.5 54.5 8 M56.5 10 Q54 12.5 56.5 15 M49.5 17 Q52 14.5 54.5 17" stroke="#E8341C" stroke-width="2.3" fill="none" stroke-linecap="round"/></g>',
+  done: '<path style="transform-box:fill-box;transform-origin:center;animation:cb-twinkle 1.4s ease-in-out infinite" d="M53 3 L54.3 7.7 L59 9 L54.3 10.3 L53 15 L51.7 10.3 L47 9 L51.7 7.7 Z" fill="#FFC21A" stroke="#141414" stroke-width=".8" stroke-linejoin="round"/><path style="transform-box:fill-box;transform-origin:center;animation:cb-twinkle 1.4s ease-in-out .7s infinite" d="M10 6 L10.8 8.7 L13.5 9.5 L10.8 10.3 L10 13 L9.2 10.3 L6.5 9.5 L9.2 8.7 Z" fill="#FFC21A" stroke="#141414" stroke-width=".7" stroke-linejoin="round"/>',
+}
+
+// ponytail: no model accessory yet (glasses, headphones, cowlick); the model is read from the
+// transcript in M2. Unknown states (an error stop) draw a plain face with no symbol.
+function chibi(state, cwd, size, bare) {
+  const [hair, eye, tint] = colours(project(cwd))
+  const [eyesFill, eyesStroke] = EYES[state] || EYES.work
+  const [mouthFill, mouthStroke] = MOUTH[state] || MOUTH.work
+  const blush = ['wait', 'done', 'question'].includes(state) ? 0.75 : 0
+  return `<svg width="${size}" height="${size}" viewBox="0 0 64 64" aria-hidden="true">
+${bare ? '' : `<rect width="64" height="64" rx="16" fill="${tint}"/>`}
+<g style="transform-box:fill-box;transform-origin:50% 100%;animation:cb-bob 2.6s ease-in-out infinite">
+<path d="M13 64 Q14 49 32 48 Q50 49 51 64 Z" fill="#2B2A33"/>
+<path d="M26.5 49 L32 55.5 L37.5 49" stroke="#FFF" stroke-width="1.6" fill="none" stroke-linejoin="round"/>
+<rect x="29" y="43" width="6" height="6" fill="#FFF1E4"/>
+<ellipse cx="32" cy="31.5" rx="15" ry="14.5" fill="#FFF1E4" stroke="#141414" stroke-width="1.3"/>
+<path d="M19.1 38.5 a2.4 1.3 0 1 0 4.8 0 a2.4 1.3 0 1 0 -4.8 0 M40.1 38.5 a2.4 1.3 0 1 0 4.8 0 a2.4 1.3 0 1 0 -4.8 0" fill="#FF9DA8" opacity="${blush}"/>
+<path d="M16.5 31 Q14 11 32 10.5 Q50 11 47.5 31 L44.5 23 L40.5 27 L37 20.5 L32.5 26 L28 20 L24 26 L20.5 22 Z" fill="${hair}" stroke="#141414" stroke-width="1.3" stroke-linejoin="round"/>
+<path d="${eyesFill}" fill="${eye}"/>
+${eyesFill === NONE ? '' : '<path d="M26.4 31.4 a.85 .85 0 1 0 .01 0 M39.4 31.4 a.85 .85 0 1 0 .01 0" fill="#FFF"/>'}
+<path d="${eyesStroke}" fill="none" stroke="#141414" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="${BROWS[state] || NONE}" fill="none" stroke="#141414" stroke-width="1.5" stroke-linecap="round"/>
+<path d="${mouthFill}" fill="#141414"/>
+<path d="${mouthStroke}" fill="none" stroke="#141414" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+${SYMBOL[state] || ''}
+</svg>`
+}
+
+// Robots pack: same symbols, the face is a screen and the paint is the project.
+const R_OPEN = 'M24 30 a2 2.6 0 1 0 4 0 a2 2.6 0 1 0 -4 0 M36 30 a2 2.6 0 1 0 4 0 a2 2.6 0 1 0 -4 0'
+const R_EYES = {
+  work: [R_OPEN, NONE], wait: [R_OPEN, NONE], question: [R_OPEN, NONE],
+  go: ['M23.4 30 a2.6 3.3 0 1 0 5.2 0 a2.6 3.3 0 1 0 -5.2 0 M35.4 30 a2.6 3.3 0 1 0 5.2 0 a2.6 3.3 0 1 0 -5.2 0', NONE],
+  denied: [NONE, 'M23.5 28 L28 30 L23.5 32 M40.5 28 L36 30 L40.5 32'],
+  done: [NONE, 'M23.5 31 Q26 27.5 28.5 31 M35.5 31 Q38 27.5 40.5 31'],
+}
+const R_BROWS = {
+  work: 'M23.5 25.2 L28.5 26 M40.5 25.2 L35.5 26', wait: 'M23.5 26 L28.5 25 M40.5 26 L35.5 25',
+  go: 'M23.5 25 Q26 23.8 28.5 25 M35.5 25 Q38 23.8 40.5 25', question: 'M23.5 25 Q26 23.8 28.5 25 M35.5 25.6 L40.5 25.6',
+  denied: 'M23.5 24.6 L28.5 26.4 M40.5 24.6 L35.5 26.4',
+}
+const R_MOUTH = {
+  work: [NONE, 'M29.5 37 L34.5 37'], wait: [NONE, 'M28.5 37.4 Q30.2 36.2 32 37.4 Q33.8 38.6 35.5 37.4'],
+  go: ['M32 35.2 a1.8 2 0 1 0 0.01 0', NONE], question: [NONE, 'M30.5 37.4 Q32 36.6 33.5 37.4'],
+  denied: [NONE, 'M28.5 38 L30.2 36.6 L32 38 L33.8 36.6 L35.5 38'],
+  done: ['M28 35.8 Q32 36.3 36 35.8 Q35.5 39.4 32 39.4 Q28.5 39.4 28 35.8 Z', NONE],
+}
+
+function robot(state, cwd, size, bare) {
+  const [paint, , tint] = colours(project(cwd))
+  const [eyesFill, eyesStroke] = R_EYES[state] || R_EYES.work
+  const [mouthFill, mouthStroke] = R_MOUTH[state] || R_MOUTH.work
+  const blush = ['wait', 'done', 'question'].includes(state)
+  return `<svg width="${size}" height="${size}" viewBox="0 0 64 64" aria-hidden="true">
+${bare ? '' : `<rect width="64" height="64" rx="16" fill="${tint}"/>`}
+<g style="transform-box:fill-box;transform-origin:50% 100%;animation:cb-bob 2.6s ease-in-out infinite">
+<path d="M14 64 Q15 52 32 51 Q49 52 50 64 Z" fill="#2B2A33"/>
+<path d="M24 64 L24 57 Q24 55.5 25.5 55.5 L38.5 55.5 Q40 55.5 40 57 L40 64" fill="#3A3946" stroke="#141414" stroke-width=".9"/>
+<circle cx="32" cy="59.5" r="2.1" fill="${paint}" stroke="#141414" stroke-width=".8"/>
+<rect x="28" y="45" width="8" height="7" fill="#A9B1BF" stroke="#141414"/>
+<path d="M28 47.5 L36 47.5 M28 49.8 L36 49.8" stroke="#141414" stroke-width=".6"/>
+<rect x="9.5" y="24" width="4.5" height="11" rx="1.6" fill="#A9B1BF" stroke="#141414" stroke-width="1.1"/>
+<rect x="50" y="24" width="4.5" height="11" rx="1.6" fill="#A9B1BF" stroke="#141414" stroke-width="1.1"/>
+<rect x="13" y="13" width="38" height="33" rx="9" fill="${paint}" stroke="#141414" stroke-width="1.3"/>
+<path d="M17.5 19 Q18.5 16.3 22 16" stroke="#FFF" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".7"/>
+<rect x="17.5" y="20" width="29" height="21" rx="5" fill="#1C1F2B" stroke="#141414" stroke-width="1.1"/>
+${blush ? '<path d="M19.4 35.6 L22 35.6 M42 35.6 L44.6 35.6" stroke="#FF9DA8" stroke-width="1.4" stroke-linecap="round"/>' : ''}
+<path d="${eyesFill}" fill="${tint}"/>
+<path d="${eyesStroke}" fill="none" stroke="${tint}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="${R_BROWS[state] || NONE}" fill="none" stroke="${tint}" stroke-width="1.3" stroke-linecap="round"/>
+<path d="${mouthFill}" fill="${tint}"/>
+<path d="${mouthStroke}" fill="none" stroke="${tint}" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+${SYMBOL[state] || ''}
+</svg>`
+}
+
+// An avatar pack changes the costume, never the symbols (BRIEF section 4).
+const PACKS = { manga: chibi, robots: robot }
+let pack = 'manga'
+try { pack = PACKS[localStorage.getItem('clearance-pack')] ? localStorage.getItem('clearance-pack') : 'manga' } catch {}
+
+function avatar(state, cwd, size, label, bare) {
+  const el = h('span', label ? { class: 'avatar', role: 'img', 'aria-label': label } : { class: 'avatar', 'aria-hidden': 'true' })
+  el.innerHTML = PACKS[pack](state, cwd, size, bare)
+  return el
+}
+
+// ---- cards ----
+const KIND = { permission: 'Permission', plan: 'Plan approval', question: 'Question', denied: 'Blocked by auto mode' }
+const STATE = { permission: 'wait', plan: 'go', question: 'question', denied: 'denied' }
+const RISK = { read: 'read', write: 'write', infra: 'infrastructure write' }
+const MODES = [['', 'keep the mode'], ['default', 'ask'], ['acceptEdits', 'edits'], ['plan', 'plan'], ['auto', 'auto']]
+const isGo = (label = '') => /^go$/i.test(label.trim())
+const ago = (t) => {
+  const s = Math.max(0, (Date.now() - t) / 1000)
+  return s < 60 ? 'just now' : s < 3600 ? `${Math.floor(s / 60)} min ago` : `${Math.floor(s / 3600)} h ${Math.floor((s % 3600) / 60)} min ago`
+}
+const target = (input) => input.command ?? input.file_path ?? input.notebook_path ?? input.url ?? input.pattern ?? ''
+
+function describe(suggestions) {
+  return suggestions.map((s) =>
+    s.type === 'addRules' ? (s.rules ?? []).map((r) => `${r.toolName}${r.ruleContent ? `(${r.ruleContent})` : ''}`).join(', ')
+    : s.type === 'addDirectories' ? `access to ${(s.directories ?? []).join(', ')}`
+    : s.type === 'setMode' ? `mode ${s.mode}` : s.type).join('; ')
+}
+
+let sessions = new Map()
+const nameOf = (session, cwd) => sessions.get(session)?.name || project(cwd || sessions.get(session)?.cwd)
+
+const BODY = {
+  permission(r, send) {
+    const infra = r.risk === 'infra'
+    const mode = h('select', { 'aria-label': 'Session mode after this answer' }, MODES.map(([v, l]) => h('option', { value: v }, l)))
+    const typed = infra ? h('input', { type: 'text', name: 'go', autocomplete: 'off', placeholder: 'type GO', 'aria-label': 'Type GO to allow an infrastructure write' }) : null
+    const reason = h('input', { type: 'text', placeholder: 'Why, for the agent (optional)', 'aria-label': 'Reason sent with a deny' })
+    const rule = r.suggestions.length > 0 && !infra
+    return [
+      h('p', { class: 'tool' }, r.tool, r.mode ? ` · mode ${r.mode}` : ''),
+      target(r.input) ? h('pre', { class: 'cmd' }, target(r.input)) : null,
+      r.input.description ? h('p', { class: 'desc' }, r.input.description) : null,
+      h('details', {}, h('summary', {}, 'Full input'), h('pre', {}, JSON.stringify(r.input, null, 2))),
+      h('div', { class: 'actions' },
+        typed,
+        h('button', { class: 'primary', 'data-go': infra, onclick: () => send({ action: 'allow', mode: mode.value || undefined, typed: typed?.value }) }, 'Allow'),
+        rule ? h('button', { title: describe(r.suggestions), onclick: () => send({ action: 'rule', mode: mode.value || undefined }) }, "Allow, don't ask again") : null,
+        h('label', { class: 'mode' }, 'then', mode)),
+      rule ? h('p', { class: 'desc' }, `Don't ask again for: ${describe(r.suggestions)}`) : null,
+      h('div', { class: 'actions' },
+        reason,
+        h('button', { onclick: () => send({ action: 'deny', reason: reason.value }) }, 'Deny'),
+        h('button', { class: 'quiet', onclick: () => send({ action: 'dismiss' }) }, 'Leave it to the terminal')),
+    ]
+  },
+
+  question(r, send, card) {
+    const qs = r.input.questions ?? []
+    const free = h('textarea', { rows: 2, placeholder: 'Or answer in your own words', 'aria-label': 'Free answer' })
+    const answers = () => Object.fromEntries(qs.map((q, i) => [q.question, [...card.querySelectorAll(`[name="r${r.id}q${i}"]:checked`)].map((x) => x.value).join(', ')]))
+    return [
+      ...qs.map((q, i) => h('fieldset', {},
+        h('legend', {}, q.header ? h('span', { class: 'chip' }, q.header) : null, ' ', q.question),
+        (q.options ?? []).map((o) => h('label', { class: 'option' },
+          h('input', { type: q.multiSelect ? 'checkbox' : 'radio', name: `r${r.id}q${i}`, value: o.label }),
+          h('span', {}, h('b', {}, o.label), o.description ? h('small', {}, o.description) : null))))),
+      free,
+      h('div', { class: 'actions' },
+        h('button', { class: 'primary', onclick: () => send(free.value.trim() ? { action: 'answer', text: free.value.trim() } : { action: 'answer', answers: answers() }) }, 'Send'),
+        h('button', { class: 'quiet', onclick: () => send({ action: 'dismiss' }) }, 'Leave it to the terminal')),
+    ]
+  },
+
+  // ponytail: a plan approval asks one question by convention; the plan itself is whatever the
+  // session put in the question and its option descriptions (its chat text comes with M2).
+  plan(r, send) {
+    const q = r.input.questions?.[0] ?? {}
+    const typed = h('input', { type: 'text', name: 'go', autocomplete: 'off', placeholder: 'type GO', 'aria-label': 'Type GO to approve the plan' })
+    return [
+      h('p', { class: 'question' }, q.question),
+      (q.options ?? []).filter((o) => o.description).map((o) => h('p', { class: 'desc' }, h('b', {}, o.label), ': ', o.description)),
+      h('div', { class: 'actions' },
+        typed,
+        (q.options ?? []).map((o) => h('button', { class: isGo(o.label) ? 'primary' : null, 'data-go': isGo(o.label), onclick: () => send({ action: 'answer', answers: { [q.question]: o.label }, typed: typed.value }) }, o.label)),
+        h('button', { class: 'quiet', onclick: () => send({ action: 'dismiss' }) }, 'Leave it to the terminal')),
+    ]
+  },
+
+  denied(r, send) {
+    return [
+      h('p', { class: 'tool' }, r.tool, r.reason ? ` · ${r.reason}` : ''),
+      target(r.input) ? h('pre', { class: 'cmd' }, target(r.input)) : null,
+      h('div', { class: 'actions' },
+        h('button', { class: 'primary', onclick: () => send({ action: 'retry' }) }, 'Let it retry'),
+        h('button', { onclick: () => send({ action: 'dismiss' }) }, 'Keep it denied')),
+    ]
+  },
+}
+
+// Buttons marked data-go stay disabled until GO is typed in the card.
+function gate(card) {
+  const typed = $('input[name=go]', card)?.value.trim()
+  card.querySelectorAll('[data-go]').forEach((b) => (b.disabled = typed !== 'GO'))
+}
+
+async function post(path, body) {
+  const res = await fetch(path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) })
+  return res.ok ? null : ((await res.json().catch(() => null))?.error ?? res.statusText)
+}
+
+function requestCard(r) {
+  const name = nameOf(r.session, r.cwd)
+  const card = h('article', { class: `card risk-${r.risk}` })
+  const error = h('p', { class: 'error', role: 'alert' })
+  const send = async (decision) => {
+    card.querySelectorAll('button').forEach((b) => (b.disabled = true))
+    error.textContent = (await post('/api/decide', { id: r.id, ...decision })) ?? ''
+    if (!error.textContent) return // the server takes the card away
+    card.querySelectorAll('button').forEach((b) => (b.disabled = false))
+    gate(card)
+  }
+  card.append(
+    h('div', { class: 'who' },
+      avatar(STATE[r.kind], r.cwd, 64, `${name}: ${KIND[r.kind].toLowerCase()}`),
+      h('div', {}, h('strong', {}, name), h('span', { class: 'meta' }, project(r.cwd), ' · ', h('time', { 'data-at': r.at }, ago(r.at)))),
+      h('span', { class: 'badge' }, KIND[r.kind]),
+      r.kind === 'permission' || r.kind === 'denied' ? h('span', { class: `risk ${r.risk}` }, RISK[r.risk]) : null),
+    ...BODY[r.kind](r, send, card).flat().filter(Boolean),
+    error)
+  card.addEventListener('input', () => gate(card))
+  gate(card)
+  return card
+}
+
+// ---- board ----
+const cards = new Map() // request id -> card, kept so a half-typed answer survives updates
+let first = true
+
+function notify(r) {
+  if (first || !('Notification' in window) || Notification.permission !== 'granted') return
+  const what = target(r.input) || r.input.questions?.[0]?.question || r.tool
+  new Notification(`${nameOf(r.session, r.cwd)}: ${KIND[r.kind].toLowerCase()}`, { body: what, tag: `clearance-${r.id}` })
+}
+
+function render(snap) {
+  sessions = new Map(snap.sessions.map((s) => [s.sessionId, s]))
+
+  const ids = new Set(snap.requests.map((r) => r.id))
+  for (const [id, card] of cards) if (!ids.has(id)) { card.remove(); cards.delete(id) }
+  const list = $('#waiting .cards')
+  snap.requests.forEach((r, i) => {
+    let card = cards.get(r.id)
+    if (!card) { card = requestCard(r); cards.set(r.id, card); notify(r) }
+    if (list.children[i] !== card) list.insertBefore(card, list.children[i] ?? null)
+  })
+  // Sessions waiting on something clearance does not hold: answer them in their terminal.
+  const held = new Set(snap.requests.map((r) => r.session))
+  const elsewhere = snap.sessions.filter((s) => s.status === 'waiting' && !held.has(s.sessionId))
+  $('#waiting .terminal').replaceChildren(...elsewhere.map((s) => h('p', { class: 'terminal-wait' },
+    avatar('wait', s.cwd, 36), h('span', {}, h('strong', {}, s.name || project(s.cwd)), ` waits for you in its terminal${s.waitingFor ? ` (${s.waitingFor})` : ''}`))))
+  $('#waiting .empty').hidden = snap.requests.length + elsewhere.length > 0
+
+  $('#done .cards').replaceChildren(...snap.done.map((d) => {
+    const name = nameOf(d.session, d.cwd)
+    return h('article', { class: 'card' },
+      h('div', { class: 'who' },
+        avatar(d.failed ? 'stopped' : 'done', d.cwd, 56, `${name}: ${d.failed ? 'stopped on error' : 'done'}`),
+        h('div', {}, h('strong', {}, name), h('span', { class: 'meta' }, project(d.cwd), ' · ', h('time', { 'data-at': d.at }, ago(d.at)))),
+        d.failed ? h('span', { class: 'risk infra' }, 'stopped on error') : null),
+      d.message ? h('p', { class: 'message' }, d.message) : null,
+      h('div', { class: 'actions' }, h('button', { onclick: () => post('/api/read', { session: d.session }) }, 'Mark as read')))
+  }))
+  $('#done .empty').hidden = snap.done.length > 0
+
+  const busy = snap.sessions.filter((s) => s.status === 'busy')
+  $('#working .crew').replaceChildren(...busy.map((s) => h('div', { class: 'worker' },
+    avatar('work', s.cwd, 64, `${s.name || project(s.cwd)}: working${s.agents ? ` with ${s.agents} subagents` : ''}`),
+    h('strong', {}, s.name || project(s.cwd)),
+    h('span', { class: 'meta' }, project(s.cwd)),
+    s.agents ? h('div', { class: 'clones' }, Array.from({ length: Math.min(s.agents, 5) }, () => avatar('work', s.cwd, 24, null, true)), s.agents > 5 ? `+${s.agents - 5}` : null) : null)))
+  $('#working .empty').hidden = busy.length > 0
+
+  const waiting = snap.requests.length
+  document.title = waiting ? `(${waiting}) clearance` : 'clearance'
+  $('#status').textContent = `live · ${snap.sessions.length} session${snap.sessions.length === 1 ? '' : 's'}`
+  first = false
+}
+
+setInterval(() => document.querySelectorAll('time[data-at]').forEach((t) => (t.textContent = ago(Number(t.dataset.at)))), 15_000)
+
+const notifyButton = $('#notify')
+if ('Notification' in window && Notification.permission === 'default') {
+  notifyButton.hidden = false
+  notifyButton.onclick = () => Notification.requestPermission().then(() => (notifyButton.hidden = true))
+}
+
+// ponytail: switching packs reloads the page rather than redrawing the cards in place.
+const other = pack === 'manga' ? 'robots' : 'manga'
+$('#pack').textContent = `Avatars: ${other}`
+$('#pack').onclick = () => {
+  try { localStorage.setItem('clearance-pack', other) } catch {}
+  location.reload()
+}
+
+const events = new EventSource('/events')
+events.onmessage = (e) => render(JSON.parse(e.data))
+events.onerror = () => ($('#status').textContent = 'connection lost, retrying...')
+</script>
+</body>
+</html>

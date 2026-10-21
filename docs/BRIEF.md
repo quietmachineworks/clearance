@@ -66,6 +66,8 @@ anyone. The mode selector is offered on pending requests, since a mode change tr
 
 Plan approvals become visible through one convention in the user's `CLAUDE.md`: present them with
 `AskUserQuestion` (options GO / No). The session then reports `waitingFor`, and clearance can answer.
+The card shows the question and the option descriptions, so the plan, its commands, risks and rollback
+belong there.
 
 ### Session detail
 
@@ -91,7 +93,7 @@ Context left, 5-hour and 7-day quota, session cost: read by clearance's companio
 
 - go to a session's terminal, start a session in a **real terminal tab** (not `--bg`);
 - decision journal and suggested rules;
-- avatar packs (first candidate: Halloween);
+- more avatar packs (robots ships with M1; next candidate: Halloween);
 - keyboard shortcuts.
 
 ### Out of scope
@@ -131,9 +133,9 @@ Mockups: `design/`.
 | Need | Source | Status |
 |---|---|---|
 | Sessions and their state | `claude agents --json`: `sessionId`, `name`, `cwd`, `kind`, `status` (busy, idle, waiting), `waitingFor`, `state` for background sessions | documented |
-| Approve a permission | `PermissionRequest` hook of type `http`, answer `decision.behavior` allow or deny | documented, to test |
-| Answer a question | `PreToolUse` hook on `AskUserQuestion`, `updatedInput.answers` | documented, to test |
-| Auto mode denial | `PermissionDenied` hook | to test |
+| Approve a permission | `PermissionRequest` hook of type `http`, answer `decision.behavior` allow or deny | documented, tested (M1) |
+| Answer a question | `PermissionRequest` on `AskUserQuestion`, `decision.updatedInput.answers` (ADR-0005) | tested (M1) |
+| Auto mode denial | `PermissionDenied` hook | documented, real payload not seen yet |
 | End of turn, read | `Stop` hook (`last_assistant_message`), then `UserPromptSubmit` | documented |
 | Subagents | `SubagentStart` / `SubagentStop` hooks; `~/.claude/projects/<project>/<session>/subagents/agent-<id>.jsonl` and `.meta.json` (`agentType`, `workflowPhase`) | observed |
 | Workflows | `.../subagents/workflows/<run>/journal.jsonl`: `launched`, `started` (`label`, `phase`, `agentId`) and `result` lines; phases declared in the script's `meta.phases` | observed on 18 runs |
@@ -174,7 +176,7 @@ Security: an "Allow" button is a right to run code on the machine.
 | Milestone | Content | Exit criterion |
 |---|---|---|
 | M0 | Technical spikes (section 8) in an isolated project | each question settled by an ADR |
-| M1 | Board, decisions, tower mode, browser notifications | a real permission approved from the page |
+| M1 | Board, decisions, browser notifications | a real permission approved from the page |
 | M2 | Session detail, subagents, workflows, errors and loops, diff | a multi-agent workflow followed end to end |
 | M3 | Companion mod (energy, quota, instructions), asleep sessions, journal and suggested rules | quota visible, one rule suggested on real data |
 | M4 | Terminal (go to, start in a tab), avatar pack | start a session from the tower |
@@ -188,8 +190,8 @@ Results: ADR-0003.
 | 1 | Terminal dialog while a `PermissionRequest` hook waits, timeout, empty answer | settled: dialog shown in parallel, timeout leaves it open |
 | 1b | Human answers in the terminal first: is the hook request closed, a late answer ignored? | settled: terminal wins, late answer ignored, closure not reliable |
 | 2 | `updatedPermissions` with `setMode` | settled: works, destination `session` |
-| 3 | Shape of `PermissionDenied`, retry | from the docs; real payload in M1 |
-| 4 | `AskUserQuestion` answered through `updatedInput.answers` | settled: works |
+| 3 | Shape of `PermissionDenied`, retry | from the docs; not triggered in M1 either (ADR-0005), recorded on the first real denial |
+| 4 | `AskUserQuestion` answered through `updatedInput.answers` | settled: works, through `PermissionRequest` (ADR-0005) |
 | 5 | Channels allowed by the organisation policy; can the relay replace the hook? | open, and less needed now that hook and dialog run in parallel |
 | 6 | Send an instruction to a session | settled another way: companion mod, `$.prompt.submit` (ADR-0004); socket format left aside |
 | 7 | Find and bring to front the terminal tab of a session (Windows Terminal first) | settled: title match and UI Automation (ADR-0004) |

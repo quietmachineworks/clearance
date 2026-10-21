@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>clearance · robot</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&amp;display=swap">
+<style>
+body{margin:0}
+@keyframes rb-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.6px)}}
+@keyframes rb-drip{0%{transform:translateY(-2px);opacity:0}25%{opacity:1}100%{transform:translateY(5px);opacity:0}}
+@keyframes rb-throb{0%,100%{transform:scale(1)}50%{transform:scale(1.28)}}
+@keyframes rb-twinkle{0%,100%{transform:scale(0.7);opacity:0.6}50%{transform:scale(1.15);opacity:1}}
+@keyframes rb-float{0%{transform:translate(0,3px);opacity:0}30%{opacity:1}100%{transform:translate(3px,-5px);opacity:0}}
+@keyframes rb-shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-1.2px)}75%{transform:translateX(1.2px)}}
+@keyframes rb-speed{0%,100%{opacity:0.2}50%{opacity:0.85}}
+@keyframes rb-spin{to{transform:rotate(360deg)}}
+@keyframes rb-blink{0%,92%,100%{opacity:1}95%{opacity:0.25}}
+@keyframes rb-boing{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none !important}}
+</style>
+</helmet>
+<span role="img" aria-label="{{label}}" style="display: block; width: {{px}}; height: {{px}}">
+<svg width="{{px}}" height="{{px}}" viewBox="0 0 64 64" aria-hidden="true" style="display: block; overflow: visible">
+<rect x="0" y="0" width="64" height="64" rx="16" fill="{{tint}}" opacity="{{bgOp}}"></rect>
+<g opacity="{{mSpeed}}" style="animation: rb-speed 0.9s ease-in-out infinite">
+<path d="M2.5 22 L9.5 24 M1.5 32 L8.5 32 M2.5 42 L9.5 40 M61.5 22 L54.5 24 M62.5 32 L55.5 32 M61.5 42 L54.5 40" stroke="#141414" stroke-width="1.4" stroke-linecap="round"></path>
+</g>
+<g style="transform-box: fill-box; transform-origin: 50% 100%; animation: rb-bob 2.6s ease-in-out infinite">
+<path d="M14 64 Q15 52 32 51 Q49 52 50 64 Z" fill="#2B2A33"></path>
+<path d="M24 64 L24 57 Q24 55.5 25.5 55.5 L38.5 55.5 Q40 55.5 40 57 L40 64" fill="#3A3946" stroke="#141414" stroke-width="0.9"></path>
+<circle cx="32" cy="59.5" r="2.1" fill="{{paint}}" stroke="#141414" stroke-width="0.8"></circle>
+<rect x="28" y="45" width="8" height="7" fill="#A9B1BF" stroke="#141414" stroke-width="1"></rect>
+<path d="M28 47.5 L36 47.5 M28 49.8 L36 49.8" stroke="#141414" stroke-width="0.6"></path>
+<g opacity="{{oAntenna}}" style="transform-box: fill-box; transform-origin: 50% 100%; animation: rb-boing 1.3s ease-in-out infinite">
+<path d="M32 13.5 L32 11.6 Q35.2 10.8 32 9.8 Q28.8 8.8 32 7.8 Q35.2 6.8 32 5.8" stroke="#141414" stroke-width="1.3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
+<circle cx="32" cy="3.6" r="2.4" fill="{{paint}}" stroke="#141414" stroke-width="1.1"></circle>
+</g>
+<rect x="9.5" y="24" width="4.5" height="11" rx="1.6" fill="#A9B1BF" stroke="#141414" stroke-width="1.1"></rect>
+<rect x="50" y="24" width="4.5" height="11" rx="1.6" fill="#A9B1BF" stroke="#141414" stroke-width="1.1"></rect>
+<rect x="13" y="13" width="38" height="33" rx="9" fill="{{paint}}" stroke="#141414" stroke-width="1.3"></rect>
+<path d="M17.5 19 Q18.5 16.3 22 16" stroke="#FFFFFF" stroke-width="1.4" fill="none" stroke-linecap="round" opacity="0.7"></path>
+<circle cx="16.4" cy="42.6" r="0.9" fill="#141414" opacity="0.55"></circle>
+<circle cx="47.6" cy="42.6" r="0.9" fill="#141414" opacity="0.55"></circle>
+<rect x="17.5" y="20" width="29" height="21" rx="5" fill="#1C1F2B" stroke="#141414" stroke-width="1.1"></rect>
+<g opacity="{{glowOp}}" style="animation: rb-blink 4.5s linear infinite">
+<path d="M19.4 35.6 L22 35.6 M42 35.6 L44.6 35.6" stroke="#FF9DA8" stroke-width="1.4" stroke-linecap="round" opacity="{{blush}}"></path>
+<path d="{{eyesFillD}}" fill="{{glow}}"></path>
+<path d="{{eyesStrokeD}}" fill="none" stroke="{{glow}}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="{{browsD}}" fill="none" stroke="{{glow}}" stroke-width="1.3" stroke-linecap="round"></path>
+<path d="{{mouthFillD}}" fill="{{glow}}"></path>
+<path d="{{mouthStrokeD}}" fill="none" stroke="{{glow}}" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path>
+</g>
+<g opacity="{{oGlasses}}">
+<path d="M26 30 m-5 0 a5 5 0 1 0 10 0 a5 5 0 1 0 -10 0 M38 30 m-5 0 a5 5 0 1 0 10 0 a5 5 0 1 0 -10 0" fill="rgba(255,255,255,0.14)" stroke="#141414" stroke-width="1.5"></path>
+<path d="M31 29.5 Q32 28.6 33 29.5" fill="none" stroke="#141414" stroke-width="1.5"></path>
+<path d="M22.4 27.2 L24 26 M34.4 27.2 L36 26" stroke="#FFFFFF" stroke-width="1.1" stroke-linecap="round"></path>
+</g>
+<g opacity="{{oPhones}}">
+<path d="M10.5 29 Q9.5 6.5 32 6.5 Q54.5 6.5 53.5 29" stroke="#141414" stroke-width="3" fill="none" stroke-linecap="round"></path>
+<rect x="7" y="23" width="7" height="13" rx="2.6" fill="#141414"></rect>
+<rect x="50" y="23" width="7" height="13" rx="2.6" fill="#141414"></rect>
+<rect x="8.6" y="25.2" width="3.8" height="8.6" rx="1.4" fill="{{paint}}"></rect>
+<rect x="51.6" y="25.2" width="3.8" height="8.6" rx="1.4" fill="{{paint}}"></rect>
+</g>
+</g>
+<g opacity="{{mSweat}}" style="transform-box: fill-box; animation: rb-drip 1.8s ease-in infinite">
+<path d="M53 13.5 Q50.2 18.6 53 20.9 Q55.8 18.6 53 13.5 Z" fill="#8FD0F7" stroke="#2A6F9E" stroke-width="1"></path>
+</g>
+<g opacity="{{mBang}}" style="animation: rb-shake 0.45s ease-in-out infinite">
+<path d="M52 2 L57.6 2 L55.9 14.6 L53.7 14.6 Z" fill="#E8341C" stroke="#141414" stroke-width="1" stroke-linejoin="round"></path>
+<path d="M54.8 17.4 m-1.9 0 a1.9 1.9 0 1 0 3.8 0 a1.9 1.9 0 1 0 -3.8 0" fill="#E8341C" stroke="#141414" stroke-width="1"></path>
+</g>
+<g opacity="{{mQ}}" style="animation: rb-bob 1.6s ease-in-out infinite">
+<text x="55.5" y="16.5" text-anchor="middle" font-family="'Dela Gothic One', sans-serif" font-size="16" fill="#2F6FE0" stroke="#141414" stroke-width="0.8">?</text>
+</g>
+<g opacity="{{mVein}}" style="transform-box: fill-box; transform-origin: center; animation: rb-throb 0.9s ease-in-out infinite">
+<path d="M49 8 Q51.5 10.5 49 13 M51 6 Q53.5 8.5 56 6 M58 8 Q55.5 10.5 58 13 M51 15 Q53.5 12.5 56 15" stroke="#E8341C" stroke-width="2.3" fill="none" stroke-linecap="round"></path>
+</g>
+<g opacity="{{mSpark}}">
+<path style="transform-box: fill-box; transform-origin: center; animation: rb-twinkle 1.4s ease-in-out infinite" d="M54 3 L55.3 7.7 L60 9 L55.3 10.3 L54 15 L52.7 10.3 L48 9 L52.7 7.7 Z" fill="#FFC21A" stroke="#141414" stroke-width="0.8" stroke-linejoin="round"></path>
+<path style="transform-box: fill-box; transform-origin: center; animation: rb-twinkle 1.4s ease-in-out 0.7s infinite" d="M9 6 L9.8 8.7 L12.5 9.5 L9.8 10.3 L9 13 L8.2 10.3 L5.5 9.5 L8.2 8.7 Z" fill="#FFC21A" stroke="#141414" stroke-width="0.7" stroke-linejoin="round"></path>
+</g>
+<g opacity="{{mZzz}}">
+<text x="48" y="14" font-family="'Dela Gothic One', sans-serif" font-size="7" fill="#141414" style="animation: rb-float 2.4s ease-out infinite">z</text>
+<text x="53" y="8" font-family="'Dela Gothic One', sans-serif" font-size="10" fill="#141414" style="animation: rb-float 2.4s ease-out 0.8s infinite">Z</text>
+</g>
+<g opacity="{{mDizzy}}" style="transform-box: fill-box; transform-origin: center; animation: rb-spin 2.4s linear infinite">
+<path d="M22 6.5 L22.7 7.9 L24.2 8.1 L23.1 9.1 L23.4 10.6 L22 9.9 L20.6 10.6 L20.9 9.1 L19.8 8.1 L21.3 7.9 Z M42 6.5 L42.7 7.9 L44.2 8.1 L43.1 9.1 L43.4 10.6 L42 9.9 L40.6 10.6 L40.9 9.1 L39.8 8.1 L41.3 7.9 Z M27 3 L27.6 4.2 L28.9 4.4 L28 5.3 L28.2 6.6 L27 6 L25.8 6.6 L26 5.3 L25.1 4.4 L26.4 4.2 Z M37 3 L37.6 4.2 L38.9 4.4 L38 5.3 L38.2 6.6 L37 6 L35.8 6.6 L36 5.3 L35.1 4.4 L36.4 4.2 Z" fill="#FFC21A" stroke="#141414" stroke-width="0.6"></path>
+</g>
+</svg>
+</span>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"av":{"editor":null},"size":{"editor":"int","default":128,"min":20,"max":256},"bare":{"editor":"boolean","default":false},"$preview":{"width":128,"height":128}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const av = this.props.av || { hair: '#3D7BE0', eye: '#1F4E9E', tint: '#E4EDFB', model: 'opus', state: 'wait', label: 'shop-0a, Opus, attend une permission' };
+    const size = Number(this.props.size ?? 128);
+    const st = av.state;
+    const OPEN = 'M24 30 a2 2.6 0 1 0 4 0 a2 2.6 0 1 0 -4 0 M36 30 a2 2.6 0 1 0 4 0 a2 2.6 0 1 0 -4 0';
+    const WIDE = 'M23.4 30 a2.6 3.3 0 1 0 5.2 0 a2.6 3.3 0 1 0 -5.2 0 M35.4 30 a2.6 3.3 0 1 0 5.2 0 a2.6 3.3 0 1 0 -5.2 0';
+    const NONE = 'M0 0';
+    const EYES = {
+      work: [OPEN, NONE], wait: [OPEN, NONE], go: [WIDE, NONE], question: [OPEN, NONE],
+      denied: [NONE, 'M23.5 28 L28 30 L23.5 32 M40.5 28 L36 30 L40.5 32'],
+      done: [NONE, 'M23.5 31 Q26 27.5 28.5 31 M35.5 31 Q38 27.5 40.5 31'],
+      sleep: [NONE, 'M23.5 30.5 L28.5 30.5 M35.5 30.5 L40.5 30.5'],
+      dizzy: [NONE, 'M26 30 m-2.4 0 a2.4 2.4 0 1 0 2.4 -2.4 a1.4 1.4 0 1 0 1.4 1.4 M38 30 m-2.4 0 a2.4 2.4 0 1 0 2.4 -2.4 a1.4 1.4 0 1 0 1.4 1.4']
+    };
+    const BROWS = {
+      work: 'M23.5 25.2 L28.5 26 M40.5 25.2 L35.5 26',
+      wait: 'M23.5 26 L28.5 25 M40.5 26 L35.5 25',
+      go: 'M23.5 25 Q26 23.8 28.5 25 M35.5 25 Q38 23.8 40.5 25',
+      question: 'M23.5 25 Q26 23.8 28.5 25 M35.5 25.6 L40.5 25.6',
+      denied: 'M23.5 24.6 L28.5 26.4 M40.5 24.6 L35.5 26.4',
+      done: NONE, sleep: NONE,
+      dizzy: 'M23.5 25.4 Q26 24.6 28.5 25.4 M35.5 25.4 Q38 24.6 40.5 25.4'
+    };
+    const MOUTH = {
+      work: [NONE, 'M29.5 37 L34.5 37'],
+      wait: [NONE, 'M28.5 37.4 Q30.2 36.2 32 37.4 Q33.8 38.6 35.5 37.4'],
+      go: ['M32 35.2 a1.8 2 0 1 0 0.01 0', NONE],
+      question: [NONE, 'M30.5 37.4 Q32 36.6 33.5 37.4'],
+      denied: [NONE, 'M28.5 38 L30.2 36.6 L32 38 L33.8 36.6 L35.5 38'],
+      done: ['M28 35.8 Q32 36.3 36 35.8 Q35.5 39.4 32 39.4 Q28.5 39.4 28 35.8 Z', NONE],
+      sleep: [NONE, 'M32 37 a0.9 0.9 0 1 0 0.01 0'],
+      dizzy: [NONE, 'M28.5 37.4 Q30.2 36.2 32 37.4 Q33.8 38.6 35.5 37.4']
+    };
+    const on = (b) => (b ? '1' : '0');
+    const e = EYES[st] || EYES.work;
+    const m = MOUTH[st] || MOUTH.work;
+    return {
+      label: av.label,
+      px: size + 'px',
+      tint: av.tint,
+      bgOp: this.props.bare ? '0' : '1',
+      paint: av.hair,
+      glow: av.tint,
+      glowOp: st === 'sleep' ? '0.5' : '1',
+      eyesFillD: e[0], eyesStrokeD: e[1],
+      browsD: BROWS[st] || NONE,
+      mouthFillD: m[0], mouthStrokeD: m[1],
+      blush: (st === 'wait' || st === 'done' || st === 'question') ? '0.85' : '0',
+      oGlasses: on(av.model === 'opus'),
+      oPhones: on(av.model === 'sonnet'),
+      oAntenna: on(av.model === 'haiku'),
+      mSpeed: on(st === 'work'),
+      mSweat: on(st === 'wait' || st === 'dizzy'),
+      mBang: on(st === 'go'),
+      mQ: on(st === 'question'),
+      mVein: on(st === 'denied'),
+      mSpark: on(st === 'done'),
+      mZzz: on(st === 'sleep'),
+      mDizzy: on(st === 'dizzy')
+    };
+  }
+}
+</script>
+</body>
+</html>
