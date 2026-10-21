@@ -15,7 +15,7 @@ passed with `--settings data/hooks.json`, the page driven in a browser.
 | A permission approved from the page | **Works.** `echo m1 > m1.txt` held by `PermissionRequest`, shown on the board, allowed from the page: the file was written within 3 s. |
 | A `PreToolUse` hook holding `AskUserQuestion` | **Hides the question.** For the whole hold (60 s), the session reports `busy` and no dialog shows. At the timeout Claude Code goes through its normal permission flow: a `PermissionRequest` with `tool_name: "AskUserQuestion"` arrives, and the session reports `waiting` / `input needed` in parallel. |
 | `AskUserQuestion` answered through `PermissionRequest` | **Works.** `decision: { behavior: "allow", updatedInput: { questions, answers: { "<question text>": "Blue" } } }`: the model received "Blue", the terminal dialog was never blocked. |
-| 3: a real `PermissionDenied` | **Still not observed.** Asked in auto mode to run `git push --force origin main` in a repository without a remote, the model declined on its own before any tool call, as in M0, so the classifier never ran. The board handles the documented shape (`tool_name`, `tool_input`, `reason`; answer `retry: true`). |
+| 3: a real `PermissionDenied` | **Still not observed.** Asked in auto mode to run `git push --force origin main` in a repository without a remote, the model declined on its own before any tool call, as in M0, so the classifier never ran. A second try, `git reset --hard` in a repository with no commit, explained as such in the prompt, was allowed by the classifier and ran harmlessly. The board handles the documented shape (`tool_name`, `tool_input`, `reason`; answer `retry: true`). |
 
 ## Decision
 
