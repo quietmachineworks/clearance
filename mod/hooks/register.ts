@@ -6,10 +6,11 @@ import type { Register } from 'claude-code'
 export const register: Register = (on) => {
   on('session.start', async ($, e, next) => {
     const session = await $.session.id()
+    const home = (await $.env.get('USERPROFILE')) ?? (await $.env.get('HOME'))
     $.clock.every(5000, async () => {
       try {
-        // Written by clearance at start, in its data folder next to this mod: { url, token }.
-        const { url, token } = JSON.parse(await $.fs.read(`${$.plugin.root}/../data/endpoint.json`))
+        // Written by clearance at start: { url, token }. Missing: clearance is not running.
+        const { url, token } = JSON.parse(await $.fs.read(`${home}/.clearance/endpoint.json`))
         const res = await $.http.fetch(`${url}/mod/sync`, {
           method: 'POST',
           headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },

@@ -1,0 +1,3 @@
+{ "name": "clearance", "owner": { "name": "quietmachineworks" }, "plugins": [
+  { "name": "clearance", "source": "./mod", "description": "Companion mod for clearance: usage, quota, instructions, what waits under the prompt" }
+] }

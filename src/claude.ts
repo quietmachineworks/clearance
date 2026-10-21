@@ -371,3 +371,30 @@ export function approvals(): Approval[] {
       .flatMap((f) => approvalsIn(join(projects(), dir, f))),
   )
 }
+
+// The last thing the assistant said, from the end of the transcript: the text of a "done" card.
+// Parsed from the last 256 KB, once per file size.
+const lastTexts = new Map<string, { size: number; text?: string }>()
+export function lastTextOf(file: string): string | undefined {
+  const size = statSync(file).size
+  const hit = lastTexts.get(file)
+  if (hit?.size === size) return hit.text
+  const len = Math.min(size, 256 * 1024)
+  const buf = Buffer.alloc(len)
+  const fd = openSync(file, 'r')
+  readSync(fd, buf, 0, len, size - len)
+  closeSync(fd)
+  let text: string | undefined
+  for (const line of buf.toString('utf8').split('\n').reverse()) {
+    if (!line.includes('"assistant"')) continue
+    try {
+      const e = JSON.parse(line)
+      text = e.type === 'assistant' ? e.message?.content?.filter((c: any) => c.type === 'text').map((c: any) => c.text).join('\n') || undefined : undefined
+    } catch {
+      continue
+    }
+    if (text) break
+  }
+  lastTexts.set(file, { size, text: text ?? hit?.text })
+  return text ?? hit?.text
+}

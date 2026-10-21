@@ -16,3 +16,7 @@
   approvals given by hand (ADR-0007).
 - M4: start a session in a new Windows Terminal tab from the page, with a folder picker; bring a
   session's tab to the front; Halloween avatar pack (ADR-0008).
+- Install for every session: `node src/install.ts` for the hooks, the repository as a plugin
+  marketplace for the mod. Only hooks that stay silent while clearance is stopped; turns read off
+  `claude agents`; auto mode denials held only while a page is open; sessions not connected to
+  clearance shown as such (ADR-0009).

@@ -5,10 +5,10 @@ import { createServer, type IncomingMessage, type ServerResponse } from 'node:ht
 import { randomBytes, timingSafeEqual } from 'node:crypto'
 import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
 import { homedir } from 'node:os'
-import { dirname, resolve } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { Board, respond, type Decision, type Session } from './board.ts'
-import { agents, approvals, detail, modelOf, readTranscript, target, transcriptOf } from './claude.ts'
+import { agents, approvals, detail, lastTextOf, modelOf, readTranscript, target, transcriptOf } from './claude.ts'
 import { suggest } from './risk.ts'
 import { focus, start, startArgs } from './terminal.ts'
 
@@ -24,16 +24,15 @@ const tokenFile = new URL('token', DATA)
 const TOKEN = existsSync(tokenFile) ? readFileSync(tokenFile, 'utf8').trim() : randomBytes(24).toString('hex')
 writeFileSync(tokenFile, TOKEN, { mode: 0o600 })
 
-// Hook settings for `claude --settings`. PermissionRequest (permissions, questions, plans) runs in
-// parallel with the terminal dialog, so it may wait. Everything else answers at once; a short
-// timeout keeps a stuck server from slowing a session down.
-// ponytail: an auto mode denial is held 60 s for a retry decision; set from what M1 observes.
+// Hook settings for `claude --settings` or `node src/install.ts`. PermissionRequest (permissions,
+// questions, plans) runs in parallel with the terminal dialog, so it may wait; an auto mode denial is
+// held 60 s while a page is open. The others answer at once, with a short timeout. Only hooks that stay
+// silent while clearance is stopped: Stop and UserPromptSubmit would print an error in every session
+// (ADR-0009), so turns ending and starting are read off `claude agents` instead.
 const HOOKS: Record<string, { matcher?: string; timeout: number }> = {
   PermissionRequest: { timeout: 600 },
   PermissionDenied: { timeout: 60 },
-  Stop: { timeout: 5 },
   StopFailure: { timeout: 5 },
-  UserPromptSubmit: { timeout: 5 },
   SubagentStart: { timeout: 5 },
   SubagentStop: { timeout: 5 },
 }
@@ -45,8 +44,11 @@ const settings = Object.fromEntries(
   ]),
 )
 writeFileSync(hooksFile, JSON.stringify({ hooks: settings }, null, 2), { mode: 0o600 })
-// Where the companion mod finds us (mod/hooks/register.ts reads it every tick).
-writeFileSync(new URL('endpoint.json', DATA), JSON.stringify({ url: BASE, token: TOKEN }), { mode: 0o600 })
+// Where the companion mod finds us (mod/hooks/register.ts reads it every tick). In the home folder, not
+// next to the mod: an installed plugin runs from a copy in Claude Code's plugin cache.
+const ENDPOINT = join(homedir(), '.clearance', 'endpoint.json')
+mkdirSync(dirname(ENDPOINT), { recursive: true })
+writeFileSync(ENDPOINT, JSON.stringify({ url: BASE, token: TOKEN }), { mode: 0o600 })
 
 // Append-only journal of what was decided from the page (BRIEF section 6).
 const journalFile = new URL('journal.jsonl', DATA)
@@ -97,7 +99,7 @@ async function json(req: IncomingMessage): Promise<any> {
 function withModel(s: Session): Session {
   try {
     const file = transcriptOf(s.sessionId, s.cwd)
-    return file ? { ...s, model: modelOf(file), lastActive: statSync(file).mtimeMs } : s
+    return file ? { ...s, model: modelOf(file), lastActive: statSync(file).mtimeMs, lastText: lastTextOf(file) } : s
   } catch {
     return s
   }
@@ -135,7 +137,11 @@ createServer(async (req, res) => {
     if (process.env.CLEARANCE_LOG) appendFileSync(new URL('hooks.jsonl', DATA), JSON.stringify({ at: new Date().toISOString(), event, body }) + '\n')
     const { request, ended } = board.hook(event, body)
     ended.forEach((id) => finish(id))
-    if (request) {
+    // Nobody to decide on a retry: an auto mode denial is not held, the session goes on at once.
+    if (request?.kind === 'denied' && clients.size === 0) {
+      board.end(request.id)
+      send(res, 200, {})
+    } else if (request) {
       held.set(request.id, res)
       // Claude Code gave up (timeout) or the human answered in the terminal and the call was closed.
       res.on('close', () => {

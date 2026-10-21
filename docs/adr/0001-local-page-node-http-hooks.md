@@ -1,6 +1,6 @@
 # ADR-0001 - Local web page, dependency-free Node 24, http hooks
 
-Date: 2026-10-20. Status: accepted; tower mode superseded by ADR-0003.
+Date: 2026-10-20. Status: accepted; tower mode superseded by ADR-0003, the hooks list by ADR-0009.
 
 ## Context
 

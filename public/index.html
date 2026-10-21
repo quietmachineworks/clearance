@@ -507,7 +507,9 @@ function render(snap) {
   const held = new Set(snap.requests.map((r) => r.session))
   const elsewhere = snap.sessions.filter((s) => s.status === 'waiting' && !held.has(s.sessionId))
   $('#waiting .terminal').replaceChildren(...elsewhere.map((s) => h('p', { class: 'terminal-wait' },
-    avatar('wait', s.cwd, 36, null, false, s.model), h('span', {}, link(s.sessionId, s.name || project(s.cwd)), ` waits for you in its terminal${s.waitingFor ? ` (${s.waitingFor})` : ''}`))))
+    avatar('wait', s.cwd, 36, null, false, s.model), h('span', {}, link(s.sessionId, s.name || project(s.cwd)),
+      ` waits for you in its terminal${s.waitingFor ? ` (${s.waitingFor})` : ''}`,
+      s.connected ? '' : h('span', { class: 'meta' }, ': not connected to clearance, answer it there')))))
   $('#waiting .empty').hidden = snap.requests.length + elsewhere.length > 0
 
   $('#done .cards').replaceChildren(...snap.done.map((d) => {

@@ -20,8 +20,9 @@ of scope. Decisions taken outside the brief: `docs/adr/`.
   sessions, the journal and rules suggested from approvals by hand in the transcripts.
 - **M4 done** (ADR-0008): sessions started in a real Windows Terminal tab from the page (folder
   picker, session markers removed from the tab's environment), go to a session's tab, Halloween pack.
-- **Next**: V1 is complete; keyboard shortcuts and installing for every session (an explicit step) are
-  what the brief leaves. `spike/` holds the M0 receiver and probe mod.
+- **Install for every session** ready (ADR-0009): `src/install.ts`, the repository as a marketplace,
+  only hooks that stay silent while clearance is stopped.
+- **Next**: keyboard shortcuts. `spike/` holds the M0 receiver and probe mod.
 
 ## Working rules
 
@@ -51,6 +52,8 @@ of scope. Decisions taken outside the brief: `docs/adr/`.
 | `src/risk.ts` | read / write / infrastructure write classification |
 | `src/claude.ts` | the only reads of Claude Code itself: `claude agents`, transcripts, subagents, workflows |
 | `src/terminal.ts` | Windows Terminal: start a tab, bring one to the front |
+| `src/install.ts` | adds or removes clearance's hooks in the user's settings |
+| `.claude-plugin/marketplace.json` | the repository as a plugin marketplace for the mod |
 | `public/index.html` | the page, avatars included |
 | `mod/` | the companion mod, loaded with `--plugin-dir` |
 | `test/` | `node --test` |

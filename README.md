@@ -8,7 +8,7 @@ right terminal. Click a session to unfold its workflow: subagents, what ran, pro
 
 Claude Code only, local only, zero dependencies.
 
-Status: V1 milestones done (M0 to M4). See `docs/BRIEF.md` for the whole plan. See `docs/BRIEF.md` for the whole plan.
+Status: V1 milestones done (M0 to M4). See `docs/BRIEF.md` for the whole plan.
 
 ## Try it
 
@@ -38,9 +38,24 @@ claude --settings /absolute/path/to/clearance/data/hooks.json --plugin-dir /abso
 On Windows, the page can also start a session in a new Windows Terminal tab, connected to clearance,
 and bring a session's tab to the front.
 
-Installing the hooks and the mod in your user settings, for every session, is a step to take once you
-trust the tool. The Journal page suggests permission rules from what you approved by hand; clearance
-never writes your settings.
+The Journal page suggests permission rules from what you approved by hand; clearance never writes
+them in your settings.
+
+## Install for every session
+
+A step to take once you trust the tool. With clearance stopped, sessions behave as usual: it only
+installs hooks that stay silent when nobody answers.
+
+```sh
+node src/install.ts --dry-run   # what would change in ~/.claude/settings.json
+node src/install.ts             # backup, then add clearance's hooks next to yours
+/plugin install clearance --marketplace quietmachineworks/clearance
+```
+
+The last line, typed in Claude Code, installs the companion mod; from a clone,
+`claude plugin marketplace add <this folder>` then `claude plugin install clearance@clearance` does the
+same. Sessions started afterwards are connected. `node src/install.ts --remove` and
+`claude plugin uninstall clearance@clearance` undo it.
 
 Tests: `node --test`.
 

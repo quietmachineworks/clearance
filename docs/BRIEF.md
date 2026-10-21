@@ -138,7 +138,7 @@ Mockups: `design/`.
 | Approve a permission | `PermissionRequest` hook of type `http`, answer `decision.behavior` allow or deny | documented, tested (M1) |
 | Answer a question | `PermissionRequest` on `AskUserQuestion`, `decision.updatedInput.answers` (ADR-0005) | tested (M1) |
 | Auto mode denial | `PermissionDenied` hook | documented, real payload not seen yet |
-| End of turn, read | `Stop` hook (`last_assistant_message`), then `UserPromptSubmit` | documented |
+| End of turn, read | `claude agents` status, busy or waiting then idle, idle then busy; last message from the transcript (ADR-0009: the `Stop` and `UserPromptSubmit` hooks print errors while clearance is stopped) | observed |
 | Subagents | `SubagentStart` / `SubagentStop` hooks; `~/.claude/projects/<project>/<session>/subagents/agent-<id>.jsonl` and `.meta.json` (`agentType`, `workflowPhase`) | observed |
 | Workflows | `.../subagents/workflows/<run>/journal.jsonl`: `launched`, `started` (`label`, `phase`, `agentId`) and `result` lines; phases declared in the script's `meta.phases`; `toolUseResult.runId` links the `Workflow` call to its run; `<session>/workflows/<run>.json` once it ends (ADR-0006) | observed, followed live in M2 |
 | An agent's model, tools, errors | the agent's transcript: `message.model`, `tool_use`, `tool_result.is_error`, `timestamp` | observed |

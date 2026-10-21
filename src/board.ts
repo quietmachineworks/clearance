@@ -29,6 +29,7 @@ export interface Session {
   waitingFor?: string
   model?: string // added by the server, from the transcript
   lastActive?: number // added by the server: the transcript's last write, epoch ms
+  lastText?: string // added by the server: the assistant's last message, for the done card
 }
 
 export interface Done {
@@ -74,6 +75,7 @@ export class Board {
   agents = new Map<string, Set<string>>() // session -> running subagents
   usage = new Map<string, Usage>() // session -> last report of its companion mod
   inbox = new Map<string, Instruction>() // session -> last instruction typed for it
+  connected = new Set<string>() // sessions that sent a hook event: clearance can answer their requests
   private seq = 0
 
   report(session: string, usage: Omit<Usage, 'at'>, now = Date.now()) {
@@ -98,6 +100,7 @@ export class Board {
     const base = { id: String(++this.seq), session, cwd: body.cwd, at: now, tool: body.tool_name ?? '', input: body.tool_input ?? {}, mode: body.permission_mode, suggestions: [], seenWaiting: false }
     let request: Request | undefined
     let ended: string[] = []
+    if (session) this.connected.add(session)
 
     // Questions come through PermissionRequest too, in parallel with the terminal dialog. A held
     // PreToolUse hook would hide that dialog until it answers (observed in M1, ADR-0005).
@@ -130,13 +133,23 @@ export class Board {
   // in the terminal or gone.
   // ponytail: per session, not per request. With parallel subagents, a request answered in the
   // terminal while a sibling still waits stays on the board until Stop; answering it is harmless.
-  sync(list: Session[]): string[] {
+  sync(list: Session[], now = Date.now()): string[] {
     const before = this.sessions
     this.sessions = new Map(list.map((s) => [s.sessionId, s]))
-    for (const map of [this.done, this.agents, this.usage, this.inbox]) {
+    for (const map of [this.done, this.agents, this.usage, this.inbox, this.connected]) {
       for (const id of map.keys()) if (before.has(id) && !this.sessions.has(id)) map.delete(id)
     }
     const ended: string[] = []
+    // A turn that ended (busy or waiting, now idle) is done until read; a new turn (idle, now busy) means
+    // the user typed or an instruction came in. Read off the status rather than from Stop and
+    // UserPromptSubmit hooks, whose errors show in every session while clearance is stopped (ADR-0009).
+    for (const s of list) {
+      const was = before.get(s.sessionId)?.status
+      if (s.status === 'idle' && (was === 'busy' || was === 'waiting')) {
+        if (!this.done.get(s.sessionId)?.failed) this.done.set(s.sessionId, { session: s.sessionId, cwd: s.cwd, at: now, message: s.lastText ?? '' })
+        ended.push(...this.drop(s.sessionId))
+      } else if (s.status === 'busy' && was === 'idle') this.done.delete(s.sessionId)
+    }
     for (const r of this.requests.values()) {
       if (this.sessions.get(r.session)?.status === 'waiting') r.seenWaiting = true
       else if (r.seenWaiting) ended.push(r.id)
@@ -161,11 +174,12 @@ export class Board {
 
   snapshot() {
     const requests = [...this.requests.values()].sort((a, b) => RANK[b.risk] - RANK[a.risk] || a.at - b.at)
-    const sessions = [...this.sessions.values()].map((s) => ({
+    const sessions = [...this.sessions.values()].map(({ lastText, ...s }) => ({
       ...s,
       agents: this.agents.get(s.sessionId)?.size ?? 0,
       usage: this.usage.get(s.sessionId),
       instruction: this.inbox.get(s.sessionId),
+      connected: this.connected.has(s.sessionId),
     }))
     // The account's quota is the same for every session: the freshest report wins.
     const quota = [...this.usage.values()].filter((u) => u.rateLimits?.length).sort((a, b) => b.at - a.at)[0]?.rateLimits

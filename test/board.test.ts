@@ -122,3 +122,17 @@ test('companion mod: usage per session, freshest quota, instructions delivered o
   assert.equal(b.usage.has(S), false)
   assert.equal(b.inbox.has(S), false)
 })
+
+test('a turn ending or starting is read off the session status', () => {
+  const b = new Board()
+  b.sync([{ sessionId: S, status: 'idle' }], 1) // first sight: nothing to say yet
+  assert.equal(b.done.size, 0)
+  b.sync([{ sessionId: S, status: 'busy' }], 2)
+  const { request } = b.hook('PermissionRequest', permission('npm test'))
+  const ended = b.sync([{ sessionId: S, status: 'idle', lastText: 'All green.' }], 3)
+  assert.deepEqual(ended, [request!.id])
+  assert.deepEqual(b.done.get(S), { session: S, cwd: undefined, at: 3, message: 'All green.' })
+  assert.equal('lastText' in b.snapshot().sessions[0], false) // not sent to the page with every update
+  b.sync([{ sessionId: S, status: 'busy' }], 4) // the user typed something
+  assert.equal(b.done.size, 0)
+})
