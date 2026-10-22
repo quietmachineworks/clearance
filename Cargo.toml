@@ -1,0 +1,23 @@
+[package]
+name = "clearance"
+version = "0.4.0"
+edition = "2024"
+rust-version = "1.85"
+description = "A local control tower for the Claude Code sessions running on one machine."
+license = "MIT"
+repository = "https://github.com/quietmachineworks/clearance"
+publish = false
+
+# Standard library only (ADR-0010): a crate needs an ADR.
+[dependencies]
+
+[lints.rust]
+unsafe_code = "deny"
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

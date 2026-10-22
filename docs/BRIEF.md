@@ -102,6 +102,31 @@ Context left, 5-hour and 7-day quota, session cost: read by clearance's companio
 
 Video replay, voices, other agent CLIs, cloud or desktop-app sessions, access from outside the machine.
 
+## 3b. V2 scope (mockup V2-A, 2026-10-22)
+
+The target is the V2-A mockup on the design canvas: one queue and one session pane, for many sessions
+at once, mostly from the keyboard.
+
+- **Queue** (left, folds into a rail of avatars): waiting for you (production and unknown environments
+  first, then permissions, questions, plans), to watch (loops, repeated errors, context almost full),
+  to read, working; asleep and ignored folded away. New requests do not move the queue while the pointer
+  or focus is in it: a "new" marker shows them. A request answered in the terminal shows as settled.
+- **Groups**: one per project folder at first, renamed, merged or moved by the user; the chips count
+  what needs you, not sessions. Group actions: mute, interrupt.
+- **Session pane**: the thread (prompts, the assistant's text, tool calls with their outcome), the
+  decision card in place, a field to write to the session with its delivery state; a terminal view.
+  Inspector beside it: the task, the plan and its current step, files changed, tests, subagents, cost and
+  its rate, the model for the next turn.
+- **Decisions**: after an answer the next request opens; every answer can be taken back for 5 seconds.
+  Infrastructure writes show their environment (ADR-0012) and what clearance checked apart from what the
+  agent claims; no "always allow" for them. Stop asks for confirmation; interrupt does not.
+- **To read**: facts first (tests, files, commits, merge request), then validate, ask for a fix, open
+  the diff.
+- **New task**: instruction, recent folder, group from the folder, model, mode; the session opens in a
+  terminal tab and gets the instruction through the companion mod.
+- **Quota**: 5-hour and 7-day gauges with the time they run dry at the current rate.
+- Skins, languages and the logo: ADR-0011.
+
 ## 4. Visual grammar
 
 Manga style, chibi avatars drawn for the project. Every trait carries information, no decoration:
@@ -122,7 +147,9 @@ Manga style, chibi avatars drawn for the project. Every trait carries informatio
 
 Rules:
 
-- an avatar pack changes the costume, never the meaning layer;
+- an avatar pack changes the costume, never the meaning layer; a skin (ADR-0011) changes the look,
+  never the meaning either;
+- the logo is the same in every skin;
 - original drawings only (or CC0 assets), fonts under the SIL Open Font License; no character, name or
   visual taken from an existing work;
 - no decorative tilt;
@@ -148,15 +175,19 @@ Mockups: `design/`.
 | Instruction to a session | companion mod: `$.prompt.submit({ text, asUser })` | documented, tested |
 | Session title, terminal tab | transcript `ai-title` records; Windows Terminal tabs through UI Automation | observed, tested |
 | Relay in parallel with the terminal | channels declaring `claude/channel/permission` | research preview, dev flag, organisation policy |
+| A session's plan and current step | the last `TodoWrite` call of the transcript (`todos`: `content`, `status`) | to check in R1 |
+| Tests, commits, merge request of a turn | the turn's `Bash` calls and their results (test commands, `git commit`, a merge request URL) | heuristic, R2 |
+| Model for the next turn | `/model <name>` sent as an instruction through the companion mod | to check in R2 |
+| Interrupt, stop a session | open | R3 |
 
 Internal files (`~/.claude/sessions/`, transcripts) may change between versions: prefer a documented
 source whenever one exists, and keep every read of internal files in a single module.
 
 ## 6. Target architecture
 
-- one Node 24 process, TypeScript run without a build step, **zero dependencies**;
-- `node:http` on `127.0.0.1` only; the page gets updates over SSE;
-- session state: `claude agents --json` every 2 s;
+- one Rust binary, standard library only, **zero dependencies** (ADR-0010), on Windows and macOS;
+- HTTP on `127.0.0.1` only; the page gets updates over SSE;
+- session state: `claude agents --json` every 2 s while a page is open, every 10 s otherwise;
 - Claude Code hooks of type `http` to `/hook/<event>`; server stopped = connection refused = Claude
   Code behaves as usual;
 - a companion mod in every session for usage figures, instructions and the line under the prompt;
@@ -183,6 +214,9 @@ Security: an "Allow" button is a right to run code on the machine.
 | M2 | Session detail, subagents, workflows, errors and loops, diff | a multi-agent workflow followed end to end |
 | M3 | Companion mod (energy, quota, instructions), asleep sessions, journal and suggested rules | quota visible, one rule suggested on real data |
 | M4 | Terminal (go to, start in a tab), avatar pack | start a session from the tower |
+| R1 | The server in Rust (ADR-0010), Windows and macOS | every Node test passes in Rust, a real permission answered |
+| R2 | The V2-A page: queue, session pane, inspector, skins, languages, logo | a day of real work from it |
+| R3 | Spikes: interrupt and stop a session, a real terminal in the page | each settled by an ADR |
 
 ## 8. Open questions for M0
 

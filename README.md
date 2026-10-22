@@ -3,26 +3,29 @@
 A local control tower for Claude Code sessions running in parallel.
 
 One page on your machine shows who is waiting for you (permission, plan approval, question, auto mode
-denial), who is done, who is working and who is asleep, and lets you answer without hunting for the
-right terminal. Click a session to unfold its workflow: subagents, what ran, progress, errors, diff.
+denial), who needs watching, who is done, who is working and who is asleep, and lets you answer without
+hunting for the right terminal. Pick a session to see its thread, its plan, the files it changed, its
+tests, agents and cost. Twelve looks, English and French.
 
-Claude Code only, local only, zero dependencies.
+Claude Code only, local only, one binary with no dependencies.
 
-Status: V1 milestones done (M0 to M4). See `docs/BRIEF.md` for the whole plan.
+Status: V1 milestones done (M0 to M4), the server rewritten in Rust (R1), the V2 page (R2). See
+`docs/BRIEF.md` for the whole plan.
 
 ## Try it
 
-Node 24 or later.
+Rust stable, 1.85 or later.
 
 ```sh
-node src/server.ts
+cargo build --release
+target/release/clearance
 ```
 
-It prints the page address, with a one-time token, and writes `data/hooks.json`. Connect a session by
+It prints the page address with its token, and writes `~/.clearance/hooks.json`. Connect a session by
 passing those hooks to it:
 
 ```sh
-claude --settings /absolute/path/to/clearance/data/hooks.json
+claude --settings ~/.clearance/hooks.json
 ```
 
 Requests from that session now show on the page as well as in its terminal; the first answer wins. With
@@ -32,11 +35,11 @@ Add the companion mod to see the session's context, cost and your quota, and to 
 from the page:
 
 ```sh
-claude --settings /absolute/path/to/clearance/data/hooks.json --plugin-dir /absolute/path/to/clearance/mod
+claude --settings ~/.clearance/hooks.json --plugin-dir /absolute/path/to/clearance/mod
 ```
 
-On Windows, the page can also start a session in a new Windows Terminal tab, connected to clearance,
-and bring a session's tab to the front.
+The page can also start a session in a new terminal tab, connected to clearance, and bring a session's
+tab to the front: Windows Terminal on Windows, Terminal on macOS.
 
 The Journal page suggests permission rules from what you approved by hand; clearance never writes
 them in your settings.
@@ -47,17 +50,17 @@ A step to take once you trust the tool. With clearance stopped, sessions behave 
 installs hooks that stay silent when nobody answers.
 
 ```sh
-node src/install.ts --dry-run   # what would change in ~/.claude/settings.json
-node src/install.ts             # backup, then add clearance's hooks next to yours
+clearance install --dry-run   # what would change in ~/.claude/settings.json
+clearance install             # backup, then add clearance's hooks next to yours
 /plugin install clearance --marketplace quietmachineworks/clearance
 ```
 
 The last line, typed in Claude Code, installs the companion mod; from a clone,
 `claude plugin marketplace add <this folder>` then `claude plugin install clearance@clearance` does the
-same. Sessions started afterwards are connected. `node src/install.ts --remove` and
+same. Sessions started afterwards are connected. `clearance install --remove` and
 `claude plugin uninstall clearance@clearance` undo it.
 
-Tests: `node --test`.
+Checks: `cargo test`, `cargo clippy --all-targets -- -D warnings`, `cargo fmt --check`.
 
 ## License
 

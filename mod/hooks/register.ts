@@ -17,10 +17,11 @@ export const register: Register = (on) => {
           body: JSON.stringify({ session, usage: await $.session.usage() }),
         })
         if (!res.ok) return $.ui.status(undefined)
-        const { waiting, here, instruction } = JSON.parse(res.text)
+        const { waiting, here, instruction, line } = JSON.parse(res.text)
         // Typed by the user in clearance: their own words, so it goes in as theirs.
         if (instruction) void $.prompt.submit({ text: instruction, asUser: true })
-        $.ui.status(waiting ? `clearance · ${waiting} waiting for you${here ? `, ${here} here` : ''}` : 'clearance · nothing waiting')
+        // The server writes the line in the page's language; an older server does not.
+        $.ui.status(line ?? (waiting ? `clearance · ${waiting} waiting for you${here ? `, ${here} here` : ''}` : 'clearance · nothing waiting'))
       } catch {
         $.ui.status(undefined)
       }

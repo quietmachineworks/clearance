@@ -8,3 +8,5 @@ data/
 spike/out/
 # types the Claude Code engine writes into a loaded mod folder
 **/.claude-plugin/types/
+# Rust build output
+/target

@@ -4,116 +4,310 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>clearance</title>
-<link rel="icon" href="data:,">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400..800&family=Atkinson+Hyperlegible+Mono:wght@400..800&family=Dela+Gothic+One&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23141414'/%3E%3Ccircle cx='32' cy='32' r='21' fill='none' stroke='%23FFC21A' stroke-width='6'/%3E%3Cpath d='M22 33 L29 40 L43 24' fill='none' stroke='%23FFF' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400..800&family=Atkinson+Hyperlegible+Mono:wght@400..800&family=Dela+Gothic+One&family=IBM+Plex+Mono:wght@400;700&family=Space+Grotesk:wght@700&family=Archivo:wght@800&family=Fraunces:wght@600..800&family=Archivo+Black&family=Silkscreen&family=VT323&family=Fredoka:wght@600&family=DM+Serif+Display&display=swap">
 <style>
-:root { --ink: #141414; --paper: #FFFFFF; --dot: #E3E3E3; --muted: #4A4A4A; --red: #E8341C; --yellow: #FFC21A; --blue: #2F6FE0; --screen: #1C1F2B }
+/* ---- skins: the only place colours, fonts, lines and shadows are written (ADR-0011) ---- */
+:root, [data-skin=manga] {
+  --font: 'Atkinson Hyperlegible Next', system-ui, sans-serif; --mono: 'Atkinson Hyperlegible Mono', ui-monospace, monospace; --fs: 16px; --focus: #2F6FE0;
+  --display: 'Dela Gothic One', sans-serif; --tape-font: var(--font); --pattern: radial-gradient(#E3E3E3 1px, transparent 1px); --pattern-size: 7px 7px;
+  --lvl-g: #1F9D5B; --lvl-y: #FFC21A; --lvl-o: #F08A24; --lvl-r: #E8341C; --scrim: rgba(20, 20, 20, .4);
+  --ink: #141414; --edge: #141414; --sel-edge: #141414; --paper: #FFFFFF; --page: #FFFFFF; --muted: #4A4A4A; --text2: #2A2A2A; --line: #C8C8C8; --line2: #8A8A8A;
+  --soft: #ECEEF2; --sel: #FFF4CC; --panel: #FAFAF7; --verified: #F1F5FD; --settled: #F4F4F4; --blueBg: #E4EDFB; --screen: #1C1F2B; --screenHead: #2A2F3F; --screenInk: #E6E6E6;
+  --green: #1B7A47; --okBg: #E1F4EA; --okInk: #16683D; --badBg: #FFE2DC; --danger: #A3200C; --ctxBg: #FFE9D2; --ctxInk: #8A4A12;
+  --accent: #FFC21A; --onAccent: #141414; --red: #C02A12; --onRed: #FFFFFF; --blue: #2457C5; --onBlue: #FFFFFF; --orange: #F08A24; --onOrange: #141414;
+  --primary: #141414; --onPrimary: #FFFFFF; --tape-bg: #141414; --tape-ink: #FFFFFF; --stop: #A3200C; --onStop: #FFFFFF;
+  --bw: 2px; --bw2: 3px; --r: 8px; --rs: 6px; --pill: 999px; --shadow: 5px 5px 0 #141414; --shadow-m: 4px 4px 0 #141414; --shadow-s: 3px 3px 0 #141414;
+}
+[data-skin=manga-dark] {
+  --display: 'Dela Gothic One', sans-serif; --tape-font: var(--font); --pattern: radial-gradient(#262A36 1px, transparent 1px); --pattern-size: 7px 7px;
+  --ink: #ECECEC; --edge: #ECECEC; --sel-edge: #ECECEC; --paper: #1D2029; --page: #14161D; --muted: #B3B8C4; --text2: #D6D9E0; --line: #3A3F4D; --line2: #6B7080;
+  --soft: #2A2E3A; --sel: #3A3216; --panel: #181B23; --verified: #1B2540; --settled: #22252F; --blueBg: #1B2A4A; --screen: #0E1016; --screenHead: #1A1D27; --screenInk: #E6E6E6;
+  --green: #5FCB91; --okBg: #173826; --okInk: #7FD6A8; --badBg: #3D1A15; --danger: #FF7A66; --ctxBg: #3A2814; --ctxInk: #F2B27A;
+  --accent: #FFC21A; --onAccent: #141414; --red: #C02A12; --onRed: #FFFFFF; --blue: #2457C5; --onBlue: #FFFFFF; --orange: #F08A24; --onOrange: #141414;
+  --primary: #ECECEC; --onPrimary: #1D2029; --tape-bg: #ECECEC; --tape-ink: #1D2029; --stop: #A3200C; --onStop: #FFFFFF;
+  --bw: 2px; --bw2: 3px; --r: 8px; --rs: 6px; --pill: 999px; --shadow: 5px 5px 0 #ECECEC; --shadow-m: 4px 4px 0 #ECECEC; --shadow-s: 3px 3px 0 #ECECEC;
+}
+[data-skin=pro] {
+  --display: var(--font); --mono: 'IBM Plex Mono', ui-monospace, monospace; --fs: 15px; --tape-font: var(--font); --pattern: none; --pattern-size: auto;
+  --ink: #1A1D23; --edge: #DDE1E7; --sel-edge: #4F46E5; --paper: #FFFFFF; --page: #F5F6F8; --muted: #5B6270; --text2: #2B2F38; --line: #E2E5EA; --line2: #A0A7B4;
+  --soft: #EEF0F4; --sel: #EEF2FF; --panel: #FAFBFC; --verified: #F1F5FF; --settled: #F5F6F8; --blueBg: #EEF2FF; --screen: #111827; --screenHead: #1F2937; --screenInk: #E6E6E6;
+  --green: #15803D; --okBg: #DCFCE7; --okInk: #166534; --badBg: #FEE2E2; --danger: #B91C1C; --ctxBg: #FFEDD5; --ctxInk: #9A3412;
+  --accent: #4F46E5; --onAccent: #FFFFFF; --red: #DC2626; --onRed: #FFFFFF; --blue: #2563EB; --onBlue: #FFFFFF; --orange: #F59E0B; --onOrange: #1A1D23;
+  --primary: #4F46E5; --onPrimary: #FFFFFF; --tape-bg: transparent; --tape-ink: #5B6270; --stop: #B91C1C; --onStop: #FFFFFF;
+  --bw: 1px; --bw2: 1px; --r: 10px; --rs: 6px; --pill: 8px; --shadow: 0 1px 2px rgba(16,24,40,.06), 0 4px 12px rgba(16,24,40,.06); --shadow-m: 0 0 0 2px #4F46E5; --shadow-s: 0 1px 2px rgba(16,24,40,.08);
+}
+[data-skin=cockpit] {
+  --display: 'Space Grotesk', var(--font); --mono: 'IBM Plex Mono', ui-monospace, monospace; --fs: 15px; --tape-font: 'Space Grotesk', var(--font);
+  --pattern: linear-gradient(rgba(120,160,200,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(120,160,200,.07) 1px, transparent 1px); --pattern-size: 24px 24px;
+  --ink: #E6EDF3; --edge: #2A3441; --sel-edge: #22D3EE; --paper: #121821; --page: #0B0F14; --muted: #8B98A8; --text2: #C9D3DE; --line: #243040; --line2: #4A5768;
+  --soft: #1A2230; --sel: #10263A; --panel: #0F141B; --verified: #0F2236; --settled: #161C25; --blueBg: #0F2236; --screen: #06090D; --screenHead: #111821; --screenInk: #E6E6E6;
+  --green: #3FB950; --okBg: #12291A; --okInk: #56D364; --badBg: #3A1417; --danger: #FF7B72; --ctxBg: #33240F; --ctxInk: #F0B35A;
+  --accent: #22D3EE; --onAccent: #04121A; --red: #DA3633; --onRed: #FFFFFF; --blue: #1F6FEB; --onBlue: #FFFFFF; --orange: #F0883E; --onOrange: #0B0F14;
+  --primary: #22D3EE; --onPrimary: #04121A; --tape-bg: transparent; --tape-ink: #22D3EE; --stop: #DA3633; --onStop: #FFFFFF;
+  --bw: 1px; --bw2: 1px; --r: 8px; --rs: 6px; --pill: 6px; --shadow: 0 0 0 1px #2A3441; --shadow-m: 0 0 0 2px #22D3EE; --shadow-s: none;
+}
+[data-skin=suisse] {
+  --display: 'Archivo', var(--font); --tape-font: 'Archivo', var(--font); --pattern: none; --pattern-size: auto;
+  --ink: #111111; --edge: #111111; --sel-edge: #E30613; --paper: #FFFFFF; --page: #FFFFFF; --muted: #555555; --text2: #222222; --line: #DDDDDD; --line2: #999999;
+  --soft: #F2F2F2; --sel: #F2F2F2; --panel: #FAFAFA; --verified: #F7F7F7; --settled: #F7F7F7; --blueBg: #F2F2F2; --screen: #111111; --screenHead: #222222; --screenInk: #E6E6E6;
+  --green: #1F7A3A; --okBg: #EAF5EE; --okInk: #1F7A3A; --badBg: #FDECEC; --danger: #C8102E; --ctxBg: #FFF3E5; --ctxInk: #8A4A12;
+  --accent: #E30613; --onAccent: #FFFFFF; --red: #E30613; --onRed: #FFFFFF; --blue: #111111; --onBlue: #FFFFFF; --orange: #F28C28; --onOrange: #111111;
+  --primary: #111111; --onPrimary: #FFFFFF; --tape-bg: transparent; --tape-ink: #111111; --stop: #C8102E; --onStop: #FFFFFF;
+  --bw: 1px; --bw2: 2px; --r: 0px; --rs: 0px; --pill: 0px; --shadow: none; --shadow-m: 0 0 0 2px #E30613; --shadow-s: none;
+}
+[data-skin=editorial] {
+  --display: 'Fraunces', Georgia, serif; --tape-font: 'Fraunces', Georgia, serif; --pattern: none; --pattern-size: auto;
+  --ink: #1F1A14; --edge: #1F1A14; --sel-edge: #B5532B; --paper: #FFFDF8; --page: #F6F1E7; --muted: #6B5E4B; --text2: #2E271E; --line: #E3D9C6; --line2: #A8987C;
+  --soft: #EFE7D7; --sel: #F3E3C8; --panel: #FBF7EE; --verified: #EEF1F6; --settled: #F1EBDF; --blueBg: #E8EDF5; --screen: #231E18; --screenHead: #3A3128; --screenInk: #E6E6E6;
+  --green: #2F6B3A; --okBg: #E5EFE3; --okInk: #2F6B3A; --badBg: #F6E1D9; --danger: #9C2B14; --ctxBg: #F8E7CF; --ctxInk: #7A4513;
+  --accent: #B5532B; --onAccent: #FFFDF8; --red: #A8341C; --onRed: #FFFFFF; --blue: #2F4B7C; --onBlue: #FFFFFF; --orange: #C97B2E; --onOrange: #1F1A14;
+  --primary: #1F1A14; --onPrimary: #FFFDF8; --tape-bg: transparent; --tape-ink: #9C4724; --stop: #9C2B14; --onStop: #FFFFFF;
+  --bw: 1px; --bw2: 1px; --r: 2px; --rs: 2px; --pill: 2px; --shadow: 0 1px 0 #E3D9C6; --shadow-m: 0 0 0 2px #B5532B; --shadow-s: none;
+}
+[data-skin=foret] {
+  --display: 'DM Serif Display', Georgia, serif; --tape-font: 'DM Serif Display', Georgia, serif; --pattern: none; --pattern-size: auto;
+  --ink: #1E2B22; --edge: #2F4A36; --sel-edge: #2F4A36; --paper: #FBFCF8; --page: #EEF1E8; --muted: #5A6B5E; --text2: #26352B; --line: #D5DDCF; --line2: #94A596;
+  --soft: #E3EADB; --sel: #E6EFD5; --panel: #F4F7EF; --verified: #E7EEF2; --settled: #EDF0E8; --blueBg: #E3ECF0; --screen: #18231B; --screenHead: #26352B; --screenInk: #E6E6E6;
+  --green: #2E7D4F; --okBg: #E1F0E3; --okInk: #23633D; --badBg: #F6E2DA; --danger: #A3402A; --ctxBg: #F6E9D3; --ctxInk: #7A4F12;
+  --accent: #C8A24B; --onAccent: #1E2B22; --red: #B5462E; --onRed: #FFFFFF; --blue: #3B6E8F; --onBlue: #FFFFFF; --orange: #D98E3A; --onOrange: #1E2B22;
+  --primary: #2F4A36; --onPrimary: #FBFCF8; --tape-bg: #2F4A36; --tape-ink: #FBFCF8; --stop: #A3402A; --onStop: #FFFFFF;
+  --bw: 1.5px; --bw2: 2px; --r: 14px; --rs: 10px; --pill: 999px; --shadow: 0 2px 0 #D5DDCF, 0 8px 20px rgba(30,43,34,.06); --shadow-m: 0 0 0 2px #C8A24B; --shadow-s: none;
+}
+[data-skin=brutal] {
+  --display: 'Archivo Black', var(--font); --tape-font: 'Archivo Black', var(--font); --pattern: radial-gradient(rgba(0,0,0,.13) 1.5px, transparent 1.5px); --pattern-size: 14px 14px;
+  --ink: #000000; --edge: #000000; --sel-edge: #000000; --paper: #FFFFFF; --page: #FDF2E9; --muted: #333333; --text2: #111111; --line: #555555; --line2: #000000;
+  --soft: #E0F7FA; --sel: #FFE600; --panel: #C7F9CC; --verified: #A0E7FF; --settled: #EEEEEE; --blueBg: #A0E7FF; --screen: #000000; --screenHead: #222222; --screenInk: #E6E6E6;
+  --green: #00703C; --okBg: #B8F5C9; --okInk: #00552D; --badBg: #FFB3C1; --danger: #9A0024; --ctxBg: #FFD6A5; --ctxInk: #7A3B00;
+  --accent: #FF5CA8; --onAccent: #000000; --red: #FF3B30; --onRed: #000000; --blue: #3D7CFF; --onBlue: #000000; --orange: #FF9F1C; --onOrange: #000000;
+  --primary: #000000; --onPrimary: #FFE600; --tape-bg: #FF5CA8; --tape-ink: #000000; --stop: #B0002A; --onStop: #FFFFFF;
+  --bw: 3px; --bw2: 4px; --r: 0px; --rs: 0px; --pill: 0px; --shadow: 8px 8px 0 #000000; --shadow-m: 6px 6px 0 #000000; --shadow-s: 4px 4px 0 #000000;
+}
+[data-skin=arcade] {
+  --display: 'Silkscreen', var(--font); --mono: 'IBM Plex Mono', ui-monospace, monospace; --tape-font: 'Silkscreen', var(--font);
+  --pattern: linear-gradient(rgba(255,46,151,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,255,.06) 1px, transparent 1px); --pattern-size: 32px 32px;
+  --ink: #F5E9FF; --edge: #7B2FF7; --sel-edge: #00E5FF; --paper: #1D0A38; --page: #120424; --muted: #B9A4D9; --text2: #E7D9FF; --line: #3A1D66; --line2: #6A4A9A;
+  --soft: #2A1150; --sel: #3A0F4F; --panel: #170630; --verified: #10214A; --settled: #24113F; --blueBg: #10214A; --screen: #08020F; --screenHead: #1D0A38; --screenInk: #E6E6E6;
+  --green: #39FF88; --okBg: #0E3322; --okInk: #39FF88; --badBg: #3F0A26; --danger: #FF6B9E; --ctxBg: #3A2208; --ctxInk: #FFB347;
+  --accent: #FF2E97; --onAccent: #120424; --red: #FF3864; --onRed: #120424; --blue: #00E5FF; --onBlue: #120424; --orange: #FFB347; --onOrange: #120424;
+  --primary: #00E5FF; --onPrimary: #120424; --tape-bg: transparent; --tape-ink: #FF5CAE; --stop: #FF3864; --onStop: #120424;
+  --bw: 2px; --bw2: 2px; --r: 6px; --rs: 4px; --pill: 6px; --shadow: 0 0 0 1px #7B2FF7, 0 0 18px rgba(123,47,247,.45); --shadow-m: 0 0 0 2px #00E5FF, 0 0 16px rgba(0,229,255,.5); --shadow-s: 0 0 10px rgba(255,46,151,.4);
+}
+[data-skin=phosphore] {
+  --font: 'Atkinson Hyperlegible Mono', ui-monospace, monospace; --display: 'VT323', monospace; --tape-font: 'VT323', monospace;
+  --pattern: repeating-linear-gradient(0deg, rgba(0,255,102,.035) 0 1px, transparent 1px 3px); --pattern-size: auto;
+  --ink: #7CFF9B; --edge: #1F6B33; --sel-edge: #7CFF9B; --paper: #0A120A; --page: #050805; --muted: #4FB86A; --text2: #9DFFB3; --line: #173D22; --line2: #2E7A45;
+  --soft: #0F1F12; --sel: #133A1C; --panel: #081008; --verified: #0C1F12; --settled: #0C150C; --blueBg: #0C1F12; --screen: #020402; --screenHead: #0A120A; --screenInk: #9DFFB3;
+  --green: #7CFF9B; --okBg: #0F2A16; --okInk: #7CFF9B; --badBg: #2A1208; --danger: #FF6B4A; --ctxBg: #2A2108; --ctxInk: #FFB000;
+  --accent: #FFB000; --onAccent: #050805; --red: #FF6B4A; --onRed: #050805; --blue: #4FD1FF; --onBlue: #050805; --orange: #FFB000; --onOrange: #050805;
+  --primary: #7CFF9B; --onPrimary: #050805; --tape-bg: transparent; --tape-ink: #FFB000; --stop: #FF6B4A; --onStop: #050805;
+  --bw: 1px; --bw2: 1px; --r: 0px; --rs: 0px; --pill: 0px; --shadow: 0 0 0 1px #1F6B33; --shadow-m: 0 0 0 1px #7CFF9B, 0 0 12px rgba(124,255,155,.35); --shadow-s: none;
+}
+[data-skin=pastel] {
+  --display: 'Fredoka', var(--font); --tape-font: 'Fredoka', var(--font); --pattern: radial-gradient(#F6D9EA 1.2px, transparent 1.2px); --pattern-size: 18px 18px;
+  --ink: #3B2E4A; --edge: #E2CFEE; --sel-edge: #D2479A; --paper: #FFFFFF; --page: #FFF6FB; --muted: #6E5E80; --text2: #4A3B5C; --line: #EFE3F6; --line2: #C8B4D8;
+  --soft: #F4ECFA; --sel: #FDE7F3; --panel: #FBF6FF; --verified: #EEF4FF; --settled: #F7F2FA; --blueBg: #EAF1FF; --screen: #2B2238; --screenHead: #3B2E4A; --screenInk: #E6E6E6;
+  --green: #217A52; --okBg: #E3F7EE; --okInk: #1F7A50; --badBg: #FFE3E8; --danger: #B5304F; --ctxBg: #FFF0DD; --ctxInk: #8A4F10;
+  --accent: #FF8FC7; --onAccent: #3B2E4A; --red: #F0657F; --onRed: #2E1F3A; --blue: #7FA8FF; --onBlue: #22183A; --orange: #FFB86B; --onOrange: #3B2E4A;
+  --primary: #7C4DEB; --onPrimary: #FFFFFF; --tape-bg: #F4ECFA; --tape-ink: #6B3FD6; --stop: #B5304F; --onStop: #FFFFFF;
+  --bw: 2px; --bw2: 2px; --r: 18px; --rs: 12px; --pill: 999px; --shadow: 0 6px 18px rgba(124,77,235,.12); --shadow-m: 0 0 0 3px #FFB3DA; --shadow-s: 0 3px 10px rgba(124,77,235,.12);
+}
+[data-skin=contraste] {
+  --display: var(--font); --fs: 18px; --tape-font: var(--font); --pattern: none; --pattern-size: auto; --focus: #FFE600;
+  --ink: #FFFFFF; --edge: #FFFFFF; --sel-edge: #FFE600; --paper: #000000; --page: #000000; --muted: #E0E0E0; --text2: #FFFFFF; --line: #FFFFFF; --line2: #FFFFFF;
+  --soft: #1A1A1A; --sel: #332B00; --panel: #000000; --verified: #001A33; --settled: #1A1A1A; --blueBg: #001A33; --screen: #000000; --screenHead: #1A1A1A; --screenInk: #FFFFFF;
+  --green: #7CFF7C; --okBg: #003300; --okInk: #7CFF7C; --badBg: #330000; --danger: #FF8080; --ctxBg: #332200; --ctxInk: #FFD966;
+  --accent: #FFE600; --onAccent: #000000; --red: #FF8080; --onRed: #000000; --blue: #80C8FF; --onBlue: #000000; --orange: #FFB347; --onOrange: #000000;
+  --primary: #FFE600; --onPrimary: #000000; --tape-bg: #FFFFFF; --tape-ink: #000000; --stop: #FF8080; --onStop: #000000;
+  --bw: 2px; --bw2: 3px; --r: 4px; --rs: 4px; --pill: 4px; --shadow: none; --shadow-m: 0 0 0 3px #FFE600; --shadow-s: none;
+}
+/* ---- end of skins ---- */
+
 * { box-sizing: border-box }
-body { margin: 0; color: var(--ink); background: var(--paper) radial-gradient(var(--dot) 1px, transparent 1px) 0 0 / 7px 7px; font: 400 16px/1.5 'Atkinson Hyperlegible Next', system-ui, sans-serif }
-header { margin: 0 auto; padding: 20px 16px 8px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap }
-h1 { margin: 0; font: 400 36px/1 'Dela Gothic One', sans-serif; text-shadow: 3px 3px 0 var(--yellow) }
-#status { font-size: 13px; font-weight: 700; padding: 4px 10px; border: 2px solid var(--ink); border-radius: 999px; background: #FFF }
-main { margin: 0 auto; padding: 8px 16px 48px; display: grid; gap: 28px }
-h2 { display: inline-block; margin: 0 0 12px; padding: 4px 12px; background: var(--ink); color: #FFF; font-size: 13px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase }
-.cards { display: grid; gap: 16px }
-/* The board across the whole screen: waiting, done, then a rail for the crews; they wrap on a narrow
-   screen. No request card: Waiting shrinks and Done, the one to read, takes the room. */
-.columns { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start }
-.columns[hidden] { display: none }
-.columns > * { min-width: 0 }
-#waiting { flex: 1.2 1 480px } #waiting:not(:has(.cards > *)) { flex: 0 1 340px }
-#done { flex: 2 1 460px }
-#done .cards { grid-template-columns: repeat(auto-fit, minmax(min(100%, 480px), 1fr)); align-items: start }
-.rail { flex: 1 0 280px; max-width: 320px; display: grid; gap: 28px }
-.card { background: #FFF; border: 3px solid var(--ink); border-radius: 6px; box-shadow: 5px 5px 0 var(--ink); padding: 14px 16px; display: grid; gap: 10px }
-.card.risk-infra { box-shadow: 5px 5px 0 var(--red) }
-.who { display: flex; align-items: center; gap: 12px; flex-wrap: wrap }
-.who > div { display: grid; flex: 1 1 160px }
-.meta { color: var(--muted); font-size: 13px }
-.badge, .risk, .chip { font-size: 12px; font-weight: 800; padding: 2px 8px; border: 2px solid var(--ink); border-radius: 999px; letter-spacing: .04em; white-space: nowrap }
-.risk.read { background: #ECEEF2 } .risk.write { background: var(--yellow) } .risk.infra { background: var(--red); color: #FFF }
-pre { margin: 0; padding: 10px 12px; background: var(--screen); color: #F4F4F4; border-radius: 4px; font: 13px/1.5 'Atkinson Hyperlegible Mono', ui-monospace, Consolas, monospace; white-space: pre-wrap; word-break: break-word; max-height: 320px; overflow: auto }
-.cmd { font-size: 14px }
-.tool, .desc { margin: 0; color: var(--muted) }
-.question { margin: 0; font-weight: 700 }
-details summary { cursor: pointer; font-size: 13px; color: var(--muted) }
-details pre { margin-top: 6px }
-.actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center }
-button { min-height: 44px; padding: 0 16px; font: 700 15px 'Atkinson Hyperlegible Next', system-ui, sans-serif; color: var(--ink); background: #FFF; border: 2px solid var(--ink); border-radius: 999px; cursor: pointer }
-button.primary { background: var(--ink); color: #FFF }
-button.quiet { border-color: transparent; background: transparent; text-decoration: underline }
-button:disabled { opacity: .4; cursor: not-allowed }
-:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px }
-input[type=text], textarea, select { min-height: 44px; padding: 8px 12px; font: inherit; color: var(--ink); background: #FFF; border: 2px solid var(--ink); border-radius: 6px }
-input[type=text] { flex: 1 1 220px }
-input[name=go] { flex: 0 0 120px; font-weight: 800; text-align: center; letter-spacing: .1em }
-textarea { width: 100%; resize: vertical }
-label.mode { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 13px }
-fieldset { margin: 0; padding: 0; border: 0; display: grid; gap: 6px }
-legend { margin-bottom: 6px; font-weight: 800 }
-.option { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; border: 2px solid var(--ink); border-radius: 6px; cursor: pointer }
-.option input { margin-top: 4px }
-.option small { display: block; color: var(--muted) }
-.option:has(input:checked) { background: #E4EDFB }
-.error { margin: 0; color: var(--red); font-weight: 700 }
-.error:empty { display: none }
+html, body { margin: 0; height: 100% }
+body { font-family: var(--font); font-size: var(--fs); line-height: 1.5; color: var(--ink); background-color: var(--page); background-image: var(--pattern); background-size: var(--pattern-size) }
+button, input, select, textarea { font: inherit; color: inherit }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap }
+svg.i { flex: none; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round }
+code, pre, kbd { font-family: var(--mono) }
+
+.app { height: 100vh; display: flex; flex-direction: column }
+.top { flex: none; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 10px 20px; border-bottom: var(--bw2) solid var(--edge); background: var(--paper) }
+.logo { display: inline-flex; flex: none; border-radius: 14px; text-decoration: none }
+.counts { display: flex; gap: 8px }
+.count { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px; font-weight: 800; background: var(--paper); border: var(--bw) solid var(--edge); border-radius: var(--pill) }
+.count.wait { color: var(--onRed); background: var(--red) }
+.count.watch { color: var(--onOrange); background: var(--orange) }
+.count.done svg { color: var(--green) }
+.spacer { flex: 1 1 8px }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 16px; font-weight: 700; color: var(--ink); background: var(--paper); border: var(--bw) solid var(--edge); border-radius: var(--pill); cursor: pointer; text-decoration: none; white-space: nowrap }
+.btn.icon { width: 44px; padding: 0 }
+.btn.sm { min-height: 36px; padding: 0 12px; font-size: 14px }
+.btn.icon.sm { width: 36px; padding: 0 }
+.btn.primary { color: var(--onPrimary); background: var(--primary); border-color: var(--primary) }
+.btn.danger { color: var(--danger); border-color: var(--danger) }
+.btn.stop { color: var(--onStop); background: var(--stop); border-color: var(--stop) }
+.btn.quiet { background: transparent; border-style: dashed }
+.btn.flat { background: transparent; border-color: transparent }
+.btn:disabled { opacity: .4; cursor: not-allowed }
+.search { flex: 1 1 220px; max-width: 380px; justify-content: flex-start; color: var(--muted); font-weight: 400 }
+.gauge { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 4px 10px; background: var(--paper); border: var(--bw) solid var(--edge); border-radius: var(--r); box-shadow: var(--shadow-s) }
+.gauge b { font-family: var(--display); font-size: 15px; line-height: 1 }
+.cells { display: flex; gap: 2px }
+.cells i { width: 7px; height: 18px; border: 1.5px solid var(--edge); border-radius: 2px; background: var(--paper) }
+.cells.small i { width: 5px; height: 14px }
+.cells i.on.g { background: var(--lvl-g) } .cells i.on.y { background: var(--lvl-y) } .cells i.on.o { background: var(--lvl-o) } .cells i.on.r { background: var(--lvl-r) }
+.pill { display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; font-size: 13px; font-weight: 800; border-radius: var(--pill) }
+.pill.dry { color: var(--onOrange); background: var(--orange) }
+.meta { font-size: 13px; color: var(--muted) }
+
+.body { flex: 1 1 auto; display: flex; min-height: 0 }
+.queue { flex: 0 1 420px; min-width: 300px; overflow: auto; padding: 16px; display: flex; flex-direction: column; gap: 18px; border-right: var(--bw2) solid var(--edge) }
+.rail { flex: 0 0 84px; overflow: auto; padding: 12px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px; border-right: var(--bw2) solid var(--edge) }
+.rail hr { width: 44px; margin: 0; border: 0; border-top: 2px solid var(--line) }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center }
+.chip { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 8px 0 12px; font-size: 14px; font-weight: 700; color: var(--ink); background: var(--paper); border: var(--bw) solid var(--edge); border-radius: var(--pill); cursor: pointer }
+.chip[aria-pressed=true] { color: var(--onPrimary); background: var(--primary); border-color: var(--primary) }
+.dot { width: 10px; height: 10px; border-radius: 50%; flex: none }
+.n { min-width: 20px; height: 20px; padding: 0 5px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; border-radius: var(--pill) }
+.n.w { color: var(--onRed); background: var(--red) } .n.s { color: var(--onOrange); background: var(--orange) }
+.groupbar { display: flex; align-items: center; gap: 8px; padding: 6px 8px 6px 12px; background: var(--paper); border: var(--bw) solid var(--edge); border-radius: var(--r) }
+.groupbar b { flex: 1 1 auto }
+section.list { display: flex; flex-direction: column; gap: 8px }
+.tape { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; margin: 0 0 4px; padding: 4px 12px; color: var(--tape-ink); background: var(--tape-bg); font-family: var(--tape-font); font-size: 13px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase }
+.tape.watch { color: var(--onOrange); background: var(--orange); border: var(--bw) solid var(--edge) }
+.newpill { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; font-weight: 800; color: var(--onAccent); background: var(--accent); border: var(--bw) solid var(--edge); border-radius: var(--pill); cursor: pointer }
+.item { display: flex; align-items: center; gap: 12px; width: 100%; margin: 0; padding: 10px 12px; text-align: left; color: var(--ink); background: var(--paper); border: var(--bw) solid var(--line); border-radius: var(--r); cursor: pointer }
+.item[aria-current=true] { background: var(--sel); border-color: var(--sel-edge); box-shadow: var(--shadow-m) }
+.item.settled { opacity: .6 }
+.item .main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px }
+.item .row { display: flex; align-items: center; gap: 8px; min-width: 0 }
+.item .name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 800 }
+.item .row .meta { flex: none; white-space: nowrap }
+.item .line { font-size: 14px; color: var(--text2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.item .line.mono { font-family: var(--mono) }
+.item .facts { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; font-weight: 700; color: var(--muted) }
+.tag { flex: none; white-space: nowrap; font-size: 12px; font-weight: 800; padding: 0 7px; border-radius: 4px }
+.env { flex: none; white-space: nowrap; font-size: 11px; font-weight: 800; letter-spacing: .06em; padding: 0 6px; border-radius: 4px; border: var(--bw) solid var(--edge) }
+.env.prod { color: var(--onRed); background: var(--red) }
+.env.unknown { color: var(--danger); background: var(--badBg); border-color: var(--danger) }
+.env.staging { color: var(--onAccent); background: var(--accent) }
+.env.local { color: var(--ink); background: var(--soft) }
+.kind { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; border: var(--bw) solid var(--edge) }
+.kind.permission, .kind.denied { color: var(--onRed); background: var(--red) }
+.kind.question { color: var(--onBlue); background: var(--blue) }
+.kind.plan { color: var(--onAccent); background: var(--accent) }
+.kind.settled { color: var(--muted); background: var(--soft) }
+.watchline { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; color: var(--ctxInk) }
+.watchline.loop { color: var(--danger) }
+.small-meter { flex: none; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 800 }
+details.fold { border: var(--bw) solid var(--line); border-radius: var(--r); background: var(--paper); padding: 0 10px }
+details.fold summary { min-height: 40px; display: flex; align-items: center; gap: 8px; font-weight: 800; cursor: pointer }
+.folds { display: flex; gap: 8px }
+.folds details { flex: 1 1 0 }
+.keys { margin: auto 0 0; padding-top: 8px; display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 13px; color: var(--muted) }
+kbd { font-size: 12px; font-weight: 700; padding: 1px 6px; color: var(--ink); background: var(--paper); border: 1.5px solid var(--edge); border-radius: 4px }
 .empty { margin: 0; color: var(--muted) }
-.terminal { display: grid; gap: 6px; margin-top: 12px }
-.terminal-wait { display: flex; align-items: center; gap: 10px; color: var(--muted) }
-.message { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere }
-.message .heading { font-size: 17px }
-.message code { font: 14px 'Atkinson Hyperlegible Mono', ui-monospace, Consolas, monospace; padding: 0 4px; background: #F0F0F0; border-radius: 3px }
-.crew { display: flex; flex-wrap: wrap; gap: 18px }
-.worker { width: 120px; display: grid; justify-items: center; gap: 2px; text-align: center }
-.clones { display: flex; align-items: flex-end; gap: 2px; font-size: 12px; font-weight: 800 }
-.avatar svg { display: block; overflow: visible }
-a.button { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; font-weight: 800; font-size: 14px; color: var(--ink); text-decoration: none; background: #FFF; border: 2px solid var(--ink); border-radius: 999px }
-.energy { display: block; width: 64px; height: 6px; background: #FFF; border: 1.5px solid var(--ink); border-radius: 3px; overflow: hidden }
-.energy > span { display: block; height: 100%; background: var(--ink) }
-.energy.low > span { background: var(--red) }
-.rule { display: grid; gap: 4px; padding: 10px 0; border-bottom: 1px solid var(--dot) }
-.rule code { font: 800 14px 'Atkinson Hyperlegible Mono', ui-monospace, Consolas, monospace }
-#journal > div, #detail-body > div { display: grid; gap: 18px }
-form.instruct { display: grid; gap: 8px }
-form.instruct p { margin: 0 } form.instruct p:empty { display: none }
-form.start { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; align-items: end }
-form.start label { display: grid; gap: 4px; font-size: 13px; font-weight: 700 }
-form.start label.check { display: flex; align-items: center; gap: 8px; min-height: 44px }
-form.start > .actions:last-of-type, form.start [role=status], .picker { grid-column: 1 / -1 }
-.picker { display: grid; gap: 8px; padding: 12px; border: 2px dashed var(--ink); border-radius: 6px }
-.picker[hidden] { display: none }
-.picker .folders { display: flex; flex-wrap: wrap; gap: 6px; max-height: 260px; overflow: auto }
-.picker .folders button { min-height: 36px; font-weight: 700 }
-.picker code { font: 700 13px 'Atkinson Hyperlegible Mono', ui-monospace, Consolas, monospace; word-break: break-all }
-a.name { color: var(--ink); font-weight: 800; text-decoration: none; border-bottom: 2px solid var(--yellow) }
-a.name:hover { background: var(--yellow) }
-a.back { display: inline-block; margin-bottom: 14px; color: var(--ink); font-weight: 800 }
-#detail { display: grid; gap: 18px }
-#detail[hidden], #journal[hidden] { display: none }
-#detail h3 { margin: 0; font-size: 13px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase }
-#detail h4 { margin: 4px 0 0; font-size: 15px }
-.head { display: flex; gap: 16px; align-items: center; flex-wrap: wrap }
-.head .grow { display: grid; gap: 6px; flex: 1 1 260px }
-.head h2 { margin: 0; padding: 0; background: none; color: var(--ink); font: 800 24px/1.2 'Atkinson Hyperlegible Next', system-ui, sans-serif; letter-spacing: 0; text-transform: none }
-.chips { display: flex; flex-wrap: wrap; gap: 6px }
-.phases { display: flex; flex-wrap: wrap; gap: 6px 0 }
-.phase { padding: 6px 14px; margin-right: -3px; font-size: 13px; font-weight: 800; background: #FFF; border: 3px solid var(--ink) }
-.phase.past { background: var(--ink); color: #FFF }
-.phase.now { background: var(--yellow) }
-.phase.next { color: var(--muted); border-style: dashed }
-.agents { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px }
-.agent { padding: 10px; display: grid; gap: 6px; align-content: start; background: #FFF; border: 2px solid var(--ink); border-radius: 6px }
-.agent.running { box-shadow: 4px 4px 0 var(--yellow) }
-.result { margin: 0; font-size: 13px; max-height: 6em; overflow: auto; word-break: break-word }
-.bad { color: var(--red); font-weight: 800 }
-.thread { display: grid; gap: 4px }
-.bubble { justify-self: end; max-width: 80%; margin: 8px 0; padding: 8px 12px; white-space: pre-wrap; background: #FFF; border: 2px solid var(--ink); border-radius: 16px 16px 4px 16px }
-.step { margin: 0; font: 13px/1.4 'Atkinson Hyperlegible Mono', ui-monospace, Consolas, monospace; color: var(--muted); word-break: break-word }
-.step.bad { color: var(--red) }
-pre.del { background: #4A1F1F } pre.add { background: #1E4A2B }
-.scroll { overflow-x: auto }
+
+.pane { flex: 1 1 640px; min-width: 0; display: flex; flex-direction: column; background: var(--paper) }
+.head { flex: none; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 14px 24px; border-bottom: var(--bw) solid var(--edge) }
+.head h1 { margin: 0; font-size: 24px; font-weight: 800; line-height: 1.2 }
+.head .who { display: flex; flex-direction: column; gap: 4px; min-width: 0 }
+.head .title { display: flex; align-items: center; gap: 10px; flex-wrap: wrap }
+.badge { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 800; padding: 3px 10px; border-radius: var(--pill); background: var(--soft) }
+.metas { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; font-size: 13px; color: var(--muted) }
+.metas span { display: inline-flex; align-items: center; gap: 5px }
+.split { flex: 1 1 auto; min-height: 0; display: flex }
+.center { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column }
+.tabs { flex: none; display: flex; gap: 4px; padding: 0 24px; border-bottom: var(--bw) solid var(--edge) }
+.tab { display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 16px; margin-bottom: calc(-1 * var(--bw)); font-weight: 600; color: var(--ink); background: transparent; border: 0; border-bottom: 4px solid transparent; cursor: pointer }
+.tab[aria-selected=true] { font-weight: 800; border-bottom-color: var(--sel-edge) }
+.thread { flex: 1 1 auto; min-height: 0; overflow: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 14px }
+.bubble { align-self: flex-end; max-width: 70%; display: flex; flex-direction: column; align-items: flex-end; gap: 4px }
+.bubble > div { padding: 10px 14px; white-space: pre-wrap; overflow-wrap: anywhere; background: var(--sel); border: var(--bw) solid var(--edge); border-radius: var(--r) var(--r) var(--rs) var(--r) }
+.said { margin: 0; max-width: 900px; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.6 }
+.said code { font-size: 14px; padding: 0 4px; background: var(--soft); border-radius: 3px }
+.said .heading { font-size: 17px }
+.tool { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; max-width: 900px; font-size: 14px; color: var(--muted) }
+.tool b { color: var(--green) } .tool.bad b { color: var(--danger) }
+.tool > * { min-width: 0; overflow-wrap: anywhere }
+.tool code { color: var(--ink) }
+.trace { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; font-size: 14px; font-weight: 700; background: var(--okBg); color: var(--okInk); border: var(--bw) solid var(--edge); border-radius: var(--pill) }
+.alert { position: sticky; top: 0; z-index: 1; background: var(--paper); display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 14px; border: var(--bw2) solid var(--edge); border-radius: var(--r); box-shadow: var(--shadow-m) }
+.alert.loop { background: var(--badBg) } .alert.stall, .alert.context { background: var(--ctxBg) }
+.alert div { flex: 1 1 300px; min-width: 0 }
+.card { max-width: 980px; display: flex; flex-direction: column; gap: 12px; padding: 16px 18px; background: var(--paper); border: var(--bw2) solid var(--edge); border-radius: var(--r); box-shadow: var(--shadow) }
+.card.hot { border-color: var(--red) }
+.card.review { border-color: var(--green) }
+.card.settledcard { background: var(--settled); border-style: dashed; color: var(--muted); box-shadow: none }
+.card .top-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px }
+.bigenv { white-space: nowrap; font-size: 15px; font-weight: 800; letter-spacing: .08em; padding: 4px 12px; border-radius: var(--rs); border: var(--bw) solid var(--edge) }
+.classbadge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; padding: 3px 10px; color: var(--onPrimary); background: var(--primary); border-radius: var(--pill) }
+pre.cmd { margin: 0; padding: 12px 14px; color: var(--screenInk); background: var(--screen); border-radius: var(--rs); font-size: 15px; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 320px; overflow: auto }
+.boxes { display: flex; flex-wrap: wrap; gap: 10px }
+.box { flex: 1 1 300px; display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; font-size: 14px; border-radius: var(--rs) }
+.box.checked { background: var(--verified); border: var(--bw) solid var(--edge) }
+.box.claimed { background: var(--paper); border: var(--bw) dashed var(--line2) }
+.box strong { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; letter-spacing: .05em; text-transform: uppercase }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px }
+.field { min-height: 44px; padding: 8px 12px; color: var(--ink); background: var(--paper); border: var(--bw) solid var(--edge); border-radius: var(--rs) }
+.field.go { flex: none; width: 96px; font-weight: 800; letter-spacing: .1em; text-align: center; text-transform: uppercase }
+.field.grow { flex: 1 1 220px; min-width: 0 }
+textarea.field { width: 100%; resize: vertical }
+fieldset { margin: 0; padding: 0; border: 0; display: grid; gap: 8px }
+legend { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 18px; font-weight: 800 }
+.option { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border: var(--bw) solid var(--edge); border-radius: var(--rs); cursor: pointer }
+.option:has(input:checked) { background: var(--sel) }
+.option small { display: block; font-size: 14px; color: var(--muted) }
+.working { margin: 0; display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted) }
+.working i { width: 10px; height: 10px; border-radius: 50%; background: var(--green); animation: blink 1.4s ease-in-out infinite }
+.term { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; margin: 16px 24px; background: var(--screen); border: var(--bw2) solid var(--edge); border-radius: var(--r); overflow: hidden }
+.term header { padding: 8px 14px; color: var(--screenInk); background: var(--screenHead); font: 13px var(--mono) }
+.term pre { flex: 1 1 auto; margin: 0; overflow: auto; padding: 14px 16px; color: var(--screenInk); font: 14px/1.55 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere }
+.composer { flex: none; display: flex; flex-direction: column; gap: 6px; padding: 12px 24px 14px; border-top: var(--bw) solid var(--edge) }
+.composer .row { display: flex; align-items: flex-end; gap: 10px }
+.send { width: 52px; height: 52px }
+.inspector { flex: 0 0 340px; min-width: 0; overflow: auto; padding: 16px; display: flex; flex-direction: column; gap: 18px; border-left: var(--bw) solid var(--edge); background: var(--panel) }
+.inspector h3 { margin: 0; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase }
+.inspector section { display: flex; flex-direction: column; gap: 6px }
+.step { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; line-height: 1.4; color: var(--muted) }
+.step.now { color: var(--ink); font-weight: 800 }
+.step.done svg { color: var(--green) }
+.file { display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 8px; font-size: 13px; background: var(--paper); border: 1.5px solid var(--line); border-radius: var(--rs) }
+.file code { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.plus { font-weight: 800; color: var(--green) } .minus { font-weight: 800; color: var(--danger) }
+.ok { color: var(--okInk); background: var(--okBg) } .ko { color: var(--danger); background: var(--badBg) } .none { color: var(--muted); background: var(--soft) }
+.agent { display: flex; align-items: center; gap: 8px; font-size: 14px }
+.agent b { flex: 1 1 auto }
+.agent .loop { color: var(--danger); font-weight: 800 }
+.blank { margin: auto; max-width: 420px; text-align: center; color: var(--muted) }
+
+.overlay { position: fixed; inset: 0; z-index: 40; display: flex; align-items: flex-start; justify-content: center; padding: 80px 16px 16px; background: var(--scrim) }
+.dialog { width: 100%; max-width: 720px; max-height: calc(100vh - 100px); overflow: auto; display: flex; flex-direction: column; gap: 16px; padding: 20px 22px; background: var(--paper); border: var(--bw2) solid var(--edge); border-radius: var(--r); box-shadow: var(--shadow) }
+.dialog.wide { max-width: 1000px }
+.dialog h2 { flex: 1 1 auto; margin: 0; display: inline-flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 800 }
+.dialog .row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px }
+.seg { display: flex }
+.seg button { min-height: 38px; padding: 0 12px; margin-left: calc(-1 * var(--bw)); font-size: 14px; font-weight: 700; color: var(--ink); background: var(--paper); border: var(--bw) solid var(--edge); cursor: pointer }
+.seg button[aria-pressed=true] { color: var(--onPrimary); background: var(--primary) }
+.folder { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px; font: 700 14px var(--mono); color: var(--ink); background: var(--paper); border: var(--bw) solid var(--edge); border-radius: var(--pill); cursor: pointer }
+.folder[aria-pressed=true] { color: var(--onPrimary); background: var(--primary) }
+.hits { display: flex; flex-direction: column; gap: 6px }
+.hit { display: flex; align-items: center; gap: 10px; padding: 8px 10px; text-align: left; color: var(--ink); background: var(--paper); border: var(--bw) solid var(--line); border-radius: var(--rs); cursor: pointer }
+.hit[aria-selected=true] { background: var(--sel); border-color: var(--sel-edge) }
 table { width: 100%; border-collapse: collapse; font-size: 14px }
-th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--dot) }
+th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--line) }
+.toast { position: fixed; left: 50%; bottom: 24px; z-index: 50; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; min-width: 380px; padding: 10px 10px 14px 16px; color: var(--onPrimary); background: var(--primary); border-radius: var(--r); box-shadow: 4px 4px 0 var(--accent); overflow: hidden; animation: rise .2s ease-out both }
+.toast span { flex: 1 1 auto; font-weight: 700 }
+.toast .undo { min-height: 40px; padding: 0 14px; font-weight: 800; color: var(--onAccent); background: var(--accent); border: 0; border-radius: var(--pill); cursor: pointer }
+.toast i { position: absolute; left: 0; bottom: 0; height: 4px; background: var(--accent); animation: drain 5s linear forwards }
+.avatar { display: inline-flex; flex: none }
+.menu { display: grid; gap: 14px }
+.menu label { display: grid; gap: 4px; font-size: 13px; font-weight: 700 }
+@keyframes blink { 0%, 100% { opacity: 1 } 50% { opacity: 0 } }
+@keyframes drain { from { width: 100% } to { width: 0 } }
+@keyframes rise { from { opacity: 0; transform: translate(-50%, 16px) } to { opacity: 1; transform: translate(-50%, 0) } }
 @keyframes cb-bob { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-1.6px) } }
 @keyframes cb-drip { 0% { transform: translateY(-2px); opacity: 0 } 25% { opacity: 1 } 100% { transform: translateY(5px); opacity: 0 } }
 @keyframes cb-throb { 0%, 100% { transform: scale(1) } 50% { transform: scale(1.28) } }
@@ -124,71 +318,22 @@ th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--dot)
 @keyframes cb-spin { to { transform: rotate(360deg) } }
 @keyframes cb-boing { 0%, 100% { transform: rotate(-6deg) } 50% { transform: rotate(6deg) } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important } }
+@media (max-width: 900px) { .inspector { display: none } .queue { flex-basis: 300px } }
 </style>
 </head>
 <body>
-<header>
-  <h1>clearance</h1>
-  <button id="new" class="primary" aria-controls="start" aria-expanded="false">+ Start a session</button>
-  <span id="status" role="status">connecting...</span>
-  <span id="quota" class="chip" hidden></span>
-  <a id="journal-link" class="button" href="#journal">Journal</a>
-  <button id="notify" hidden>Turn on notifications</button>
-  <button id="pack"></button>
-</header>
-<main>
-  <section id="start" aria-labelledby="h-start" hidden>
-    <h2 id="h-start">Start a session</h2>
-    <form class="card start">
-      <label>Folder <input type="text" name="cwd" required placeholder="The project's folder, full path"></label>
-      <div class="actions"><button type="button" id="browse">Browse...</button></div>
-      <div class="picker" hidden></div>
-      <label>Name <input type="text" name="name" required pattern="[\w.\-]{1,40}" placeholder="also the tab's title"></label>
-      <label>Model
-        <select name="model"><option value="">default</option><option value="fable">Fable</option><option value="opus">Opus</option><option value="sonnet">Sonnet</option><option value="haiku">Haiku</option></select>
-      </label>
-      <label>Mode
-        <select name="mode"><option value="">default</option><option value="default">ask</option><option value="acceptEdits">edits</option><option value="plan">plan</option><option value="auto">auto</option></select>
-      </label>
-      <label class="check"><input type="checkbox" name="connect" checked> Connect to clearance (hooks and companion mod)</label>
-      <div class="actions"><button class="primary" type="submit">Start in a new tab</button></div>
-      <p class="meta" role="status"></p>
-    </form>
-  </section>
-  <div class="columns">
-  <section id="waiting" aria-labelledby="h-waiting">
-    <h2 id="h-waiting">Waiting for you</h2>
-    <p class="empty">Nobody is waiting for you.</p>
-    <div class="cards"></div>
-    <div class="terminal"></div>
-  </section>
-  <section id="done" aria-labelledby="h-done">
-    <h2 id="h-done">Done</h2>
-    <p class="empty">Nothing left to read.</p>
-    <div class="cards"></div>
-  </section>
-  <div class="rail">
-  <section id="working" aria-labelledby="h-working">
-    <h2 id="h-working">Working</h2>
-    <p class="empty">Nobody is working.</p>
-    <div class="crew"></div>
-  </section>
-  <section id="ignored" aria-labelledby="h-ignored" hidden>
-    <h2 id="h-ignored">Ignored</h2>
-    <div class="crew"></div>
-  </section>
-  <section id="asleep" aria-labelledby="h-asleep" hidden>
-    <h2 id="h-asleep">Asleep</h2>
-    <div class="crew"></div>
-  </section>
+<div class="app">
+  <header class="top" id="top"></header>
+  <div class="body">
+    <nav id="side" aria-label="Queue"></nav>
+    <main class="pane" id="pane"></main>
   </div>
-  </div>
-  <section id="detail" hidden></section>
-  <section id="journal" hidden></section>
-</main>
+</div>
+<div id="layer"></div>
+<div id="toast"></div>
 <script>
-// Everything that comes from a session (commands, questions, messages) goes through h() as text,
-// never through innerHTML. The avatar SVG is built from constants only.
+// Everything that comes from a session (commands, questions, messages) goes through h() as text, never
+// through innerHTML. The avatar and icon SVG are built from constants only.
 const $ = (sel, root = document) => root.querySelector(sel)
 
 function h(tag, attrs = {}, ...children) {
@@ -197,41 +342,180 @@ function h(tag, attrs = {}, ...children) {
     if (v == null || v === false) continue
     if (k.startsWith('on')) el.addEventListener(k.slice(2), v)
     else if (k === 'class') el.className = v
+    else if (k === 'value') el.value = v
     else el.setAttribute(k, v === true ? '' : v)
   }
-  for (const c of children.flat(Infinity)) if (c != null && c !== false) el.append(c instanceof Node ? c : String(c))
+  el.append(...kids(children))
   return el
 }
+// Children as h() takes them: nested lists flattened, null and false dropped.
+const kids = (list) => list.flat(Infinity).filter((c) => c != null && c !== false).map((c) => (c instanceof Node ? c : String(c)))
+const fill = (el, ...children) => el.replaceChildren(...kids(children))
 
-// ---- avatars (design/canvas/Chibi.dc.html, BRIEF section 4) ----
-// Hair colour: the project, from its folder name.
+// Per browser: skin, language, avatar pack, ignored sessions, muted groups, folded queue.
+const store = {
+  get(key, fallback) { try { const v = localStorage.getItem(`clearance-${key}`); return v == null ? fallback : JSON.parse(v) } catch { return fallback } },
+  set(key, value) { try { localStorage.setItem(`clearance-${key}`, JSON.stringify(value)) } catch {} },
+}
+
+async function post(path, body) {
+  try {
+    const res = await fetch(path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) })
+    const out = await res.json().catch(() => ({}))
+    return res.ok ? null : (out.error ?? res.statusText)
+  } catch (e) { return String(e.message || e) }
+}
+
+// ---- languages (ADR-0011) ----
+const I18N = {
+  en: {
+    waiting: 'Waiting for you', watch: 'To watch', review: 'To read', working: 'Working', asleep: 'Asleep', ignored: 'Ignored',
+    'waiting.n': '{n} waiting for you', 'watch.n': '{n} to watch', 'review.n': '{n} to read', 'working.n': '{n} working',
+    all: 'All', groups: 'Groups', 'groups.manage': 'Manage groups', 'group.change': 'Change the group', 'group.mute': 'Mute the group', 'group.unmute': 'Notify again for the group', 'group.interrupt': 'Interrupt the whole group', sessions: '{n} sessions',
+    'new.one': '{n} new · queue held', 'nothing.waits': 'Nothing waits for you.', 'nothing.here': 'Nothing here.',
+    search: 'Go to a session or a command', journal: 'Journal', settings: 'Settings', 'new.task': 'New task', fold: 'Fold the queue', unfold: 'Unfold the queue',
+    skin: 'Look', lang: 'Language', pack: 'Avatars', notify: 'Turn on notifications', 'notify.on': 'Notifications are on',
+    'perm.kind': 'Permission to give', 'question.kind': 'Question asked', 'plan.kind': 'Plan to approve', 'denied.kind': 'Blocked by auto mode', 'settled.kind': 'Settled in the terminal',
+    'risk.read': 'read', 'risk.write': 'write', 'risk.infra': 'infrastructure write',
+    'env.prod': 'PROD', 'env.staging': 'STAGING', 'env.unknown': 'UNKNOWN', 'env.local': 'LOCAL',
+    'env.why.pattern': '{env}, pattern “{p}”', 'env.why.unknown': 'unknown, no pattern matches: handled like production', 'env.why.local': 'local, the command stays on this machine',
+    checked: 'Checked by clearance', claimed: 'The agent says, not checked', tool: 'tool', folder: 'folder', environment: 'environment',
+    allow: 'Allow', always: 'Always', 'always.title': 'Allow, and do not ask again for: {rule}', deny: 'Deny', why: 'Why?', 'to.terminal': 'Leave it to the terminal',
+    'mode.after': 'Mode after the answer', 'mode.keep': 'unchanged', 'mode.default': 'ask', 'mode.acceptEdits': 'edits', 'mode.plan': 'plan', 'mode.auto': 'auto',
+    'go.ph': 'GO', 'go.label': 'Type GO', send: 'Send', 'other.answer': 'Other answer', launch: 'Launch', revise: 'Ask for a change', retry: 'Let it retry', 'keep.denied': 'Keep it denied',
+    next: 'Opens next: {name}', since: 'Waiting since', 'settled.note': 'Answered in the terminal at {time}. Nothing to do here.',
+    validate: 'Validate', fix: 'Ask for a fix', 'fix.text': 'Fix: ', diff: 'See the diff', facts: 'The facts, checked by clearance',
+    'tests.ok': 'tests pass', 'tests.ko': 'tests fail', 'tests.none': 'no tests run', files: '{n} files', commits: '{n} commits',
+    thread: 'Thread', terminal: 'Terminal', 'terminal.note': 'the session, as its terminal shows it', interrupt: 'Interrupt', 'interrupt.soon': 'Interrupt: coming soon', stop: 'Stop', 'stop.soon': 'Stop the session: coming soon',
+    'open.tab': 'Open its terminal tab', ignore: 'Ignore', unignore: 'Stop ignoring', context: 'context left', model: 'model', mode: 'mode', branch: 'branch', cost: 'cost',
+    task: 'Task', plan: 'Plan', tests: 'Tests', agents: 'Agents', 'cost.rate': '{usd} per hour', 'at.rest': 'at rest', 'model.next': 'Model for the next turn',
+    'write.to': 'Write to {name}', 'delivery.busy': 'Busy: your message is read at the end of its turn.', 'delivery.waits': 'It waits for your answer above: your message comes after.',
+    'delivery.ready': 'Reaches the session within 5 s.', 'delivery.nomod': 'No companion mod runs in this session: the message waits for one.',
+    'sent.busy': 'sent at {time} · read at the end of its turn', 'sent.ready': 'delivered at {time}',
+    'watch.loop': 'Loop: the same call failed {count} times', 'watch.loop.short': 'same error {count} times', 'watch.stall': 'No progress for {min} min', 'watch.stall.short': 'quiet for {min} min',
+    'watch.context': 'Context almost full: {left} %', 'watch.context.short': 'context {left} %',
+    'q.dry': 'dry at {time}', 'q.reset': 'reloads {time}', 'q.label.five_hour': '5 h', 'q.label.seven_day': '7 d', 'q.aria': 'Quota {label}: {pct} % used, reloads {reset}',
+    'decided.allow': 'Allowed', 'decided.always': 'Allowed for good', 'decided.deny': 'Denied', 'decided.answer': 'Answer sent', 'decided.launch': 'Plan launched', 'decided.revise': 'Change asked',
+    'decided.dismiss': 'Left to the terminal', 'decided.retry': 'Retry allowed', 'decided.validate': 'Validated', undo: 'Undo', 'from.clearance': '{what} from clearance at {time}',
+    'palette.title': 'New task', 'palette.prompt': 'What the session must do', 'palette.name': 'Name, also the tab title', browse: 'Browse', 'group.auto': 'auto',
+    'palette.launch': 'Launch', 'palette.started': 'Session started · {name}, tab opened', close: 'Close', home: 'Home', up: 'Up', 'use.folder': 'Use this folder',
+    'journal.title': 'Journal and suggested rules', 'journal.decisions': 'Decisions', 'journal.rules': 'Rules to add', 'journal.none': 'No decision taken from this page yet.',
+    'journal.rule': 'approved {count} times in {sessions} sessions', when: 'When', session: 'Session', what: 'What', risk: 'Risk', action: 'Action',
+    'groups.title': 'Groups', 'groups.hint': 'One group per folder at first. Rename it to move the folder; an empty name puts it back.', save: 'Save',
+    'keys.updown': 'next, previous', 'keys.a': 'allow', 'keys.d': 'deny', 'keys.num': 'pick an option', 'keys.e': 'validate', 'keys.i': 'interrupt', 'keys.r': 'write to the session',
+    'keys.n': 'new task', 'keys.t': 'terminal', 'keys.fold': 'fold the queue', 'keys.k': 'search',
+    'no.session': 'Pick a session in the queue.', 'no.transcript': 'No transcript for this session yet.', 'not.connected': 'not connected to clearance: answer it in its terminal',
+    'waits.terminal': 'waits for you in its terminal', 'tab.found': 'Tab brought to the front.', 'tab.missing': 'Tab not found: look for “{title}”.',
+    'err.gone': 'Already answered, or the session moved on.', 'err.go': 'Type GO first.', 'err.answer': 'Pick an answer for each question.', 'err.start': 'The session did not start: {error}',
+    connecting: 'connecting...', offline: 'clearance is not answering', live: 'live · {n} sessions',
+  },
+  fr: {
+    waiting: "T'attendent", watch: 'À surveiller', review: 'À relire', working: 'Au travail', asleep: 'Endormies', ignored: 'Ignorées',
+    'waiting.n': "{n} t'attendent", 'watch.n': '{n} à surveiller', 'review.n': '{n} à relire', 'working.n': '{n} au travail',
+    all: 'Tous', groups: 'Groupes', 'groups.manage': 'Gérer les groupes', 'group.change': 'Changer de groupe', 'group.mute': 'Mettre le groupe en sourdine', 'group.unmute': 'Réactiver les notifications du groupe', 'group.interrupt': 'Interrompre tout le groupe', sessions: '{n} sessions',
+    'new.one': '{n} nouvelle · file figée', 'nothing.waits': "Rien ne t'attend.", 'nothing.here': 'Rien ici.',
+    search: 'Aller à une session ou à une commande', journal: 'Journal', settings: 'Réglages', 'new.task': 'Nouvelle tâche', fold: 'Replier la file', unfold: 'Déplier la file',
+    skin: 'Apparence', lang: 'Langue', pack: 'Avatars', notify: 'Activer les notifications', 'notify.on': 'Notifications activées',
+    'perm.kind': 'Permission à donner', 'question.kind': 'Question posée', 'plan.kind': 'Plan à valider', 'denied.kind': 'Bloquée par le mode auto', 'settled.kind': 'Réglée au terminal',
+    'risk.read': 'lecture', 'risk.write': 'écriture', 'risk.infra': 'écriture infra',
+    'env.prod': 'PROD', 'env.staging': 'STAGING', 'env.unknown': 'INCONNU', 'env.local': 'LOCAL',
+    'env.why.pattern': '{env}, motif « {p} »', 'env.why.unknown': 'inconnu, aucun motif ne correspond : traité comme la prod', 'env.why.local': 'local, la commande ne sort pas de la machine',
+    checked: 'Vérifié par clearance', claimed: "Selon l'agent, non vérifié", tool: 'outil', folder: 'dossier', environment: 'environnement',
+    allow: 'Autoriser', always: 'Toujours', 'always.title': 'Autoriser et ne plus demander pour : {rule}', deny: 'Refuser', why: 'Pourquoi ?', 'to.terminal': 'Laisser au terminal',
+    'mode.after': 'Mode après la réponse', 'mode.keep': 'inchangé', 'mode.default': 'demander', 'mode.acceptEdits': 'éditions', 'mode.plan': 'plan', 'mode.auto': 'auto',
+    'go.ph': 'GO', 'go.label': 'Tape GO', send: 'Envoyer', 'other.answer': 'Autre réponse', launch: 'Lancer', revise: 'Modifier', retry: 'Laisser réessayer', 'keep.denied': 'Garder le refus',
+    next: 'Ensuite : {name}', since: 'Attend depuis', 'settled.note': 'Réglée au terminal à {time}. Rien à faire ici.',
+    validate: 'Valider', fix: 'Corriger', 'fix.text': 'Corrige : ', diff: 'Voir le diff', facts: 'Les faits, vérifiés par clearance',
+    'tests.ok': 'tests au vert', 'tests.ko': 'tests en échec', 'tests.none': 'pas de tests lancés', files: '{n} fichiers', commits: '{n} commits',
+    thread: 'Fil', terminal: 'Terminal', 'terminal.note': 'la session, telle que son terminal la montre', interrupt: 'Interrompre', 'interrupt.soon': 'Interrompre : bientôt', stop: 'Arrêter', 'stop.soon': 'Arrêter la session : bientôt',
+    'open.tab': 'Ouvrir son onglet de terminal', ignore: 'Ignorer', unignore: 'Ne plus ignorer', context: 'contexte restant', model: 'modèle', mode: 'mode', branch: 'branche', cost: 'coût',
+    task: 'Tâche', plan: 'Plan', tests: 'Tests', agents: 'Agents', 'cost.rate': '{usd} par heure', 'at.rest': "à l'arrêt", 'model.next': 'Modèle au prochain tour',
+    'write.to': 'Écrire à {name}', 'delivery.busy': 'Occupée : ton message sera lu à la fin de son tour.', 'delivery.waits': 'Elle attend ta réponse ci-dessus : ton message passe après.',
+    'delivery.ready': 'Arrive dans la session en moins de 5 s.', 'delivery.nomod': "Aucun mod compagnon dans cette session : le message attendra qu'il y en ait un.",
+    'sent.busy': 'envoyé à {time} · lu à la fin de son tour', 'sent.ready': 'livré à {time}',
+    'watch.loop': 'Boucle : le même appel a échoué {count} fois', 'watch.loop.short': 'même erreur {count} fois', 'watch.stall': 'Aucun progrès depuis {min} min', 'watch.stall.short': 'silencieuse depuis {min} min',
+    'watch.context': 'Contexte presque plein : {left} %', 'watch.context.short': 'contexte {left} %',
+    'q.dry': 'à sec {time}', 'q.reset': 'recharge {time}', 'q.label.five_hour': '5 h', 'q.label.seven_day': '7 j', 'q.aria': 'Quota {label} : {pct} % utilisés, recharge {reset}',
+    'decided.allow': 'Autorisée', 'decided.always': 'Autorisée pour toujours', 'decided.deny': 'Refusée', 'decided.answer': 'Réponse envoyée', 'decided.launch': 'Plan lancé', 'decided.revise': 'Modification demandée',
+    'decided.dismiss': 'Laissée au terminal', 'decided.retry': 'Nouvel essai autorisé', 'decided.validate': 'Validée', undo: 'Annuler', 'from.clearance': '{what} depuis clearance à {time}',
+    'palette.title': 'Nouvelle tâche', 'palette.prompt': 'Ce que la session doit faire', 'palette.name': "Nom, aussi le titre de l'onglet", browse: 'Parcourir', 'group.auto': 'auto',
+    'palette.launch': 'Lancer', 'palette.started': 'Session lancée · {name}, onglet ouvert', close: 'Fermer', home: 'Accueil', up: 'Remonter', 'use.folder': 'Prendre ce dossier',
+    'journal.title': 'Journal et règles suggérées', 'journal.decisions': 'Décisions', 'journal.rules': 'Règles à ajouter', 'journal.none': 'Aucune décision prise depuis cette page.',
+    'journal.rule': 'approuvée {count} fois dans {sessions} sessions', when: 'Quand', session: 'Session', what: 'Quoi', risk: 'Risque', action: 'Action',
+    'groups.title': 'Groupes', 'groups.hint': 'Un groupe par dossier au départ. Renomme-le pour déplacer le dossier ; un nom vide le remet dans le sien.', save: 'Enregistrer',
+    'keys.updown': 'session suivante, précédente', 'keys.a': 'autoriser', 'keys.d': 'refuser', 'keys.num': "choisir l'option", 'keys.e': 'valider', 'keys.i': 'interrompre', 'keys.r': 'écrire à la session',
+    'keys.n': 'nouvelle tâche', 'keys.t': 'terminal', 'keys.fold': 'replier la file', 'keys.k': 'rechercher',
+    'no.session': 'Choisis une session dans la file.', 'no.transcript': 'Pas encore de transcript pour cette session.', 'not.connected': 'pas reliée à clearance : réponds dans son terminal',
+    'waits.terminal': "t'attend dans son terminal", 'tab.found': 'Onglet mis au premier plan.', 'tab.missing': 'Onglet introuvable : cherche « {title} ».',
+    'err.gone': 'Déjà répondue, ou la session est passée à autre chose.', 'err.go': "Tape GO d'abord.", 'err.answer': 'Choisis une réponse pour chaque question.', 'err.start': "La session n'a pas démarré : {error}",
+    connecting: 'connexion...', offline: 'clearance ne répond pas', live: 'en direct · {n} sessions',
+  },
+}
+const SKINS = { manga: 'Manga', 'manga-dark': 'Manga sombre', pro: 'Studio pro', cockpit: 'Cockpit', suisse: 'Suisse', editorial: 'Éditorial', foret: 'Forêt', brutal: 'Néo-brutal', arcade: 'Arcade néon', phosphore: 'Phosphore', pastel: 'Pastel', contraste: 'Haut contraste' }
+const ROBOT_SKINS = ['cockpit', 'arcade', 'phosphore']
+let lang = store.get('lang', null) ?? (navigator.language?.startsWith('fr') ? 'fr' : 'en')
+let skin = store.get('skin', null) ?? (matchMedia('(prefers-color-scheme: dark)').matches ? 'manga-dark' : 'manga')
+const t = (key, vars = {}) => (I18N[lang][key] ?? I18N.en[key] ?? key).replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '')
+const ERRORS = { 'Already answered, or the session moved on.': 'err.gone', 'type GO to allow an infrastructure write': 'err.go', 'type GO to approve a plan': 'err.go' }
+const error = (message) => (ERRORS[message] ? t(ERRORS[message]) : message)
+const clock = (ms) => (ms ? new Date(ms).toLocaleTimeString(lang, { hour: '2-digit', minute: '2-digit' }) : '')
+const ago = (ms) => { const m = Math.max(0, Math.round((Date.now() - ms) / 60000)); return m < 1 ? '<1 min' : m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${m % 60}` }
+document.documentElement.lang = lang
+document.documentElement.dataset.skin = skin
+
+// ---- icons: stroke paths on a 24 px grid ----
+const RING = 'M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0'
+const ICON = {
+  bell: 'M6 16v-5a6 6 0 0 1 12 0v5l2 2H4zM10 21h4', bellOff: 'M6 16v-5a6 6 0 0 1 9.5-4.9M18 11v5l2 2H8M10 21h4M3 3l18 18', done: RING + 'M8 12l3 3 5-6',
+  work: 'M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1', alert: 'M12 4l9 16H3zM12 10v4M12 17v.01',
+  search: 'M4 11a7 7 0 1 0 14 0a7 7 0 1 0-14 0M20 20l-4-4', journal: 'M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3zM4 17a3 3 0 0 1 3-3h11', plus: 'M12 5v14M5 12h14',
+  fold: 'M11 6l-6 6 6 6M19 6l-6 6 6 6', unfold: 'M13 6l6 6-6 6M5 6l6 6-6 6', arrowUp: 'M12 19V5M6 11l6-6 6 6', trend: 'M3 7l6 6 4-4 8 8M21 11v6h-6',
+  sliders: 'M4 7h10M18 7h2M4 17h4M12 17h8M14 7a2 2 0 1 0 4 0a2 2 0 1 0-4 0M8 17a2 2 0 1 0 4 0a2 2 0 1 0-4 0', shield: 'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z',
+  verified: 'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6zM8.5 12l2.5 2.5 4.5-5', speech: 'M4 5h16v11H9l-5 4zM8 10h8M8 13h5',
+  question: RING + 'M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17.5v.01', plan: 'M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01',
+  moon: 'M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z', eye: 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM9 12a3 3 0 1 0 6 0a3 3 0 1 0-6 0',
+  eyeOff: 'M3 3l18 18M10.6 6.1A9.8 9.8 0 0 1 12 6c5 0 9 6 9 6a16 16 0 0 1-3 3.6M6.6 6.6C4.3 8.1 3 12 3 12s4 6 9 6a9 9 0 0 0 4.4-1.2M9.9 9.9a3 3 0 0 0 4.2 4.2',
+  terminal: 'M5 4h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM7 9l3 3-3 3M13 15h4', external: 'M14 4h6v6M20 4l-9 9M19 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h4',
+  handoff: 'M3 12h12M11 8l4 4-4 4M20 4v16', pause: 'M9 5v14M15 5v14', stop: 'M8 6h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z',
+  mode: 'M4 12h4l2-6 4 12 2-6h4', folder: 'M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z',
+  branch: 'M6 7v10M4 5a2 2 0 1 0 4 0a2 2 0 1 0-4 0M4 19a2 2 0 1 0 4 0a2 2 0 1 0-4 0M16 8a2 2 0 1 0 4 0a2 2 0 1 0-4 0M18 10c0 4-4 4-10 7',
+  coin: RING + 'M14.5 9.5c-.4-1-1.4-1.5-2.5-1.5-1.5 0-2.5.8-2.5 2s1 1.6 2.5 2 2.5.8 2.5 2-1 2-2.5 2c-1.1 0-2.1-.5-2.5-1.5M12 6.5v1.5M12 16v1.5',
+  chip: 'M7 7h10v10H7zM10 3v4M14 3v4M10 17v4M14 17v4M3 10h4M3 14h4M17 10h4M17 14h4', battery: 'M5 7h12a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2zM22 11v2',
+  loop: 'M4 12a8 8 0 0 1 14-5.3M20 4v4h-4M20 12a8 8 0 0 1-14 5.3M4 20v-4h4', chat: 'M4 5h16v11H9l-5 4z', diff: 'M12 4v8M8 8h8M8 18h8',
+  commit: 'M3 12h6M15 12h6M9 12a3 3 0 1 0 6 0a3 3 0 1 0-6 0', mr: 'M6 3v12M4 19a2 2 0 1 0 4 0a2 2 0 1 0-4 0M16 19a2 2 0 1 0 4 0a2 2 0 1 0-4 0M18 17V9a4 4 0 0 0-4-4H9M12 2L9 5l3 3',
+  agents: 'M6 8a3 3 0 1 0 6 0a3 3 0 1 0-6 0M3 20a6 6 0 0 1 12 0M14.5 9a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0-5 0M15.5 14.5A5 5 0 0 1 21 19', flag: 'M5 21V4M5 4h11l-2 4 2 4H5',
+  flask: 'M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8-3l-5-9V3', check: 'M5 12l5 5 9-10', checks: 'M2 12l5 5 9-10M12 16l1 1 9-10', x: 'M6 6l12 12M18 6L6 18',
+  send: 'M4 12l16-8-6 16-3-6zM11 14l9-10', play: 'M7 4l13 8-13 8z', pencil: 'M4 20l1-5L16 4l4 4L9 19z', clock: RING + 'M12 7v5l3 2',
+  next: 'M6 6l8 6-8 6zM18 6v12', now: 'M8 5l10 7-10 7z', todo: 'M12 12m-7 0a7 7 0 1 0 14 0a7 7 0 1 0-14 0', updown: 'M8 9l4-4 4 4M8 15l4 4 4-4',
+}
+function icon(name, size = 18) {
+  const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+  s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('width', size); s.setAttribute('height', size); s.setAttribute('class', 'i'); s.setAttribute('aria-hidden', 'true')
+  const p = document.createElementNS('http://www.w3.org/2000/svg', 'path'); p.setAttribute('d', ICON[name]); s.append(p)
+  return s
+}
+const btn = (cls, label, iconName, onclick, attrs = {}) => h('button', { type: 'button', class: `btn ${cls}`, title: attrs.title ?? label, 'aria-label': attrs.text ? null : label, onclick, ...attrs, text: null }, iconName ? icon(iconName, attrs.size ?? 20) : null, attrs.text ?? null)
+
+// ---- avatars (design/canvas/Chibi.dc.html, BRIEF section 4); fixed art, the same in every skin ----
 const PALETTE = [['#3D7BE0', '#1F4E9E', '#E4EDFB'], ['#8B5CF6', '#5B2FC0', '#EFE8FE'], ['#13A3A3', '#0B6B6B', '#DDF4F4'], ['#F06292', '#B0305C', '#FDE6EE'], ['#3BAA5C', '#22743A', '#E2F4E7'], ['#F08A24', '#A85A0C', '#FDEEDC'], ['#8A94A6', '#4F5869', '#ECEEF2']]
-const project = (cwd = '') => cwd.split(/[\\/]/).filter(Boolean).pop() || 'unknown'
+const folderName = (cwd = '') => cwd.split(/[\\/]/).filter(Boolean).pop() || '?'
 const colours = (name) => PALETTE[[...name].reduce((n, c) => (n * 31 + c.charCodeAt(0)) >>> 0, 7) % PALETTE.length]
-
 const NONE = 'M0 0'
 const OPEN = 'M23.3 33 a2.2 3 0 1 0 4.4 0 a2.2 3 0 1 0 -4.4 0 M36.3 33 a2.2 3 0 1 0 4.4 0 a2.2 3 0 1 0 -4.4 0'
 const WIDE = 'M22.9 33 a2.6 3.6 0 1 0 5.2 0 a2.6 3.6 0 1 0 -5.2 0 M35.9 33 a2.6 3.6 0 1 0 5.2 0 a2.6 3.6 0 1 0 -5.2 0'
 const EYES = {
   work: [OPEN, NONE], wait: [OPEN, NONE], go: [WIDE, NONE], question: [OPEN, NONE],
-  denied: [NONE, 'M23 31 L27.5 33 L23 35 M41 31 L36.5 33 L41 35'],
-  done: [NONE, 'M23 34 Q25.5 30.5 28 34 M36 34 Q38.5 30.5 41 34'],
-  sleep: [NONE, 'M23 33.5 Q25.5 35 28 33.5 M36 33.5 Q38.5 35 41 33.5'],
-  dizzy: [NONE, 'M25.5 33 m-2.6 0 a2.6 2.6 0 1 0 2.6 -2.6 a1.6 1.6 0 1 0 1.6 1.6 M38.5 33 m-2.6 0 a2.6 2.6 0 1 0 2.6 -2.6 a1.6 1.6 0 1 0 1.6 1.6'],
+  denied: [NONE, 'M23 31 L27.5 33 L23 35 M41 31 L36.5 33 L41 35'], done: [NONE, 'M23 34 Q25.5 30.5 28 34 M36 34 Q38.5 30.5 41 34'],
+  sleep: [NONE, 'M23 33.5 Q25.5 35 28 33.5 M36 33.5 Q38.5 35 41 33.5'], dizzy: [NONE, 'M25.5 33 m-2.6 0 a2.6 2.6 0 1 0 2.6 -2.6 a1.6 1.6 0 1 0 1.6 1.6 M38.5 33 m-2.6 0 a2.6 2.6 0 1 0 2.6 -2.6 a1.6 1.6 0 1 0 1.6 1.6'],
 }
 const BROWS = {
-  dizzy: 'M22.5 28.5 Q25.5 27.5 28 28.5 M36 28.5 Q38.5 27.5 41.5 28.5',
-  work: 'M22.5 28 L28 29.2 M41.5 28 L36 29.2', wait: 'M22.5 29 L28 27.8 M41.5 29 L36 27.8',
-  go: 'M22.5 27 Q25.5 25.5 28 27 M36 27 Q38.5 25.5 41.5 27', question: 'M22.5 27 Q25.5 25.5 28 27 M36 28.5 L41.5 28.5',
-  denied: 'M22.5 27.5 L28 29.8 M41.5 27.5 L36 29.8',
+  dizzy: 'M22.5 28.5 Q25.5 27.5 28 28.5 M36 28.5 Q38.5 27.5 41.5 28.5', work: 'M22.5 28 L28 29.2 M41.5 28 L36 29.2', wait: 'M22.5 29 L28 27.8 M41.5 29 L36 27.8',
+  go: 'M22.5 27 Q25.5 25.5 28 27 M36 27 Q38.5 25.5 41.5 27', question: 'M22.5 27 Q25.5 25.5 28 27 M36 28.5 L41.5 28.5', denied: 'M22.5 27.5 L28 29.8 M41.5 27.5 L36 29.8',
 }
 const MOUTH = {
-  work: [NONE, 'M30 41.5 L34 41.5'], wait: [NONE, 'M28.5 42 Q30.2 40.8 32 42 Q33.8 43.2 35.5 42'],
-  go: ['M32 39.6 a2 2.4 0 1 0 0.01 0', NONE], question: [NONE, 'M30.5 42 Q32 41 33.5 42'],
-  denied: [NONE, 'M28.5 42.5 L30.2 41 L32 42.5 L33.8 41 L35.5 42.5'],
-  done: ['M27.5 40.2 Q32 40.8 36.5 40.2 Q36 45 32 45 Q28 45 27.5 40.2 Z', NONE],
-  sleep: [NONE, 'M32 41.2 a1.1 1.1 0 1 0 0.01 0'],
-  dizzy: [NONE, 'M28.5 42 Q30.2 40.8 32 42 Q33.8 43.2 35.5 42'],
+  work: [NONE, 'M30 41.5 L34 41.5'], wait: [NONE, 'M28.5 42 Q30.2 40.8 32 42 Q33.8 43.2 35.5 42'], go: ['M32 39.6 a2 2.4 0 1 0 0.01 0', NONE], question: [NONE, 'M30.5 42 Q32 41 33.5 42'],
+  denied: [NONE, 'M28.5 42.5 L30.2 41 L32 42.5 L33.8 41 L35.5 42.5'], done: ['M27.5 40.2 Q32 40.8 36.5 40.2 Q36 45 32 45 Q28 45 27.5 40.2 Z', NONE],
+  sleep: [NONE, 'M32 41.2 a1.1 1.1 0 1 0 0.01 0'], dizzy: [NONE, 'M28.5 42 Q30.2 40.8 32 42 Q33.8 43.2 35.5 42'],
 }
 const SWEAT = '<g style="transform-box:fill-box;animation:cb-drip 1.8s ease-in infinite"><path d="M51 14.5 Q48.2 19.6 51 21.9 Q53.8 19.6 51 14.5 Z" fill="#8FD0F7" stroke="#2A6F9E"/></g>'
 const SYMBOL = {
@@ -244,285 +528,368 @@ const SYMBOL = {
   denied: '<g style="transform-box:fill-box;transform-origin:center;animation:cb-throb .9s ease-in-out infinite"><path d="M47.5 10 Q50 12.5 47.5 15 M49.5 8 Q52 10.5 54.5 8 M56.5 10 Q54 12.5 56.5 15 M49.5 17 Q52 14.5 54.5 17" stroke="#E8341C" stroke-width="2.3" fill="none" stroke-linecap="round"/></g>',
   done: '<path style="transform-box:fill-box;transform-origin:center;animation:cb-twinkle 1.4s ease-in-out infinite" d="M53 3 L54.3 7.7 L59 9 L54.3 10.3 L53 15 L51.7 10.3 L47 9 L51.7 7.7 Z" fill="#FFC21A" stroke="#141414" stroke-width=".8" stroke-linejoin="round"/><path style="transform-box:fill-box;transform-origin:center;animation:cb-twinkle 1.4s ease-in-out .7s infinite" d="M10 6 L10.8 8.7 L13.5 9.5 L10.8 10.3 L10 13 L9.2 10.3 L6.5 9.5 L9.2 8.7 Z" fill="#FFC21A" stroke="#141414" stroke-width=".7" stroke-linejoin="round"/>',
 }
-
-// The model's accessory: glasses for Opus, headphones for Sonnet, a cowlick (or an antenna) for Haiku.
 const gearOf = (model = '') => /opus/.test(model) ? 'opus' : /sonnet/.test(model) ? 'sonnet' : /haiku/.test(model) ? 'haiku' : ''
 const CHIBI_GEAR = {
   haiku: (hair) => `<path d="M31 11.5 Q33 2.5 40 4.5 Q35 5.5 33.5 11.5 Z" fill="${hair}" stroke="#141414" stroke-width="1.1" stroke-linejoin="round"/>`,
   sonnet: (hair) => `<path d="M14.5 30 Q13.5 7.5 32 7.5 Q50.5 7.5 49.5 30" stroke="#141414" stroke-width="3" fill="none" stroke-linecap="round"/><rect x="10.5" y="25.5" width="6" height="10.5" rx="2.4" fill="#141414"/><rect x="47.5" y="25.5" width="6" height="10.5" rx="2.4" fill="#141414"/><rect x="11.8" y="27.5" width="3.4" height="6.5" rx="1.4" fill="${hair}"/><rect x="48.8" y="27.5" width="3.4" height="6.5" rx="1.4" fill="${hair}"/>`,
   opus: () => '<path d="M25.5 33 m-4.8 0 a4.8 4.8 0 1 0 9.6 0 a4.8 4.8 0 1 0 -9.6 0 M38.5 33 m-4.8 0 a4.8 4.8 0 1 0 9.6 0 a4.8 4.8 0 1 0 -9.6 0" fill="rgba(255,255,255,.18)" stroke="#141414" stroke-width="1.4"/><path d="M30.3 32.5 Q32 31.5 33.7 32.5" fill="none" stroke="#141414" stroke-width="1.4"/><path d="M22 30.4 L23.6 29.2 M35 30.4 L36.6 29.2" stroke="#FFF" stroke-width="1.1" stroke-linecap="round"/>',
 }
-
-// Unknown states (an error stop, an idle session) draw a plain face with no symbol.
-// The Halloween pack: a witch's hat and a cape over the same chibi. The hair still shows the project.
 const HAT = '<path d="M20 13 Q24 -2 37 -6 Q35 2 44 13 Z" fill="#3B2A5A" stroke="#141414" stroke-width="1.3" stroke-linejoin="round"/><ellipse cx="32" cy="13.5" rx="21" ry="3.6" fill="#3B2A5A" stroke="#141414" stroke-width="1.3"/><path d="M21.6 10.6 Q32 13 42.4 10.6 L42.9 12.6 Q32 15 21.1 12.6 Z" fill="#F08A24" stroke="#141414" stroke-width=".8"/>'
 const CAPE = '<path d="M21.5 48.6 L25.8 55.5 L32 50.2 L38.2 55.5 L42.5 48.6" fill="#F08A24" stroke="#141414" stroke-width=".9" stroke-linejoin="round"/>'
-
-function chibi(state, cwd, size, bare, model, costume) {
+function chibi(state, hue, size, model, costume) {
   const gear = gearOf(model)
   const witch = costume === 'halloween'
-  const [hair, eye, tint] = colours(project(cwd))
+  const [hair, eye, tint] = hue
   const [eyesFill, eyesStroke] = EYES[state] || EYES.work
   const [mouthFill, mouthStroke] = MOUTH[state] || MOUTH.work
   const blush = ['wait', 'done', 'question'].includes(state) ? 0.75 : 0
-  return `<svg width="${size}" height="${size}" viewBox="0 0 64 64" aria-hidden="true">
-${bare ? '' : `<rect width="64" height="64" rx="16" fill="${tint}"/>`}
+  return `<svg width="${size}" height="${size}" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="${tint}"/>
 <g style="transform-box:fill-box;transform-origin:50% 100%;animation:cb-bob 2.6s ease-in-out infinite">
 <path d="M13 64 Q14 49 32 48 Q50 49 51 64 Z" fill="${witch ? '#4A2370' : '#2B2A33'}"/>
 ${witch ? CAPE : '<path d="M26.5 49 L32 55.5 L37.5 49" stroke="#FFF" stroke-width="1.6" fill="none" stroke-linejoin="round"/>'}
-<rect x="29" y="43" width="6" height="6" fill="#FFF1E4"/>
-<ellipse cx="32" cy="31.5" rx="15" ry="14.5" fill="#FFF1E4" stroke="#141414" stroke-width="1.3"/>
+<rect x="29" y="43" width="6" height="6" fill="#FFF1E4"/><ellipse cx="32" cy="31.5" rx="15" ry="14.5" fill="#FFF1E4" stroke="#141414" stroke-width="1.3"/>
 <path d="M19.1 38.5 a2.4 1.3 0 1 0 4.8 0 a2.4 1.3 0 1 0 -4.8 0 M40.1 38.5 a2.4 1.3 0 1 0 4.8 0 a2.4 1.3 0 1 0 -4.8 0" fill="#FF9DA8" opacity="${blush}"/>
 <path d="M16.5 31 Q14 11 32 10.5 Q50 11 47.5 31 L44.5 23 L40.5 27 L37 20.5 L32.5 26 L28 20 L24 26 L20.5 22 Z" fill="${hair}" stroke="#141414" stroke-width="1.3" stroke-linejoin="round"/>
-${gear === 'haiku' || gear === 'sonnet' ? CHIBI_GEAR[gear](hair) : ''}
-${witch ? HAT : ''}
-<path d="${eyesFill}" fill="${eye}"/>
-${eyesFill === NONE ? '' : '<path d="M26.4 31.4 a.85 .85 0 1 0 .01 0 M39.4 31.4 a.85 .85 0 1 0 .01 0" fill="#FFF"/>'}
+${gear === 'haiku' || gear === 'sonnet' ? CHIBI_GEAR[gear](hair) : ''}${witch ? HAT : ''}
+<path d="${eyesFill}" fill="${eye}"/>${eyesFill === NONE ? '' : '<path d="M26.4 31.4 a.85 .85 0 1 0 .01 0 M39.4 31.4 a.85 .85 0 1 0 .01 0" fill="#FFF"/>'}
 <path d="${eyesStroke}" fill="none" stroke="#141414" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="${BROWS[state] || NONE}" fill="none" stroke="#141414" stroke-width="1.5" stroke-linecap="round"/>
-${gear === 'opus' ? CHIBI_GEAR.opus() : ''}
-<path d="${mouthFill}" fill="#141414"/>
-<path d="${mouthStroke}" fill="none" stroke="#141414" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-</g>
-${SYMBOL[state] || ''}
-</svg>`
+<path d="${BROWS[state] || NONE}" fill="none" stroke="#141414" stroke-width="1.5" stroke-linecap="round"/>${gear === 'opus' ? CHIBI_GEAR.opus() : ''}
+<path d="${mouthFill}" fill="#141414"/><path d="${mouthStroke}" fill="none" stroke="#141414" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</g>${SYMBOL[state] || ''}</svg>`
 }
-
-// Robots pack: same symbols, the face is a screen and the paint is the project.
 const R_OPEN = 'M24 30 a2 2.6 0 1 0 4 0 a2 2.6 0 1 0 -4 0 M36 30 a2 2.6 0 1 0 4 0 a2 2.6 0 1 0 -4 0'
 const R_EYES = {
-  work: [R_OPEN, NONE], wait: [R_OPEN, NONE], question: [R_OPEN, NONE],
-  go: ['M23.4 30 a2.6 3.3 0 1 0 5.2 0 a2.6 3.3 0 1 0 -5.2 0 M35.4 30 a2.6 3.3 0 1 0 5.2 0 a2.6 3.3 0 1 0 -5.2 0', NONE],
-  denied: [NONE, 'M23.5 28 L28 30 L23.5 32 M40.5 28 L36 30 L40.5 32'],
-  done: [NONE, 'M23.5 31 Q26 27.5 28.5 31 M35.5 31 Q38 27.5 40.5 31'],
-  sleep: [NONE, 'M23.5 30.5 L28.5 30.5 M35.5 30.5 L40.5 30.5'],
-  dizzy: [NONE, 'M26 30 m-2.4 0 a2.4 2.4 0 1 0 2.4 -2.4 a1.4 1.4 0 1 0 1.4 1.4 M38 30 m-2.4 0 a2.4 2.4 0 1 0 2.4 -2.4 a1.4 1.4 0 1 0 1.4 1.4'],
+  work: [R_OPEN, NONE], wait: [R_OPEN, NONE], question: [R_OPEN, NONE], go: ['M23.4 30 a2.6 3.3 0 1 0 5.2 0 a2.6 3.3 0 1 0 -5.2 0 M35.4 30 a2.6 3.3 0 1 0 5.2 0 a2.6 3.3 0 1 0 -5.2 0', NONE],
+  denied: [NONE, 'M23.5 28 L28 30 L23.5 32 M40.5 28 L36 30 L40.5 32'], done: [NONE, 'M23.5 31 Q26 27.5 28.5 31 M35.5 31 Q38 27.5 40.5 31'],
+  sleep: [NONE, 'M23.5 30.5 L28.5 30.5 M35.5 30.5 L40.5 30.5'], dizzy: [NONE, 'M26 30 m-2.4 0 a2.4 2.4 0 1 0 2.4 -2.4 a1.4 1.4 0 1 0 1.4 1.4 M38 30 m-2.4 0 a2.4 2.4 0 1 0 2.4 -2.4 a1.4 1.4 0 1 0 1.4 1.4'],
 }
 const R_BROWS = {
-  dizzy: 'M23.5 25.4 Q26 24.6 28.5 25.4 M35.5 25.4 Q38 24.6 40.5 25.4',
-  work: 'M23.5 25.2 L28.5 26 M40.5 25.2 L35.5 26', wait: 'M23.5 26 L28.5 25 M40.5 26 L35.5 25',
-  go: 'M23.5 25 Q26 23.8 28.5 25 M35.5 25 Q38 23.8 40.5 25', question: 'M23.5 25 Q26 23.8 28.5 25 M35.5 25.6 L40.5 25.6',
-  denied: 'M23.5 24.6 L28.5 26.4 M40.5 24.6 L35.5 26.4',
+  dizzy: 'M23.5 25.4 Q26 24.6 28.5 25.4 M35.5 25.4 Q38 24.6 40.5 25.4', work: 'M23.5 25.2 L28.5 26 M40.5 25.2 L35.5 26', wait: 'M23.5 26 L28.5 25 M40.5 26 L35.5 25',
+  go: 'M23.5 25 Q26 23.8 28.5 25 M35.5 25 Q38 23.8 40.5 25', question: 'M23.5 25 Q26 23.8 28.5 25 M35.5 25.6 L40.5 25.6', denied: 'M23.5 24.6 L28.5 26.4 M40.5 24.6 L35.5 26.4',
 }
 const R_MOUTH = {
-  work: [NONE, 'M29.5 37 L34.5 37'], wait: [NONE, 'M28.5 37.4 Q30.2 36.2 32 37.4 Q33.8 38.6 35.5 37.4'],
-  go: ['M32 35.2 a1.8 2 0 1 0 0.01 0', NONE], question: [NONE, 'M30.5 37.4 Q32 36.6 33.5 37.4'],
-  denied: [NONE, 'M28.5 38 L30.2 36.6 L32 38 L33.8 36.6 L35.5 38'],
-  done: ['M28 35.8 Q32 36.3 36 35.8 Q35.5 39.4 32 39.4 Q28.5 39.4 28 35.8 Z', NONE],
-  sleep: [NONE, 'M32 37 a0.9 0.9 0 1 0 0.01 0'],
-  dizzy: [NONE, 'M28.5 37.4 Q30.2 36.2 32 37.4 Q33.8 38.6 35.5 37.4'],
+  work: [NONE, 'M29.5 37 L34.5 37'], wait: [NONE, 'M28.5 37.4 Q30.2 36.2 32 37.4 Q33.8 38.6 35.5 37.4'], go: ['M32 35.2 a1.8 2 0 1 0 0.01 0', NONE], question: [NONE, 'M30.5 37.4 Q32 36.6 33.5 37.4'],
+  denied: [NONE, 'M28.5 38 L30.2 36.6 L32 38 L33.8 36.6 L35.5 38'], done: ['M28 35.8 Q32 36.3 36 35.8 Q35.5 39.4 32 39.4 Q28.5 39.4 28 35.8 Z', NONE],
+  sleep: [NONE, 'M32 37 a0.9 0.9 0 1 0 0.01 0'], dizzy: [NONE, 'M28.5 37.4 Q30.2 36.2 32 37.4 Q33.8 38.6 35.5 37.4'],
 }
-
 const ROBOT_GEAR = {
   haiku: (paint) => `<g style="transform-box:fill-box;transform-origin:50% 100%;animation:cb-boing 1.3s ease-in-out infinite"><path d="M32 13.5 L32 11.6 Q35.2 10.8 32 9.8 Q28.8 8.8 32 7.8 Q35.2 6.8 32 5.8" stroke="#141414" stroke-width="1.3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="32" cy="3.6" r="2.4" fill="${paint}" stroke="#141414" stroke-width="1.1"/></g>`,
   sonnet: (paint) => `<path d="M10.5 29 Q9.5 6.5 32 6.5 Q54.5 6.5 53.5 29" stroke="#141414" stroke-width="3" fill="none" stroke-linecap="round"/><rect x="7" y="23" width="7" height="13" rx="2.6" fill="#141414"/><rect x="50" y="23" width="7" height="13" rx="2.6" fill="#141414"/><rect x="8.6" y="25.2" width="3.8" height="8.6" rx="1.4" fill="${paint}"/><rect x="51.6" y="25.2" width="3.8" height="8.6" rx="1.4" fill="${paint}"/>`,
   opus: () => '<path d="M26 30 m-5 0 a5 5 0 1 0 10 0 a5 5 0 1 0 -10 0 M38 30 m-5 0 a5 5 0 1 0 10 0 a5 5 0 1 0 -10 0" fill="rgba(255,255,255,.14)" stroke="#CFD5DF" stroke-width="1.5"/><path d="M31 29.5 Q32 28.6 33 29.5" fill="none" stroke="#CFD5DF" stroke-width="1.5"/><path d="M22.4 27.2 L24 26 M34.4 27.2 L36 26" stroke="#FFF" stroke-width="1.1" stroke-linecap="round"/>',
 }
-
-function robot(state, cwd, size, bare, model) {
+function robot(state, hue, size, model) {
   const gear = gearOf(model)
-  const [paint, , tint] = colours(project(cwd))
+  const [paint, , tint] = hue
   const [eyesFill, eyesStroke] = R_EYES[state] || R_EYES.work
   const [mouthFill, mouthStroke] = R_MOUTH[state] || R_MOUTH.work
   const blush = ['wait', 'done', 'question'].includes(state)
-  return `<svg width="${size}" height="${size}" viewBox="0 0 64 64" aria-hidden="true">
-${bare ? '' : `<rect width="64" height="64" rx="16" fill="${tint}"/>`}
+  return `<svg width="${size}" height="${size}" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="${tint}"/>
 <g style="transform-box:fill-box;transform-origin:50% 100%;animation:cb-bob 2.6s ease-in-out infinite">
-<path d="M14 64 Q15 52 32 51 Q49 52 50 64 Z" fill="#2B2A33"/>
-<path d="M24 64 L24 57 Q24 55.5 25.5 55.5 L38.5 55.5 Q40 55.5 40 57 L40 64" fill="#3A3946" stroke="#141414" stroke-width=".9"/>
-<circle cx="32" cy="59.5" r="2.1" fill="${paint}" stroke="#141414" stroke-width=".8"/>
-<rect x="28" y="45" width="8" height="7" fill="#A9B1BF" stroke="#141414"/>
-<path d="M28 47.5 L36 47.5 M28 49.8 L36 49.8" stroke="#141414" stroke-width=".6"/>
+<path d="M14 64 Q15 52 32 51 Q49 52 50 64 Z" fill="#2B2A33"/><path d="M24 64 L24 57 Q24 55.5 25.5 55.5 L38.5 55.5 Q40 55.5 40 57 L40 64" fill="#3A3946" stroke="#141414" stroke-width=".9"/>
+<circle cx="32" cy="59.5" r="2.1" fill="${paint}" stroke="#141414" stroke-width=".8"/><rect x="28" y="45" width="8" height="7" fill="#A9B1BF" stroke="#141414"/><path d="M28 47.5 L36 47.5 M28 49.8 L36 49.8" stroke="#141414" stroke-width=".6"/>
 ${gear === 'haiku' ? ROBOT_GEAR.haiku(paint) : ''}
-<rect x="9.5" y="24" width="4.5" height="11" rx="1.6" fill="#A9B1BF" stroke="#141414" stroke-width="1.1"/>
-<rect x="50" y="24" width="4.5" height="11" rx="1.6" fill="#A9B1BF" stroke="#141414" stroke-width="1.1"/>
-<rect x="13" y="13" width="38" height="33" rx="9" fill="${paint}" stroke="#141414" stroke-width="1.3"/>
-<path d="M17.5 19 Q18.5 16.3 22 16" stroke="#FFF" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".7"/>
+<rect x="9.5" y="24" width="4.5" height="11" rx="1.6" fill="#A9B1BF" stroke="#141414" stroke-width="1.1"/><rect x="50" y="24" width="4.5" height="11" rx="1.6" fill="#A9B1BF" stroke="#141414" stroke-width="1.1"/>
+<rect x="13" y="13" width="38" height="33" rx="9" fill="${paint}" stroke="#141414" stroke-width="1.3"/><path d="M17.5 19 Q18.5 16.3 22 16" stroke="#FFF" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".7"/>
 <rect x="17.5" y="20" width="29" height="21" rx="5" fill="#1C1F2B" stroke="#141414" stroke-width="1.1"/>
 ${blush ? '<path d="M19.4 35.6 L22 35.6 M42 35.6 L44.6 35.6" stroke="#FF9DA8" stroke-width="1.4" stroke-linecap="round"/>' : ''}
-<path d="${eyesFill}" fill="${tint}"/>
-<path d="${eyesStroke}" fill="none" stroke="${tint}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="${R_BROWS[state] || NONE}" fill="none" stroke="${tint}" stroke-width="1.3" stroke-linecap="round"/>
-<path d="${mouthFill}" fill="${tint}"/>
-<path d="${mouthStroke}" fill="none" stroke="${tint}" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-${gear === 'opus' || gear === 'sonnet' ? ROBOT_GEAR[gear](paint) : ''}
-</g>
-${SYMBOL[state] || ''}
-</svg>`
+<path d="${eyesFill}" fill="${tint}"/><path d="${eyesStroke}" fill="none" stroke="${tint}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="${R_BROWS[state] || NONE}" fill="none" stroke="${tint}" stroke-width="1.3" stroke-linecap="round"/><path d="${mouthFill}" fill="${tint}"/>
+<path d="${mouthStroke}" fill="none" stroke="${tint}" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>${gear === 'opus' || gear === 'sonnet' ? ROBOT_GEAR[gear](paint) : ''}
+</g>${SYMBOL[state] || ''}</svg>`
 }
-
-// An avatar pack changes the costume, never the symbols (BRIEF section 4).
-const PACKS = { manga: chibi, robots: robot, halloween: (state, cwd, size, bare, model) => chibi(state, cwd, size, bare, model, 'halloween') }
-let pack = 'manga'
-try { pack = PACKS[localStorage.getItem('clearance-pack')] ? localStorage.getItem('clearance-pack') : 'manga' } catch {}
-
-function avatar(state, cwd, size, label, bare, model) {
+const PACKS = { manga: chibi, robots: robot, halloween: (state, hue, size, model) => chibi(state, hue, size, model, 'halloween') }
+// A skin suggests a pack; a pack picked by hand wins.
+const packOf = () => store.get('pack', null) ?? (ROBOT_SKINS.includes(skin) ? 'robots' : 'manga')
+function avatar(state, s, size, label) {
   const el = h('span', label ? { class: 'avatar', role: 'img', 'aria-label': label } : { class: 'avatar', 'aria-hidden': 'true' })
-  el.innerHTML = PACKS[pack](state, cwd, size, bare, model)
+  el.innerHTML = PACKS[packOf()](state, colours(groupOf(s)), size, s?.model)
   return el
 }
 
-// ---- cards ----
-const KIND = { permission: 'Permission', plan: 'Plan approval', question: 'Question', denied: 'Blocked by auto mode' }
-const STATE = { permission: 'wait', plan: 'go', question: 'question', denied: 'denied' }
-const RISK = { read: 'read', write: 'write', infra: 'infrastructure write' }
-const MODES = [['', 'keep the mode'], ['default', 'ask'], ['acceptEdits', 'edits'], ['plan', 'plan'], ['auto', 'auto']]
-const isGo = (label = '') => /^go$/i.test(label.trim())
-const ago = (t) => {
-  const s = Math.max(0, (Date.now() - t) / 1000)
-  return s < 60 ? 'just now' : s < 3600 ? `${Math.floor(s / 60)} min ago` : `${Math.floor(s / 3600)} h ${Math.floor((s % 3600) / 60)} min ago`
+// ---- state ----
+let snap = { requests: [], sessions: [], done: [], settled: [], groups: {}, quota: null }
+let sel = null // session id shown in the pane
+let tab = 'thread'
+let folded = store.get('folded', false)
+let ignored = new Set(store.get('ignored', []))
+let muted = new Set(store.get('muted', []))
+let group = 'all'
+const pending = new Map() // request id or "read:<session>" -> { timer, label }
+const answered = new Map() // session -> trace line once a decision went out
+const sent = new Map() // session -> [{ text, status }]
+const drafts = new Map() // session -> composer text
+let detail = null, detailOf = null, detailTimer = null
+let held = null // ids shown while the queue is held under the pointer or the focus
+let toastTimer = null
+
+const sessionOf = (id) => snap.sessions.find((s) => s.sessionId === id)
+const nameOf = (s) => s?.name || folderName(s?.cwd)
+// A session not listed yet (just started, or invented by a test) is named after the folder of its request.
+const named = (id) => nameOf(sessionOf(id) ?? { cwd: [...snap.requests, ...(snap.settled ?? []), ...(snap.done ?? [])].find((r) => r.session === id)?.cwd })
+// A file under the session's folder is shown from there, any other by its last two parts.
+const rel = (file, cwd) => {
+  const f = file.replace(/\\/g, '/'), c = `${(cwd ?? '').replace(/\\/g, '/').replace(/\/$/, '')}/`
+  const short = cwd && f.toLowerCase().startsWith(c.toLowerCase()) ? f.slice(c.length) : f
+  return short.length <= 40 ? short : `…/${f.split('/').slice(-2).join('/')}`
 }
-// What a request would run, shown in full on its card (a workflow: its whole script).
-const target = (input) => input.command ?? input.file_path ?? input.notebook_path ?? input.url ?? input.pattern ?? input.script ?? input.scriptPath ?? ''
-
-function describe(suggestions) {
-  return suggestions.map((s) =>
-    s.type === 'addRules' ? (s.rules ?? []).map((r) => `${r.toolName}${r.ruleContent ? `(${r.ruleContent})` : ''}`).join(', ')
-    : s.type === 'addDirectories' ? `access to ${(s.directories ?? []).join(', ')}`
-    : s.type === 'setMode' ? `mode ${s.mode}` : s.type).join('; ')
-}
-
-let sessions = new Map()
-const nameOf = (session, cwd) => sessions.get(session)?.name || project(cwd || sessions.get(session)?.cwd)
-const modelFor = (session) => sessions.get(session)?.model
-// A session's name opens its detail.
-const link = (session, text) => h('a', { class: 'name', href: `#s=${encodeURIComponent(session)}` }, text)
-
-const BODY = {
-  permission(r, send) {
-    const infra = r.risk === 'infra'
-    const mode = h('select', { 'aria-label': 'Session mode after this answer' }, MODES.map(([v, l]) => h('option', { value: v }, l)))
-    const typed = infra ? h('input', { type: 'text', name: 'go', autocomplete: 'off', placeholder: 'type GO', 'aria-label': 'Type GO to allow an infrastructure write' }) : null
-    const reason = h('input', { type: 'text', placeholder: 'Why, for the agent (optional)', 'aria-label': 'Reason sent with a deny' })
-    const rule = r.suggestions.length > 0 && !infra
-    return [
-      h('p', { class: 'tool' }, r.tool, r.mode ? ` · mode ${r.mode}` : ''),
-      target(r.input) ? h('pre', { class: 'cmd' }, target(r.input)) : null,
-      r.input.description ? h('p', { class: 'desc' }, r.input.description) : null,
-      h('details', {}, h('summary', {}, 'Full input'), h('pre', {}, JSON.stringify(r.input, null, 2))),
-      h('div', { class: 'actions' },
-        typed,
-        h('button', { class: 'primary', 'data-go': infra, onclick: () => send({ action: 'allow', mode: mode.value || undefined, typed: typed?.value }) }, 'Allow'),
-        rule ? h('button', { title: describe(r.suggestions), onclick: () => send({ action: 'rule', mode: mode.value || undefined }) }, "Allow, don't ask again") : null,
-        h('label', { class: 'mode' }, 'then', mode)),
-      rule ? h('p', { class: 'desc' }, `Don't ask again for: ${describe(r.suggestions)}`) : null,
-      h('div', { class: 'actions' },
-        reason,
-        h('button', { onclick: () => send({ action: 'deny', reason: reason.value }) }, 'Deny'),
-        h('button', { class: 'quiet', onclick: () => send({ action: 'dismiss' }) }, 'Leave it to the terminal')),
-    ]
-  },
-
-  question(r, send, card) {
-    const qs = r.input.questions ?? []
-    const free = h('textarea', { rows: 2, placeholder: 'Or answer in your own words', 'aria-label': 'Free answer' })
-    const answers = () => Object.fromEntries(qs.map((q, i) => [q.question, [...card.querySelectorAll(`[name="r${r.id}q${i}"]:checked`)].map((x) => x.value).join(', ')]))
-    return [
-      ...qs.map((q, i) => h('fieldset', {},
-        h('legend', {}, q.header ? h('span', { class: 'chip' }, q.header) : null, ' ', q.question),
-        (q.options ?? []).map((o) => h('label', { class: 'option' },
-          h('input', { type: q.multiSelect ? 'checkbox' : 'radio', name: `r${r.id}q${i}`, value: o.label }),
-          h('span', {}, h('b', {}, o.label), o.description ? h('small', {}, o.description) : null))))),
-      free,
-      h('div', { class: 'actions' },
-        h('button', { class: 'primary', onclick: () => send(free.value.trim() ? { action: 'answer', text: free.value.trim() } : { action: 'answer', answers: answers() }) }, 'Send'),
-        h('button', { class: 'quiet', onclick: () => send({ action: 'dismiss' }) }, 'Leave it to the terminal')),
-    ]
-  },
-
-  // ponytail: a plan approval asks one question by convention; the plan itself is whatever the
-  // session put in the question and its option descriptions (its chat text comes with M2).
-  plan(r, send) {
-    const q = r.input.questions?.[0] ?? {}
-    const typed = h('input', { type: 'text', name: 'go', autocomplete: 'off', placeholder: 'type GO', 'aria-label': 'Type GO to approve the plan' })
-    return [
-      h('p', { class: 'question' }, q.question),
-      (q.options ?? []).filter((o) => o.description).map((o) => h('p', { class: 'desc' }, h('b', {}, o.label), ': ', o.description)),
-      h('div', { class: 'actions' },
-        typed,
-        (q.options ?? []).map((o) => h('button', { class: isGo(o.label) ? 'primary' : null, 'data-go': isGo(o.label), onclick: () => send({ action: 'answer', answers: { [q.question]: o.label }, typed: typed.value }) }, o.label)),
-        h('button', { class: 'quiet', onclick: () => send({ action: 'dismiss' }) }, 'Leave it to the terminal')),
-    ]
-  },
-
-  denied(r, send) {
-    return [
-      h('p', { class: 'tool' }, r.tool, r.reason ? ` · ${r.reason}` : ''),
-      target(r.input) ? h('pre', { class: 'cmd' }, target(r.input)) : null,
-      h('div', { class: 'actions' },
-        h('button', { class: 'primary', onclick: () => send({ action: 'retry' }) }, 'Let it retry'),
-        h('button', { onclick: () => send({ action: 'dismiss' }) }, 'Keep it denied')),
-    ]
-  },
+const groupOf = (s) => (s && snap.groups?.[s.cwd]) || folderName(s?.cwd)
+const left = (s) => (s?.usage?.context?.percent == null ? null : Math.max(0, Math.round(100 - s.usage.context.percent)))
+const level = (l) => (l >= 50 ? 'g' : l >= 25 ? 'y' : l >= 10 ? 'o' : 'r')
+const inGroup = (s) => group === 'all' || groupOf(s) === group
+const isHot = (r) => r.env === 'prod' || r.env === 'unknown'
+const watchOf = (s) => {
+  if (s?.watch?.kind === 'loop') return { kind: 'loop', title: t('watch.loop', { count: s.watch.count }), short: t('watch.loop.short', { count: s.watch.count }), detail: `${s.watch.tool} · ${s.watch.target}` }
+  const l = left(s)
+  if (l != null && l < 10 && s.status !== 'idle') return { kind: 'context', title: t('watch.context', { left: l }), short: t('watch.context.short', { left: l }), detail: '' }
+  if (s?.watch?.kind === 'stall') return { kind: 'stall', title: t('watch.stall', { min: s.watch.minutes }), short: t('watch.stall.short', { min: s.watch.minutes }), detail: '' }
+  return null
 }
 
-// Buttons marked data-go stay disabled until GO is typed in the card.
-function gate(card) {
-  const typed = $('input[name=go]', card)?.value.trim()
-  card.querySelectorAll('[data-go]').forEach((b) => (b.disabled = typed !== 'GO'))
+// What the queue shows, in order: waiting (hot environments first), to watch, to read, working; then
+// asleep and ignored.
+function lists() {
+  const visible = (s) => s && !ignored.has(s.sessionId) && inGroup(s)
+  const requests = snap.requests.filter((r) => !pending.has(r.id) && visible(sessionOf(r.session) ?? { sessionId: r.session, cwd: r.cwd }))
+  requests.sort((a, b) => isHot(b) - isHot(a))
+  const firstOf = new Map()
+  for (const r of requests) if (!firstOf.has(r.session)) firstOf.set(r.session, r)
+  const settled = (snap.settled ?? []).filter((r) => !firstOf.has(r.session) && visible(sessionOf(r.session) ?? { cwd: r.cwd, sessionId: r.session }))
+  const done = (snap.done ?? []).filter((d) => !pending.has(`read:${d.session}`) && !firstOf.has(d.session) && visible(sessionOf(d.session)))
+  const reading = new Set(done.map((d) => d.session))
+  const live = snap.sessions.filter((s) => visible(s) && !firstOf.has(s.sessionId) && !reading.has(s.sessionId))
+  const terminalWaits = live.filter((s) => s.status === 'waiting')
+  const watch = live.filter((s) => s.status !== 'waiting' && watchOf(s))
+  const working = live.filter((s) => s.status === 'busy' && !watchOf(s))
+  const asleep = live.filter((s) => s.status === 'idle' && s.lastActive && Date.now() - s.lastActive > 3 * 3600_000)
+  const ignoredList = snap.sessions.filter((s) => ignored.has(s.sessionId))
+  return { waiting: [...firstOf.values()], terminalWaits, settled, watch, done, working, asleep, ignored: ignoredList }
+}
+// The sessions in queue order, for j / k and for "next".
+const order = (L) => [...L.waiting.map((r) => r.session), ...L.terminalWaits.map((s) => s.sessionId), ...L.watch.map((s) => s.sessionId), ...L.done.map((d) => d.session), ...L.working.map((s) => s.sessionId)]
+
+// ---- header ----
+function renderTop() {
+  const L = lists()
+  const all = snap.sessions
+  const count = (cls, iconName, n, label) => h('span', { class: `count ${cls}`, title: label }, icon(iconName), String(n), h('span', { class: 'sr' }, label))
+  const quota = (snap.quota ?? []).filter((q) => t(`q.label.${q.kind}`) !== `q.label.${q.kind}`).map((q) => {
+    const pct = Math.round(q.percentUsed)
+    const reset = q.resetsAt ? clock(Date.parse(q.resetsAt)) : '?'
+    const dry = q.kind === 'five_hour' && snap.quotaDryAt && (!q.resetsAt || snap.quotaDryAt < Date.parse(q.resetsAt)) ? snap.quotaDryAt : null
+    const cells = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => h('i', { class: i < Math.round(pct / 10) ? `on ${i < 5 ? 'g' : i < 7 ? 'y' : i < 9 ? 'o' : 'r'}` : '' }))
+    const label = t('q.aria', { label: t(`q.label.${q.kind}`), pct, reset })
+    return h('div', { class: 'gauge', role: 'meter', 'aria-label': label, 'aria-valuemin': 0, 'aria-valuemax': 100, 'aria-valuenow': pct, title: label },
+      h('b', {}, t(`q.label.${q.kind}`)), h('span', { class: 'cells' }, cells), h('strong', {}, `${pct} %`), h('span', { class: 'meta' }, `↻ ${reset}`),
+      dry ? h('span', { class: 'pill dry' }, icon('trend', 14), t('q.dry', { time: clock(dry) })) : null)
+  })
+  fill($('#top'),
+    h('a', { class: 'logo', href: '#', 'aria-label': 'clearance', onclick: (e) => { e.preventDefault(); select(order(lists())[0] ?? null) } }, logo()),
+    h('div', { class: 'counts' },
+      count('wait', 'bell', L.waiting.length + L.terminalWaits.length, t('waiting')),
+      count('watch', 'alert', L.watch.length, t('watch')),
+      count('done', 'done', L.done.length, t('review')),
+      count('', 'work', L.working.length, t('working'))),
+    h('button', { type: 'button', class: 'btn search', onclick: openSearch, 'aria-label': t('search') }, icon('search'), h('span', {}, 'Ctrl K')),
+    h('span', { class: 'spacer' }),
+    quota,
+    btn('icon', t('settings'), 'sliders', openSettings),
+    btn('icon', t('journal'), 'journal', openJournal),
+    btn('icon primary', t('new.task'), 'plus', () => openPalette()))
 }
 
-async function post(path, body) {
-  const res = await fetch(path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) })
-  return res.ok ? null : ((await res.json().catch(() => null))?.error ?? res.statusText)
+// The logo, proposal A (a radar echo and the check of a cleared flight): fixed colours on its own tile, the
+// same in every skin (ADR-0011). The favicon is its small form, without the sweep.
+function logo() {
+  const el = h('span', { 'aria-hidden': 'true' })
+  el.innerHTML = '<svg width="176" height="44" viewBox="0 0 176 44"><rect width="176" height="44" rx="12" fill="#141414"/><g transform="translate(4 4) scale(.5625)"><path d="M32 32 L32 11 A21 21 0 0 1 50.2 21.5 Z" fill="#FFC21A" opacity=".4"/><circle cx="32" cy="32" r="21" fill="none" stroke="#FFC21A" stroke-width="5"/><path d="M22 33 L29 40 L43 24" fill="none" stroke="#FFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></g><text x="48" y="29" font-family="\'Dela Gothic One\', sans-serif" font-size="20" fill="#FFFFFF">clearance</text></svg>'
+  return el
 }
 
-function requestCard(r) {
-  const name = nameOf(r.session, r.cwd)
-  const card = h('article', { class: `card risk-${r.risk}` })
-  const error = h('p', { class: 'error', role: 'alert' })
-  const send = async (decision) => {
-    card.querySelectorAll('button').forEach((b) => (b.disabled = true))
-    error.textContent = (await post('/api/decide', { id: r.id, ...decision })) ?? ''
-    if (!error.textContent) return // the server takes the card away
-    card.querySelectorAll('button').forEach((b) => (b.disabled = false))
-    gate(card)
+// ---- queue ----
+const AVATAR = { permission: 'wait', question: 'question', plan: 'go', denied: 'denied' }
+const KIND_ICON = { permission: 'shield', question: 'question', plan: 'plan', denied: 'shield', settled: 'handoff' }
+function tag(s) {
+  const [, eye, tint] = colours(groupOf(s))
+  return h('span', { class: 'tag', style: `background:${tint};color:${eye}` }, groupOf(s))
+}
+function envLabel(r) {
+  const env = r.risk === 'infra' && r.env ? r.env : 'local'
+  const known = ['prod', 'staging', 'unknown', 'local'].includes(env)
+  return { cls: known ? env : 'staging', text: known ? t(`env.${env}`) : env.toUpperCase(), why: env === 'unknown' ? t('env.why.unknown') : env === 'local' ? t('env.why.local') : t('env.why.pattern', { env, p: r.envPattern ?? '' }) }
+}
+function cmdOf(input = {}) {
+  return input.command ?? input.file_path ?? input.url ?? input.questions?.[0]?.question ?? input.description ?? JSON.stringify(input)
+}
+function item(sessionId, avatarState, main, kindBox, extra = {}) {
+  const s = sessionOf(sessionId) ?? { sessionId, cwd: extra.cwd }
+  return h('button', { type: 'button', class: `item ${extra.cls ?? ''}`, 'aria-current': sel === sessionId ? 'true' : null, 'data-session': sessionId, onclick: () => select(sessionId) },
+    avatar(avatarState, s, extra.size ?? 40), h('span', { class: 'main' }, main), kindBox)
+}
+function row(s, at, ...rest) {
+  return h('span', { class: 'row' }, h('span', { class: 'name' }, nameOf(s)), tag(s), rest, h('span', { class: 'spacer' }), at ? h('span', { class: 'meta' }, ago(at)) : null)
+}
+function renderQueue() {
+  const L = lists()
+  const side = $('#side')
+  if (folded) {
+    const rail = (sessionId, state, dot, label) => {
+      const s = sessionOf(sessionId) ?? { sessionId }
+      return h('button', { type: 'button', class: 'btn flat', style: 'position:relative;padding:3px;min-height:0', 'aria-label': `${nameOf(s)}, ${label}`, title: `${nameOf(s)}, ${label}`, onclick: () => select(sessionId) },
+        avatar(state, s, 48), dot ? h('span', { class: `n ${dot}`, style: 'position:absolute;top:-6px;right:-6px;min-width:16px;height:16px;padding:0' }) : null)
+    }
+    side.className = 'rail'
+    fill(side, btn('icon', t('unfold'), 'unfold', () => fold(false)),
+      L.waiting.map((r) => rail(r.session, AVATAR[r.kind], 'w', t(`${r.kind === 'permission' ? 'perm' : r.kind}.kind`))),
+      L.terminalWaits.map((s) => rail(s.sessionId, 'wait', 'w', t('waits.terminal'))), h('hr'),
+      L.watch.map((s) => rail(s.sessionId, 'dizzy', 's', t('watch'))), h('hr'),
+      L.done.map((d) => rail(d.session, 'done', null, t('review'))), h('hr'),
+      L.working.map((s) => rail(s.sessionId, 'work', null, t('working'))))
+    return
   }
-  card.append(
-    h('div', { class: 'who' },
-      avatar(STATE[r.kind], r.cwd, 64, `${name}: ${KIND[r.kind].toLowerCase()}`, false, modelFor(r.session)),
-      h('div', {}, link(r.session, name), h('span', { class: 'meta' }, project(r.cwd), ' · ', h('time', { 'data-at': r.at }, ago(r.at)))),
-      h('span', { class: 'badge' }, KIND[r.kind]),
-      r.kind === 'permission' || r.kind === 'denied' ? h('span', { class: `risk ${r.risk}` }, RISK[r.risk]) : null),
-    ...BODY[r.kind](r, send, card).flat().filter(Boolean),
-    error)
-  card.addEventListener('input', () => gate(card))
-  gate(card)
-  return card
+  side.className = 'queue'
+  const groups = [...new Set(snap.sessions.map(groupOf))].sort()
+  const chip = (key, label, color) => {
+    const mine = snap.sessions.filter((s) => key === 'all' || groupOf(s) === key)
+    const w = snap.requests.filter((r) => mine.some((s) => s.sessionId === r.session)).length
+    const sw = mine.filter((s) => watchOf(s)).length
+    return h('button', { type: 'button', class: 'chip', 'aria-pressed': String(group === key), onclick: () => { group = key; render() } },
+      h('span', { class: 'dot', style: `background:${color}` }), label,
+      w ? h('span', { class: 'n w' }, w) : null, sw ? h('span', { class: 'n s' }, sw) : null,
+      !w && !sw ? h('span', { class: 'meta' }, mine.length) : null, muted.has(key) ? icon('bellOff', 14) : null)
+  }
+  const shown = new Set(L.waiting.map((r) => r.id))
+  const fresh = held ? [...shown].filter((id) => !held.has(id)) : []
+  const waiting = held ? L.waiting.filter((r) => held.has(r.id)) : L.waiting
+  fill(side,
+    h('div', { class: 'chips', role: 'group', 'aria-label': t('groups') },
+      btn('icon sm', t('fold'), 'fold', () => fold(true)),
+      chip('all', t('all'), 'var(--accent)'), groups.map((g) => chip(g, g, colours(g)[0])),
+      btn('icon sm flat', t('groups.manage'), 'sliders', openGroups)),
+    group !== 'all' ? h('div', { class: 'groupbar' }, h('b', {}, `${group} · ${t('sessions', { n: snap.sessions.filter((s) => groupOf(s) === group).length })}`),
+      btn('icon sm', muted.has(group) ? t('group.unmute') : t('group.mute'), muted.has(group) ? 'bell' : 'bellOff', () => { muted.has(group) ? muted.delete(group) : muted.add(group); store.set('muted', [...muted]); render() }),
+      btn('icon sm', t('interrupt.soon'), 'pause', null, { disabled: true })) : null,
+    h('section', { class: 'list' },
+      h('h2', { class: 'tape' }, icon('bell', 15), `${t('waiting')} · ${L.waiting.length + L.terminalWaits.length}`),
+      fresh.length ? h('button', { type: 'button', class: 'newpill', onclick: release }, icon('arrowUp', 16), t('new.one', { n: fresh.length })) : null,
+      waiting.length + L.terminalWaits.length + L.settled.length ? null : h('p', { class: 'empty' }, t('nothing.waits')),
+      waiting.map((r) => {
+        const s = sessionOf(r.session) ?? { sessionId: r.session, cwd: r.cwd }
+        const env = r.kind === 'permission' || r.kind === 'denied' ? envLabel(r) : null
+        return item(r.session, AVATAR[r.kind], [
+          row(s, r.at, env && env.cls !== 'local' ? h('span', { class: `env ${env.cls}`, title: env.why }, env.text) : null),
+          h('span', { class: `line${r.kind === 'permission' || r.kind === 'denied' ? ' mono' : ''}` }, cmdOf(r.input)),
+        ], h('span', { class: `kind ${r.kind}`, title: t(`${r.kind === 'permission' ? 'perm' : r.kind}.kind`) }, icon(KIND_ICON[r.kind], 16), h('span', { class: 'sr' }, t(`${r.kind === 'permission' ? 'perm' : r.kind}.kind`))), { cwd: r.cwd })
+      }),
+      L.terminalWaits.map((s) => item(s.sessionId, 'wait', [row(s, null), h('span', { class: 'line' }, `${t('waits.terminal')}${s.waitingFor ? ` (${s.waitingFor})` : ''}${s.connected ? '' : ` · ${t('not.connected')}`}`)], h('span', { class: 'kind settled' }, icon('terminal', 16)))),
+      L.settled.map((r) => item(r.session, 'done', [row(sessionOf(r.session) ?? { cwd: r.cwd }, r.settledAt), h('span', { class: 'line' }, t('settled.kind'))], h('span', { class: 'kind settled', title: t('settled.kind') }, icon('handoff', 16)), { cls: 'settled', cwd: r.cwd }))),
+    h('section', { class: 'list' },
+      h('h2', { class: 'tape watch' }, icon('alert', 15), `${t('watch')} · ${L.watch.length}`),
+      L.watch.map((s) => { const w = watchOf(s); return item(s.sessionId, w.kind === 'context' ? 'dizzy' : 'work', [row(s, null), h('span', { class: `watchline ${w.kind}` }, icon(w.kind === 'loop' ? 'loop' : w.kind === 'context' ? 'battery' : 'clock', 15), w.short)]) })),
+    h('section', { class: 'list' },
+      h('h2', { class: 'tape' }, icon('done', 15), `${t('review')} · ${L.done.length}`),
+      L.done.map((d) => {
+        const s = sessionOf(d.session) ?? { sessionId: d.session, cwd: d.cwd }
+        const f = s.facts ?? {}
+        return item(d.session, d.failed ? 'denied' : 'done', [row(s, d.at), h('span', { class: 'facts' },
+          h('span', { class: f.tests ? (f.tests.ok ? 'ok' : 'ko') : '' }, icon('flask', 14), ' ', f.tests ? (f.tests.ok ? t('tests.ok') : t('tests.ko')) : t('tests.none')),
+          h('span', {}, icon('diff', 14), ' ', f.files ?? 0), f.mr ? h('span', {}, icon('mr', 14), ' MR') : null),
+          h('span', { class: 'line' }, (d.message || '').split('\n')[0])])
+      })),
+    h('section', { class: 'list' },
+      h('h2', { class: 'tape' }, icon('work', 15), `${t('working')} · ${L.working.length}`),
+      L.working.map((s) => { const l = left(s); return item(s.sessionId, 'work', [row(s, null), h('span', { class: 'line' }, s.title || s.waitingFor || '')], l == null ? null : meter(l, true), { size: 36 }) })),
+    h('div', { class: 'folds' },
+      h('details', { class: 'fold' }, h('summary', { title: t('asleep') }, icon('moon'), L.asleep.length, h('span', { class: 'sr' }, t('asleep'))),
+        L.asleep.map((s) => h('div', { class: 'row', style: 'display:flex;align-items:center;gap:8px;padding:4px 0 10px' }, avatar('sleep', s, 32), h('strong', {}, nameOf(s)), h('span', { class: 'meta' }, ago(s.lastActive))))),
+      h('details', { class: 'fold' }, h('summary', { title: t('ignored') }, icon('eyeOff'), L.ignored.length, h('span', { class: 'sr' }, t('ignored'))),
+        L.ignored.map((s) => h('div', { style: 'display:flex;align-items:center;gap:8px;padding:4px 0 10px' }, avatar('sleep', s, 32), h('strong', { style: 'flex:1' }, nameOf(s)), btn('icon sm', t('unignore'), 'eye', () => setIgnored(s.sessionId, false)))))),
+    h('p', { class: 'keys', 'aria-label': 'Keyboard' },
+      [['j k', 'updown', 'keys.updown'], ['a', 'check', 'keys.a'], ['d', 'x', 'keys.d'], ['1 2 3', 'question', 'keys.num'], ['e', 'done', 'keys.e'], ['r', 'send', 'keys.r'], ['n', 'plus', 'keys.n'], ['t', 'terminal', 'keys.t'], ['[', 'fold', 'keys.fold'], ['Ctrl K', 'search', 'keys.k']]
+        .map(([k, i, label]) => h('span', { title: t(label), style: 'display:inline-flex;align-items:center;gap:4px' }, h('kbd', {}, k), icon(i, 16), h('span', { class: 'sr' }, t(label))))))
+}
+function meter(l, small) {
+  const cells = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => h('i', { class: i < Math.round(l / 10) ? `on ${level(l)}` : '' }))
+  return h('span', { class: small ? 'small-meter' : 'gauge', role: 'meter', 'aria-label': `${t('context')} ${l} %`, 'aria-valuemin': 0, 'aria-valuemax': 100, 'aria-valuenow': l, title: `${t('context')} ${l} %` },
+    small ? null : icon('battery', 20), h('span', { class: `cells${small ? ' small' : ''}` }, cells), h('strong', {}, `${l} %`))
+}
+function fold(on) { folded = on; store.set('folded', on); render() }
+function setIgnored(id, on) { on ? ignored.add(id) : ignored.delete(id); store.set('ignored', [...ignored]); render() }
+
+// New requests do not move the queue while the pointer or the focus is in it.
+function hold() { if (!held) held = new Set(lists().waiting.map((r) => r.id)) }
+function release() { held = null; renderQueue(); renderTop() }
+$('#side').addEventListener('pointerenter', hold)
+$('#side').addEventListener('pointerleave', () => { if (!$('#side').contains(document.activeElement)) release() })
+$('#side').addEventListener('focusin', hold)
+$('#side').addEventListener('focusout', (e) => { if (!$('#side').contains(e.relatedTarget) && !$('#side').matches(':hover')) release() })
+
+// ---- pane ----
+function select(id) {
+  if (sel !== id) { sel = id; tab = 'thread'; detail = null; detailOf = null }
+  renderQueue(); renderPane(); loadDetail()
+  if (id) $(`[data-session="${CSS.escape(id)}"]`)?.scrollIntoView({ block: 'nearest' })
+}
+async function loadDetail() {
+  clearTimeout(detailTimer)
+  if (!sel) return
+  const id = sel
+  try {
+    const res = await fetch(`/api/session/${encodeURIComponent(id)}`)
+    const d = res.ok ? await res.json() : null
+    if (sel !== id) return
+    const changed = JSON.stringify(d) !== JSON.stringify(detail)
+    detail = d; detailOf = id
+    if (changed) { renderThread(); renderInspector() }
+  } catch {}
+  detailTimer = setTimeout(loadDetail, 3000)
 }
 
-// ---- energy and quota (companion mod, ADR-0004) ----
-const ASLEEP_MS = 3 * 3600_000
-const QUOTA = { five_hour: '5 h', seven_day: '7 d' }
-const used = (s) => s?.usage?.context?.percent ?? 0
-// Energy is the context left; below 10 % it turns red.
-function energy(s) {
-  if (s?.usage?.context?.percent == null) return null
-  const left = Math.max(0, Math.round(100 - s.usage.context.percent))
-  return h('span', { class: `energy${left < 10 ? ' low' : ''}`, role: 'meter', 'aria-valuemin': 0, 'aria-valuemax': 100, 'aria-valuenow': left, 'aria-label': `context left: ${left} %`, title: `context left: ${left} %` },
-    h('span', { style: `width:${left}%` }))
+const requestOf = (sessionId) => lists().waiting.find((r) => r.session === sessionId) ?? snap.requests.find((r) => r.session === sessionId && !pending.has(r.id))
+function renderPane() {
+  const pane = $('#pane')
+  const s = sessionOf(sel)
+  if (!sel || (!s && !requestOf(sel) && !answered.has(sel))) {
+    fill(pane, h('p', { class: 'blank' }, t('no.session')))
+    return
+  }
+  const view = s ?? { sessionId: sel, cwd: requestOf(sel)?.cwd }
+  const l = left(view)
+  const r = requestOf(sel)
+  fill(pane,
+    h('div', { class: 'head' },
+      avatar(r ? AVATAR[r.kind] : view.status === 'busy' ? 'work' : view.status === 'waiting' ? 'wait' : 'done', view, 56),
+      h('div', { class: 'who' },
+        h('div', { class: 'title' }, h('h1', {}, nameOf(view)),
+          h('button', { type: 'button', class: 'chip', title: t('group.change'), onclick: () => openGroups(view.cwd) }, h('span', { class: 'dot', style: `background:${colours(groupOf(view))[0]}` }), groupOf(view), ' ▾'),
+          view.model ? h('span', { class: 'badge', title: t('model') }, view.model.replace(/^claude-/, '')) : null,
+          view.permissionMode || detail?.mode ? h('span', { class: 'badge', title: t('mode') }, icon('mode', 14), view.permissionMode || detail.mode) : null),
+        h('div', { class: 'metas' },
+          view.cwd ? h('span', { title: t('folder') }, icon('folder', 15), view.cwd) : null,
+          view.branch || detail?.branch ? h('span', { title: t('branch') }, icon('branch', 15), view.branch || detail.branch) : null)),
+      h('span', { class: 'spacer' }),
+      l == null ? null : meter(l, false),
+      h('div', { class: 'actions' },
+        btn('icon', t('interrupt.soon'), 'pause', null, { disabled: true }),
+        btn('icon', t('open.tab'), 'external', focusTab),
+        btn('icon', t('ignore'), 'eyeOff', () => { setIgnored(sel, true); select(order(lists())[0] ?? null) }),
+        btn('icon danger', t('stop.soon'), 'stop', null, { disabled: true }))),
+    h('div', { class: 'split' },
+      h('div', { class: 'center' },
+        h('div', { class: 'tabs', role: 'tablist' },
+          [['thread', 'chat'], ['terminal', 'terminal']].map(([k, i]) => h('button', { type: 'button', class: 'tab', role: 'tab', 'aria-selected': String(tab === k), onclick: () => { tab = k; renderPane() } }, icon(i), t(k)))),
+        h('div', { id: 'view', class: tab === 'thread' ? 'thread' : 'term' }),
+        composer(view)),
+      h('aside', { class: 'inspector', id: 'inspector', 'aria-label': t('task') })))
+  renderThread(); renderInspector()
 }
 
-// ---- board ----
-const cards = new Map() // request id -> card, kept so a half-typed answer survives updates
-const doneCards = new Map() // session@end of turn -> card, same reason for a half-typed reply
-let first = true
-
-// Sessions ignored from this browser: out of Done, Working and Asleep, listed under Ignored. Their
-// requests still show in Waiting, so that none stalls unseen.
-// ponytail: by session id, so a relaunched session shows again; by folder if that gets tedious.
-let ignored = new Set()
-try { ignored = new Set(JSON.parse(localStorage.getItem('clearance-ignored') ?? '[]')) } catch {}
-function ignore(id, on) {
-  if (on) ignored.add(id)
-  else ignored.delete(id)
-  try { localStorage.setItem('clearance-ignored', JSON.stringify([...ignored])) } catch {}
-  if (lastSnap) render(lastSnap)
+async function focusTab() {
+  const res = await fetch('/api/focus', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ session: sel }) }).catch(() => null)
+  const out = res ? await res.json().catch(() => ({})) : {}
+  toast(out.found ? t('tab.found') : t('tab.missing', { title: (out.titles ?? []).join(' / ') }), 'external')
 }
 
-// A session's text with its light Markdown made readable: headings, bold, code and bullets. Built as
-// nodes, never as HTML: the text comes from the session.
-// ponytail: line by line, no nesting, tables or links; a Markdown parser if sessions need more.
+// What ran: prompts, the assistant's text with its light Markdown, tool calls and how they ended.
 function prose(text) {
   return text.split('\n').map((line, i) => {
     const head = /^#{1,6}\s+(.*)$/.exec(line)
@@ -531,361 +898,385 @@ function prose(text) {
     return [i ? '\n' : null, head ? h('b', { class: 'heading' }, parts) : parts]
   })
 }
-
-// A finished turn: its last message in full, and a reply the companion mod types into the session,
-// which then turns busy and leaves Done on its own.
-function doneCard(d) {
-  const name = nameOf(d.session, d.cwd)
-  const text = h('textarea', { rows: 2, 'aria-label': `Reply to ${name}`, placeholder: 'Reply, sent to the session as if you typed it' })
-  const status = h('p', { class: 'meta', role: 'status' })
-  return h('article', { class: 'card' },
-    h('div', { class: 'who' },
-      avatar(d.failed ? 'stopped' : 'done', d.cwd, 56, `${name}: ${d.failed ? 'stopped on error' : 'done'}`, false, modelFor(d.session)),
-      h('div', {}, link(d.session, name), h('span', { class: 'meta' }, project(d.cwd), ' · ', h('time', { 'data-at': d.at }, ago(d.at)))),
-      d.failed ? h('span', { class: 'risk infra' }, 'stopped on error') : null),
-    d.message ? h('div', { class: 'message' }, prose(d.message)) : null,
-    h('form', {
-      class: 'instruct',
-      onsubmit: async (e) => {
-        e.preventDefault()
-        const error = await post('/api/instruct', { session: d.session, text: text.value })
-        if (!error) text.value = ''
-        status.textContent = error ?? instructText(sessions.get(d.session), true)
-      },
-    }, text, h('div', { class: 'actions' },
-      h('button', { class: 'primary', type: 'submit' }, 'Reply'),
-      h('button', { type: 'button', onclick: () => post('/api/read', { session: d.session }) }, 'Mark as read'),
-      h('button', { type: 'button', class: 'quiet', onclick: () => ignore(d.session, true) }, 'Ignore')), status))
+function renderThread() {
+  const view = $('#view')
+  if (!view) return
+  const items = detailOf === sel ? (detail?.thread ?? []) : []
+  if (tab === 'terminal') {
+    const lines = [`claude · ${named(sel)}`, '']
+    for (const x of items) {
+      if (x.kind === 'user') lines.push(`> ${x.text}`, '')
+      else if (x.kind === 'text') lines.push(`● ${x.text}`, '')
+      else lines.push(`● ${x.tool}(${x.target})`, `  ⎿  ${x.out ?? ''}`, '')
+    }
+    fill(view, h('header', {}, `claude · ${named(sel)} · ${t('terminal.note')}`), h('pre', {}, lines.join('\n')))
+    return
+  }
+  const stick = view.scrollHeight - view.scrollTop - view.clientHeight < 60
+  const s = sessionOf(sel)
+  const w = s && watchOf(s)
+  fill(view,
+    w ? h('div', { class: `alert ${w.kind}`, role: 'alert' }, icon(w.kind === 'loop' ? 'loop' : w.kind === 'context' ? 'battery' : 'clock', 24),
+      h('div', {}, h('strong', { style: 'display:block' }, w.title), w.detail ? h('code', {}, w.detail) : null),
+      btn('primary', t('interrupt.soon'), 'pause', null, { disabled: true, text: t('interrupt') })) : null,
+    detailOf === sel && !detail ? h('p', { class: 'empty' }, t('no.transcript')) : null,
+    items.map((x) => x.kind === 'user' ? h('div', { class: 'bubble' }, h('div', {}, x.text))
+      : x.kind === 'text' ? h('p', { class: 'said' }, prose(x.text))
+      : h('div', { class: `tool${x.error ? ' bad' : ''}` }, h('b', {}, `${x.error ? '✗' : '✓'} ${x.tool}`), h('code', {}, x.target), x.out ? h('span', {}, `→ ${x.out.split('\n')[0]}`) : null)),
+    (sent.get(sel) ?? []).map((m) => h('div', { class: 'bubble' }, h('div', {}, m.text), h('span', { class: 'meta' }, m.status))),
+    answered.has(sel) ? h('p', { class: 'trace' }, icon('check', 16), answered.get(sel)) : null,
+    decisionCard(),
+    s?.status === 'busy' && !w ? h('p', { class: 'working' }, h('i'), s.title || t('working')) : null)
+  if (stick) view.scrollTop = view.scrollHeight
 }
 
-function notify(r) {
-  if (first || !('Notification' in window) || Notification.permission !== 'granted') return
-  const what = (target(r.input) || r.input.questions?.[0]?.question || r.tool).slice(0, 200)
-  new Notification(`${nameOf(r.session, r.cwd)}: ${KIND[r.kind].toLowerCase()}`, { body: what, tag: `clearance-${r.id}` })
+// ---- decision cards ----
+const MODES = ['', 'default', 'acceptEdits', 'plan', 'auto']
+const isGo = (label = '') => /^go$/i.test(label.trim())
+function decisionCard() {
+  const r = requestOf(sel)
+  const settled = !r && (snap.settled ?? []).find((x) => x.session === sel)
+  if (settled) return h('article', { class: 'card settledcard' }, h('strong', {}, icon('handoff', 18), ' ', t('settled.note', { time: clock(settled.settledAt) })), h('code', {}, cmdOf(settled.input)))
+  const done = !r && (snap.done ?? []).find((d) => d.session === sel && !pending.has(`read:${sel}`))
+  if (done) return reviewCard(done)
+  if (!r) return null
+  const L = lists()
+  const queue = order(L)
+  const next = queue[queue.indexOf(sel) + 1] ?? queue.find((x) => x !== sel)
+  const head = (kind, extra) => h('div', { class: 'top-row' }, extra, h('span', { class: 'meta', title: t('since') }, icon('clock', 15), ' ', ago(r.at)), h('span', { class: 'spacer' }),
+    next ? h('span', { class: 'meta', title: t('next', { name: named(next) }) }, icon('next', 15), ' ', named(next)) : null)
+  const decide = (body, label) => queueDecision(r, body, label, next)
+  if (r.kind === 'permission' || r.kind === 'denied') {
+    const env = envLabel(r)
+    const infra = r.risk === 'infra'
+    const go = infra ? h('input', { class: 'field go', name: 'go', autocomplete: 'off', spellcheck: 'false', placeholder: t('go.ph'), 'aria-label': t('go.label'), oninput: () => { allow.disabled = go.value.trim().toUpperCase() !== 'GO' } }) : null
+    const mode = h('select', { class: 'field', 'aria-label': t('mode.after') }, MODES.map((m) => h('option', { value: m }, t(m ? `mode.${m}` : 'mode.keep'))))
+    const reason = h('input', { class: 'field grow', placeholder: t('why'), 'aria-label': t('why') })
+    const typed = () => (go ? go.value.trim().toUpperCase() : undefined)
+    const allow = r.kind === 'denied'
+      ? h('button', { type: 'button', class: 'btn primary', onclick: () => decide({ action: 'retry' }, 'retry') }, icon('check'), t('retry'))
+      : h('button', { type: 'button', class: 'btn primary', 'data-key': 'a', disabled: infra, title: `${t('allow')}  a`, onclick: () => decide({ action: 'allow', mode: mode.value || undefined, typed: typed() }, 'allow') }, icon('check'), t('allow'))
+    const rule = r.kind === 'permission' && !infra && r.suggestions?.length
+    return h('article', { class: `card${isHot(r) ? ' hot' : ''}`, 'aria-label': t(r.kind === 'denied' ? 'denied.kind' : 'perm.kind') },
+      head(r.kind, [h('span', { class: `bigenv env ${env.cls}`, title: env.why }, env.text), h('span', { class: 'classbadge' }, icon('shield', 14), t(`risk.${r.risk}`))]),
+      h('pre', { class: 'cmd' }, cmdOf(r.input)),
+      h('div', { class: 'boxes' },
+        h('div', { class: 'box checked' }, h('strong', {}, icon('verified', 16), t('checked')),
+          h('span', {}, h('span', { class: 'meta' }, t('tool')), ' ', h('b', {}, r.tool), r.cwd ? [' · ', h('span', { class: 'meta' }, t('folder')), ' ', h('b', {}, folderName(r.cwd))] : null),
+          h('span', {}, h('span', { class: 'meta' }, t('environment')), ' ', h('b', {}, env.why))),
+        r.input?.description || r.reason ? h('div', { class: 'box claimed' }, h('strong', {}, icon('speech', 16), t('claimed')), h('span', {}, r.input?.description || r.reason)) : null),
+      h('div', { class: 'actions' }, go, allow,
+        rule ? h('button', { type: 'button', class: 'btn', title: t('always.title', { rule: describe(r.suggestions) }), onclick: () => decide({ action: 'rule', mode: mode.value || undefined }, 'always') }, icon('checks'), t('always')) : null,
+        r.kind === 'permission' ? h('label', { title: t('mode.after'), style: 'display:inline-flex;align-items:center;gap:6px' }, icon('mode'), h('span', { class: 'sr' }, t('mode.after')), mode) : null,
+        h('span', { class: 'spacer' }), r.kind === 'permission' ? reason : null,
+        r.kind === 'permission'
+          ? h('button', { type: 'button', class: 'btn danger', 'data-key': 'd', title: `${t('deny')}  d`, onclick: () => decide({ action: 'deny', reason: reason.value }, 'deny') }, icon('x'), t('deny'))
+          : h('button', { type: 'button', class: 'btn danger', 'data-key': 'd', onclick: () => decide({ action: 'dismiss' }, 'dismiss') }, icon('x'), t('keep.denied')),
+        r.kind === 'permission' ? btn('icon quiet', t('to.terminal'), 'handoff', () => decide({ action: 'dismiss' }, 'dismiss')) : null))
+  }
+  const qs = r.input?.questions ?? []
+  if (r.kind === 'plan') {
+    const q = qs[0] ?? {}
+    const go = h('input', { class: 'field go', name: 'go', autocomplete: 'off', spellcheck: 'false', placeholder: t('go.ph'), 'aria-label': t('go.label'), oninput: () => { launch.disabled = go.value.trim().toUpperCase() !== 'GO' } })
+    const yes = (q.options ?? []).find((o) => isGo(o.label))
+    const no = (q.options ?? []).find((o) => !isGo(o.label))
+    const launch = h('button', { type: 'button', class: 'btn primary', 'data-key': 'a', disabled: true, onclick: () => decide({ action: 'answer', answers: { [q.question]: yes?.label ?? 'GO' }, typed: go.value.trim().toUpperCase() }, 'launch') }, icon('play'), t('launch'))
+    const change = h('input', { class: 'field grow', placeholder: t('revise'), 'aria-label': t('revise') })
+    return h('article', { class: 'card', 'aria-label': t('plan.kind') },
+      head('plan', h('span', { class: 'kind plan' }, icon('plan', 16))),
+      h('p', { style: 'margin:0;font-weight:800;font-size:18px' }, q.question),
+      (q.options ?? []).filter((o) => o.description).map((o) => h('p', { class: 'said' }, h('b', {}, o.label), ': ', prose(o.description))),
+      h('div', { class: 'actions' }, go, launch, h('span', { class: 'spacer' }), change,
+        h('button', { type: 'button', class: 'btn', 'data-key': 'd', onclick: () => decide(change.value.trim() ? { action: 'answer', text: change.value.trim() } : no ? { action: 'answer', answers: { [q.question]: no.label } } : { action: 'deny' }, 'revise') }, icon('pencil'), t('revise')),
+        btn('icon quiet', t('to.terminal'), 'handoff', () => decide({ action: 'dismiss' }, 'dismiss'))))
+  }
+  // A question: options numbered for the keyboard, or a free answer.
+  const free = h('input', { class: 'field grow', placeholder: t('other.answer'), 'aria-label': t('other.answer') })
+  let n = 0
+  const sets = qs.map((q, qi) => h('fieldset', {}, h('legend', {}, h('span', { class: 'kind question' }, icon('question', 16)), q.question),
+    (q.options ?? []).map((o) => { n += 1; return h('label', { class: 'option' }, h('kbd', {}, n), h('input', { type: q.multiSelect ? 'checkbox' : 'radio', name: `q${r.id}-${qi}`, value: o.label, 'data-option': n }), h('span', {}, h('b', {}, o.label), o.description ? h('small', {}, o.description) : null)) })))
+  const card = h('article', { class: 'card', 'aria-label': t('question.kind') }, head('question', null), sets,
+    h('div', { class: 'actions' }, free,
+      h('button', { type: 'button', class: 'btn primary', 'data-key': 'a', onclick: () => {
+        if (free.value.trim()) return decide({ action: 'answer', text: free.value.trim() }, 'answer')
+        const answers = Object.fromEntries(qs.map((q, qi) => [q.question, [...card.querySelectorAll(`[name="q${r.id}-${qi}"]:checked`)].map((x) => x.value).join(', ')]))
+        if (Object.values(answers).some((a) => !a)) return toast(t('err.answer'), 'alert')
+        decide({ action: 'answer', answers }, 'answer')
+      } }, icon('send'), t('send')),
+      btn('icon quiet', t('to.terminal'), 'handoff', () => decide({ action: 'dismiss' }, 'dismiss'))))
+  return card
+}
+function describe(suggestions = []) {
+  return suggestions.flatMap((s) => (s.rules ?? []).map((r) => (r.ruleContent ? `${r.toolName}(${r.ruleContent})` : r.toolName))).join(', ') || '?'
+}
+function reviewCard(d) {
+  const s = sessionOf(d.session) ?? {}
+  const f = s.facts ?? {}
+  const files = detailOf === sel ? (detail?.files ?? []) : []
+  const plus = files.reduce((n, x) => n + x.plus, 0), minus = files.reduce((n, x) => n + x.minus, 0)
+  return h('article', { class: 'card review', 'aria-label': t('review') },
+    h('strong', { style: 'display:inline-flex;align-items:center;gap:8px;font-size:12px;letter-spacing:.05em;text-transform:uppercase' }, icon('verified', 16), t('facts')),
+    h('div', { class: 'actions' },
+      h('span', { class: `pill ${f.tests ? (f.tests.ok ? 'ok' : 'ko') : 'none'}`, title: f.tests?.summary ?? '' }, icon('flask', 16), f.tests ? (f.tests.ok ? t('tests.ok') : t('tests.ko')) : t('tests.none')),
+      h('span', { class: 'pill none' }, icon('diff', 16), t('files', { n: f.files ?? files.length }), plus || minus ? [' · ', h('span', { class: 'plus' }, `+${plus}`), ' ', h('span', { class: 'minus' }, `-${minus}`)] : null),
+      h('span', { class: 'pill none' }, icon('commit', 16), t('commits', { n: f.commits ?? 0 })),
+      f.mr ? h('a', { class: 'pill none', href: f.mr, target: '_blank', rel: 'noopener' }, icon('mr', 16), 'MR') : null),
+    h('div', { class: 'actions' },
+      h('button', { type: 'button', class: 'btn primary', 'data-key': 'e', title: `${t('validate')}  e`, onclick: () => queueRead(d) }, icon('check'), t('validate')),
+      h('button', { type: 'button', class: 'btn', onclick: () => { drafts.set(sel, t('fix.text')); renderPane(); $('#composer')?.focus() } }, icon('pencil'), t('fix')),
+      btn('icon', t('diff'), 'eye', () => { tab = 'thread'; $('#inspector')?.scrollIntoView() })))
 }
 
-function render(snap) {
-  sessions = new Map(snap.sessions.map((s) => [s.sessionId, s]))
-
-  const ids = new Set(snap.requests.map((r) => r.id))
-  for (const [id, card] of cards) if (!ids.has(id)) { card.remove(); cards.delete(id) }
-  const list = $('#waiting .cards')
-  snap.requests.forEach((r, i) => {
-    let card = cards.get(r.id)
-    if (!card) { card = requestCard(r); cards.set(r.id, card); notify(r) }
-    if (list.children[i] !== card) list.insertBefore(card, list.children[i] ?? null)
+// Every answer waits 5 s before it leaves, so that it can be taken back; the next request opens at once.
+function queueDecision(r, body, label, next) {
+  const id = r.id
+  pending.set(id, { timer: setTimeout(async () => {
+    pending.delete(id)
+    const err = await post('/api/decide', { id, ...body })
+    if (err) { answered.delete(r.session); toast(error(err), 'alert'); render(); return }
+  }, 5000) })
+  answered.set(r.session, t('from.clearance', { what: t(`decided.${label}`), time: clock(Date.now()) }))
+  toast(`${t(`decided.${label}`)} · ${named(r.session)}`, 'check', () => {
+    clearTimeout(pending.get(id)?.timer); pending.delete(id); answered.delete(r.session); select(r.session)
   })
-  // Sessions waiting on something clearance does not hold: answer them in their terminal.
-  const held = new Set(snap.requests.map((r) => r.session))
-  const elsewhere = snap.sessions.filter((s) => s.status === 'waiting' && !held.has(s.sessionId))
-  $('#waiting .terminal').replaceChildren(...elsewhere.map((s) => h('p', { class: 'terminal-wait' },
-    avatar('wait', s.cwd, 36, null, false, s.model), h('span', {}, link(s.sessionId, s.name || project(s.cwd)),
-      ` waits for you in its terminal${s.waitingFor ? ` (${s.waitingFor})` : ''}`,
-      s.connected ? '' : h('span', { class: 'meta' }, ': not connected to clearance, answer it there')))))
-  $('#waiting .empty').hidden = snap.requests.length + elsewhere.length > 0
+  select(next && next !== r.session ? next : r.session)
+}
+function queueRead(d) {
+  const key = `read:${d.session}`
+  const L = lists(), queue = order(L)
+  const next = queue[queue.indexOf(d.session) + 1] ?? queue.find((x) => x !== d.session)
+  pending.set(key, { timer: setTimeout(() => { pending.delete(key); post('/api/read', { session: d.session }) }, 5000) })
+  toast(`${t('decided.validate')} · ${named(d.session)}`, 'check', () => { clearTimeout(pending.get(key)?.timer); pending.delete(key); select(d.session) })
+  select(next ?? d.session)
+}
 
-  const done = snap.done.filter((d) => !ignored.has(d.session))
-  const turns = new Set(done.map((d) => `${d.session}@${d.at}`))
-  for (const [k, card] of doneCards) if (!turns.has(k)) { card.remove(); doneCards.delete(k) }
-  const doneList = $('#done .cards')
-  done.forEach((d, i) => {
-    const k = `${d.session}@${d.at}`
-    if (!doneCards.has(k)) doneCards.set(k, doneCard(d))
-    const card = doneCards.get(k)
-    if (doneList.children[i] !== card) doneList.insertBefore(card, doneList.children[i] ?? null)
+// ---- composer: written as if typed in the session, delivered by its companion mod ----
+function composer(s) {
+  const id = s.sessionId
+  const fresh = s.usage && Date.now() - s.usage.at < 30_000
+  const r = requestOf(id)
+  const delivery = !fresh ? t('delivery.nomod') : s.status === 'busy' ? t('delivery.busy') : r ? t('delivery.waits') : t('delivery.ready')
+  const area = h('textarea', { id: 'composer', class: 'field', rows: 2, 'aria-label': t('write.to', { name: nameOf(s) }), placeholder: t('write.to', { name: nameOf(s) }), value: drafts.get(id) ?? '',
+    oninput: () => drafts.set(id, area.value), onkeydown: (e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); submit() } } })
+  async function submit() {
+    const text = area.value.trim()
+    if (!text) return
+    const err = await post('/api/instruct', { session: id, text })
+    if (err) return toast(error(err), 'alert')
+    drafts.delete(id)
+    const list = sent.get(id) ?? []
+    list.push({ text, status: s.status === 'busy' ? t('sent.busy', { time: clock(Date.now()) }) : t('sent.ready', { time: clock(Date.now()) }) })
+    sent.set(id, list)
+    area.value = ''
+    renderThread()
+  }
+  return h('div', { class: 'composer' },
+    h('div', { class: 'row' }, area, h('button', { type: 'button', class: 'btn icon primary send', 'aria-label': t('send'), title: `${t('send')}  Ctrl Enter`, onclick: submit }, icon('send', 22))),
+    h('span', { class: 'meta', style: 'display:inline-flex;align-items:center;gap:6px' }, icon('clock', 14), delivery))
+}
+
+// ---- inspector: the task, the plan, files, tests, agents, cost ----
+function renderInspector() {
+  const box = $('#inspector')
+  if (!box) return
+  const s = sessionOf(sel) ?? {}
+  const d = detailOf === sel ? detail : null
+  const prompts = d?.prompts ?? []
+  const todos = Array.isArray(d?.todos) ? d.todos : []
+  const run = (d?.runs ?? []).at(-1)
+  const steps = todos.length ? todos.map((x) => ({ text: x.content, state: x.status === 'completed' ? 'done' : x.status === 'in_progress' ? 'now' : 'todo' }))
+    : run?.phases?.length ? run.phases.map((p) => ({ text: p, state: p === run.current ? 'now' : run.phases.indexOf(p) < run.phases.indexOf(run.current) ? 'done' : 'todo' })) : []
+  const files = d?.files ?? []
+  const agents = [...(d?.agents ?? []), ...(run?.agents ?? [])].filter((a) => a.running || a.errors)
+  const f = s.facts ?? {}
+  const usd = s.usage?.cost?.usd
+  const section = (iconName, title, ...body) => h('section', {}, h('h3', {}, icon(iconName, 16), title), body)
+  const model = h('select', { class: 'field', 'aria-label': t('model.next'), title: t('model.next'), onchange: async () => {
+    const err = await post('/api/instruct', { session: sel, text: `/model ${model.value}` })
+    toast(err ? error(err) : `${t('model.next')} · ${model.value}`, err ? 'alert' : 'chip')
+  } }, ['', 'fable', 'opus', 'sonnet', 'haiku'].map((m) => h('option', { value: m, selected: m && (s.model ?? '').includes(m) ? true : null }, m || '·')))
+  fill(box,
+    section('flag', t('task'), h('p', { style: 'margin:0;font-size:15px;line-height:1.45' }, prompts.at(-1)?.text ?? s.title ?? '')),
+    steps.length ? section('plan', t('plan'), steps.map((x) => h('div', { class: `step ${x.state}` }, icon(x.state === 'done' ? 'check' : x.state === 'now' ? 'now' : 'todo', 16), h('span', {}, x.text)))) : null,
+    section('diff', `${t('files', { n: files.length })}`, files.length ? files.slice(-20).map((x) => h('div', { class: 'file', title: x.file }, h('code', {}, rel(x.file, s.cwd)), h('span', { class: 'plus' }, `+${x.plus}`), h('span', { class: 'minus' }, `-${x.minus}`))) : h('span', { class: 'meta' }, '·')),
+    section('flask', t('tests'), h('span', { class: `pill ${f.tests ? (f.tests.ok ? 'ok' : 'ko') : 'none'}`, style: 'align-self:flex-start' }, f.tests ? `${f.tests.ok ? t('tests.ok') : t('tests.ko')}${f.tests.summary ? ` · ${f.tests.summary}` : ''}` : t('tests.none'))),
+    agents.length ? section('agents', `${t('agents')} · ${agents.length}`, agents.map((a) => h('div', { class: 'agent' }, avatar(a.errors >= 3 ? 'dizzy' : 'work', { ...s, model: a.model }, 28), h('b', {}, a.label), h('span', { class: a.errors >= 3 ? 'loop' : 'meta' }, a.running ? '…' : a.errors ? `✗ ${a.errors}` : '')))) : null,
+    section('coin', t('cost'), h('span', {}, h('strong', {}, usd != null ? `${usd.toFixed(2)} $` : '·'), ' ', h('span', { class: 'meta' }, s.usage?.rate ? t('cost.rate', { usd: `${s.usage.rate.toFixed(2)} $` }) : t('at.rest'))),
+      h('label', { style: 'display:flex;align-items:center;gap:8px' }, icon('chip', 16), model)))
+}
+
+// ---- overlays: new task, search, groups, journal, settings ----
+function overlay(...content) {
+  const layer = h('div', { class: 'overlay', onclick: (e) => { if (e.target === layer) close() } }, h('div', { class: 'dialog', role: 'dialog', 'aria-modal': 'true' }, content))
+  $('#layer').replaceChildren(layer)
+  return layer
+}
+const close = () => $('#layer').replaceChildren()
+const dialogHead = (iconName, title) => h('div', { class: 'row' }, h('h2', {}, icon(iconName, 22), title), btn('icon sm', t('close'), 'x', close))
+
+function openPalette() {
+  const recent = [...new Set(snap.sessions.map((s) => s.cwd).filter(Boolean))]
+  const st = { folder: store.get('cwd', recent[0] ?? ''), model: 'sonnet', mode: 'auto' }
+  const text = h('textarea', { class: 'field', rows: 3, placeholder: t('palette.prompt'), 'aria-label': t('palette.prompt') })
+  const name = h('input', { class: 'field grow', 'aria-label': t('palette.name'), placeholder: t('palette.name') })
+  const folders = h('div', { class: 'row', role: 'group', 'aria-label': t('folder') })
+  const picker = h('div', { class: 'row', hidden: true })
+  const groupLine = h('span', { class: 'meta' })
+  const seg = (list, key, label) => h('div', { class: 'seg', role: 'group', 'aria-label': label }, list.map(([v, l]) => h('button', { type: 'button', 'aria-pressed': String(st[key] === v), onclick: (e) => { st[key] = v; e.target.parentNode.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === e.target))) } }, l)))
+  const autoName = () => `${folderName(st.folder).toLowerCase().replace(/[^\w.-]/g, '-').slice(0, 30)}-${Math.random().toString(16).slice(2, 4)}`
+  const drawFolders = () => {
+    fill(folders, icon('folder'), [...new Set([st.folder, ...recent].filter(Boolean))].slice(0, 8).map((p) => h('button', { type: 'button', class: 'folder', 'aria-pressed': String(p === st.folder), title: p, onclick: () => { st.folder = p; name.value = autoName(); drawFolders() } }, h('span', { class: 'dot', style: `background:${colours(snap.groups?.[p] || folderName(p))[0]}` }), folderName(p))),
+      btn('icon sm quiet', t('browse'), 'search', () => browse(st.folder)))
+    groupLine.textContent = st.folder ? `${snap.groups?.[st.folder] || folderName(st.folder)} · ${t('group.auto')}` : ''
+  }
+  async function browse(path) {
+    picker.hidden = false
+    const res = await fetch(`/api/folders?path=${encodeURIComponent(path ?? '')}`)
+    const at = await res.json().catch(() => ({}))
+    if (!res.ok) return fill(picker, h('span', {}, error(at.error ?? '')), btn('sm', t('home'), null, () => browse(''), { text: t('home') }))
+    fill(picker, at.drives.map((d) => btn('sm', d, null, () => browse(d), { text: d })), at.parent ? btn('sm', t('up'), 'arrowUp', () => browse(at.parent), { text: t('up') }) : null, h('code', {}, at.path),
+      h('div', { class: 'row', style: 'width:100%' }, at.folders.map((f) => btn('sm', f, null, () => browse(`${at.path.replace(/[\\/]$/, '')}${at.path.includes('\\') ? '\\' : '/'}${f}`), { text: f }))),
+      btn('primary sm', t('use.folder'), 'check', () => { st.folder = at.path; name.value = autoName(); picker.hidden = true; drawFolders() }, { text: t('use.folder') }))
+  }
+  const error_ = h('p', { class: 'meta', role: 'status' })
+  name.value = autoName()
+  drawFolders()
+  const go = async () => {
+    const err = await post('/api/start', { cwd: st.folder, name: name.value.trim(), model: st.model, mode: st.mode, prompt: text.value.trim() || undefined })
+    if (err) { error_.textContent = t('err.start', { error: error(err) }); return }
+    store.set('cwd', st.folder)
+    close()
+    toast(t('palette.started', { name: name.value.trim() }), 'play')
+  }
+  overlay(dialogHead('plus', t('palette.title')), text, folders, picker,
+    h('div', { class: 'row' }, groupLine, name),
+    h('div', { class: 'row' }, seg([['fable', 'fable'], ['opus', 'opus'], ['sonnet', 'sonnet'], ['haiku', 'haiku']], 'model', t('model')), seg([['default', t('mode.default')], ['auto', t('mode.auto')], ['plan', t('mode.plan')], ['acceptEdits', t('mode.acceptEdits')]], 'mode', t('mode'))),
+    h('div', { class: 'row' }, h('button', { type: 'button', class: 'btn primary', onclick: go }, icon('play'), t('palette.launch')), h('kbd', {}, 'Ctrl ⏎'), error_))
+  text.addEventListener('keydown', (e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) go() })
+  text.focus()
+}
+
+function openSearch() {
+  const input = h('input', { class: 'field', style: 'width:100%', placeholder: t('search'), 'aria-label': t('search') })
+  const hits = h('div', { class: 'hits', role: 'listbox' })
+  const commands = [[t('new.task'), 'plus', () => openPalette()], [t('journal'), 'journal', openJournal], [t('groups.manage'), 'sliders', () => openGroups()], [t('settings'), 'sliders', openSettings], [folded ? t('unfold') : t('fold'), 'fold', () => { close(); fold(!folded) }]]
+  let found = [], at = 0
+  const draw = () => {
+    const q = input.value.toLowerCase()
+    const sessions = snap.sessions.filter((s) => `${nameOf(s)} ${s.cwd} ${s.title ?? ''} ${groupOf(s)}`.toLowerCase().includes(q)).map((s) => [nameOf(s), null, () => { close(); select(s.sessionId) }, s])
+    found = [...sessions, ...commands.filter(([l]) => l.toLowerCase().includes(q))]
+    at = Math.min(at, Math.max(0, found.length - 1))
+    hits.replaceChildren(...found.map(([label, i, run, s], k) => h('button', { type: 'button', class: 'hit', role: 'option', 'aria-selected': String(k === at), onclick: run }, s ? avatar('done', s, 28) : icon(i), h('b', {}, label), s ? h('span', { class: 'meta' }, s.cwd) : null)))
+  }
+  input.addEventListener('input', () => { at = 0; draw() })
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') { at = Math.min(at + 1, found.length - 1); draw(); e.preventDefault() }
+    if (e.key === 'ArrowUp') { at = Math.max(at - 1, 0); draw(); e.preventDefault() }
+    if (e.key === 'Enter') found[at]?.[2]()
   })
-  $('#done .empty').hidden = done.length > 0
-
-  const busy = snap.sessions.filter((s) => s.status === 'busy' && !ignored.has(s.sessionId))
-  $('#working .crew').replaceChildren(...busy.map((s) => h('div', { class: 'worker' },
-    avatar(used(s) >= 90 ? 'dizzy' : 'work', s.cwd, 64, `${s.name || project(s.cwd)}: working${s.agents ? ` with ${s.agents} subagents` : ''}`, false, s.model),
-    energy(s),
-    link(s.sessionId, s.name || project(s.cwd)),
-    h('span', { class: 'meta' }, project(s.cwd)),
-    s.agents ? h('div', { class: 'clones' }, Array.from({ length: Math.min(s.agents, 5) }, () => avatar('work', s.cwd, 24, null, true)), s.agents > 5 ? `+${s.agents - 5}` : null) : null)))
-  $('#working .empty').hidden = busy.length > 0
-
-  // Idle for hours and not waiting to be read: candidates to close.
-  const unread = new Set(snap.done.map((d) => d.session))
-  const asleep = snap.sessions.filter((s) => s.status === 'idle' && !ignored.has(s.sessionId) && !unread.has(s.sessionId) && s.lastActive && Date.now() - s.lastActive > ASLEEP_MS)
-  $('#asleep .crew').replaceChildren(...asleep.map((s) => h('div', { class: 'worker' },
-    avatar('sleep', s.cwd, 56, `${s.name || project(s.cwd)}: asleep`, false, s.model),
-    link(s.sessionId, s.name || project(s.cwd)),
-    h('span', { class: 'meta' }, `idle ${span(Date.now() - s.lastActive)}`))))
-  $('#asleep').hidden = asleep.length === 0 || location.hash.length > 1
-
-  const shunned = snap.sessions.filter((s) => ignored.has(s.sessionId))
-  $('#ignored .crew').replaceChildren(...shunned.map((s) => h('div', { class: 'worker' },
-    avatar(s.status === 'busy' ? 'work' : s.status === 'waiting' ? 'wait' : 'sleep', s.cwd, 56, `${s.name || project(s.cwd)}: ignored, ${s.status}`, false, s.model),
-    link(s.sessionId, s.name || project(s.cwd)),
-    h('span', { class: 'meta' }, s.status),
-    h('button', { type: 'button', 'aria-label': `Stop ignoring ${s.name || project(s.cwd)}`, onclick: () => ignore(s.sessionId, false) }, 'Unignore'))))
-  $('#ignored').hidden = shunned.length === 0 || location.hash.length > 1
-
-  const q = (snap.quota ?? []).filter((r) => QUOTA[r.kind])
-  $('#quota').hidden = q.length === 0
-  $('#quota').textContent = q.map((r) => `${QUOTA[r.kind]} ${Math.round(r.percentUsed)} %`).join(' · ')
-  $('#quota').title = q.map((r) => `${QUOTA[r.kind]} window resets ${r.resetsAt ? new Date(r.resetsAt).toLocaleString() : 'later'}`).join('\n')
-
-  const waiting = snap.requests.length
-  document.title = waiting ? `(${waiting}) clearance` : 'clearance'
-  $('#status').textContent = `live · ${snap.sessions.length} session${snap.sessions.length === 1 ? '' : 's'}`
-  first = false
+  overlay(input, hits)
+  draw()
+  input.focus()
 }
 
-// ---- session detail (BRIEF section 3) ----
-const short = (model = '') => model.replace(/^claude-/, '').replace(/-(\d+)-(\d+)$/, ' $1.$2')
-const span = (ms) => {
-  const s = Math.round(ms / 1000)
-  return s < 60 ? `${s} s` : s < 3600 ? `${Math.round(s / 60)} min` : `${Math.floor(s / 3600)} h ${Math.round((s % 3600) / 60)} min`
-}
-const between = (a, b) => (a && b ? span(Date.parse(b) - Date.parse(a)) : '')
-const clock = (t) => (t ? new Date(t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '')
-// A path inside the session's folder, shown relative to it.
-const inside = (file = '', cwd = '') => {
-  const f = file.replace(/\\/g, '/'), c = cwd.replace(/\\/g, '/').replace(/\/$/, '')
-  return c && f.toLowerCase().startsWith(c.toLowerCase() + '/') ? f.slice(c.length + 1) : file
-}
-const RUN_STATUS = { completed: 'closed', running: 'running', interrupted: 'interrupted', ended: 'ended without closure' }
-
-function agentCard(a, cwd) {
-  const state = a.running ? 'work' : a.result !== undefined ? 'done' : 'stopped'
-  return h('div', { class: `agent${a.running ? ' running' : ''}` },
-    h('div', { class: 'who' },
-      avatar(state, cwd, 44, `${a.label}: ${a.running ? 'running' : 'finished'}`, true, a.model),
-      h('div', {}, h('strong', {}, a.label), h('span', { class: 'meta' }, [a.type, short(a.model)].filter(Boolean).join(' · ')))),
-    h('span', { class: 'meta' },
-      [a.running ? `running for ${between(a.start, new Date().toISOString())}` : between(a.start, a.end), `${a.tools} tool call${a.tools === 1 ? '' : 's'}`].filter(Boolean).join(' · '),
-      a.errors ? h('span', { class: 'bad' }, ` · ${a.errors} in error`) : null),
-    a.result ? h('p', { class: 'result' }, a.result) : null)
+function openGroups(focusCwd) {
+  const folders = [...new Set(snap.sessions.map((s) => s.cwd).filter(Boolean))]
+  const rows = folders.map((cwd) => {
+    const input = h('input', { class: 'field grow', value: snap.groups?.[cwd] ?? '', placeholder: folderName(cwd), 'aria-label': cwd })
+    return [cwd, input, h('div', { class: 'row' }, h('span', { class: 'dot', style: `background:${colours(snap.groups?.[cwd] || folderName(cwd))[0]}` }), h('code', { style: 'flex:1 1 300px' }, cwd), input)]
+  })
+  overlay(dialogHead('sliders', t('groups.title')), h('p', { class: 'meta', style: 'margin:0' }, t('groups.hint')), rows.map((x) => x[2]),
+    h('div', { class: 'row' }, h('button', { type: 'button', class: 'btn primary', onclick: async () => {
+      for (const [cwd, input] of rows) if ((snap.groups?.[cwd] ?? '') !== input.value.trim()) await post('/api/group', { cwd, group: input.value.trim() })
+      close()
+    } }, icon('check'), t('save'))))
+  ;(rows.find((x) => x[0] === focusCwd)?.[1] ?? rows[0]?.[1])?.focus()
 }
 
-// Phases the workflow declares: done in ink, the current one in yellow, those still to come dashed.
-function runView(run, cwd) {
-  const phases = [...run.phases]
-  for (const a of run.agents) if (a.phase && !phases.includes(a.phase)) phases.push(a.phase)
-  const live = run.status === 'running'
-  const ran = new Set(run.agents.map((a) => a.phase))
-  const of = (p) => run.agents.filter((a) => a.phase === p)
-  return [
-    h('p', { class: 'meta' }, `${run.name} · ${RUN_STATUS[run.status] ?? run.status} · started ${clock(run.start)}`, run.durationMs ? ` · ${span(run.durationMs)}` : ''),
-    phases.length ? h('div', { class: 'phases' }, phases.map((p) => h('span', { class: `phase ${live && p === run.current ? 'now' : ran.has(p) ? 'past' : 'next'}` }, p))) : null,
-    h('h4', {}, run.current ? `${live ? 'Now' : 'Last'}: ${run.current}` : 'Agents'),
-    h('div', { class: 'agents' }, (run.current ? of(run.current) : run.agents).map((a) => agentCard(a, cwd))),
-    phases.filter((p) => p !== run.current && of(p).length).map((p) =>
-      h('details', {}, h('summary', {}, `${p} · ${of(p).length} agent${of(p).length === 1 ? '' : 's'}`), h('div', { class: 'agents' }, of(p).map((a) => agentCard(a, cwd))))),
-  ]
-}
-
-function renderDetail(id, d, error) {
-  const back = h('a', { class: 'back', href: '#' }, 'Back to the board')
-  if (!d) return $('#detail-body').replaceChildren(back, h('p', { class: 'error' }, error || 'Nothing to show.'))
-  const s = sessions.get(id)
-  const cwd = s?.cwd
-  const name = s?.name || project(cwd)
-  const state = s?.status === 'waiting' ? 'wait' : s?.status === 'busy' ? (used(s) >= 90 ? 'dizzy' : 'work') : 'idle'
-  instructState(s)
-  const last = d.steps.at(-1)
-  const run = d.runs.at(-1)
-  const section = (title, ...body) => h('section', { class: 'card' }, h('h3', {}, title), body)
-  const thread = [...d.prompts.map((p) => ({ at: p.at, prompt: p.text })), ...d.steps.map((step) => ({ at: step.at, step }))]
-    .sort((a, b) => String(a.at).localeCompare(String(b.at))).slice(-80)
-  // Keep what the user unfolded across refreshes.
-  const open = new Set([...document.querySelectorAll('#detail details[open] > summary')].map((x) => x.textContent))
-  const usage = s?.usage
-  $('#detail-body').replaceChildren(h('div', {},
-    back,
-    h('div', { class: 'card head' },
-      h('div', {}, avatar(state, cwd, 96, name, false, d.model), energy(s)),
-      h('div', { class: 'grow' },
-        h('h2', {}, d.title || name),
-        h('div', { class: 'chips' }, [
-          name, d.branch && `branch ${d.branch}`, short(d.model), d.mode && `mode ${d.mode}`, s?.status ?? 'not running',
-          usage?.context?.percent != null && `context ${Math.round(usage.context.percent)} % used`,
-          usage?.cost && `$${usage.cost.usd.toFixed(2)}`,
-        ].filter(Boolean).map((c) => h('span', { class: 'chip' }, c))),
-        last ? h('p', { class: 'meta' }, `Last: ${[last.tool, last.target, clock(last.at)].filter(Boolean).join(' · ')}`) : null,
-        s ? h('div', { class: 'actions' }, h('button', { onclick: goTo(id) }, 'Go to terminal'), h('span', { class: 'meta', id: 'focus-status', role: 'status' })) : null)),
-    run ? section('Workflow', runView(run, cwd)) : null,
-    d.agents.length ? section('Subagents', h('div', { class: 'agents' }, d.agents.map((a) => agentCard(a, cwd)))) : null,
-    d.loops.length || d.errors.length ? section('Errors and loops',
-      d.loops.map((l) => h('p', { class: 'bad' }, `${l.count} failures in a row: ${l.tool} · ${l.target}`)),
-      d.errors.slice(-15).reverse().map((e) => h('details', {}, h('summary', {}, `${clock(e.at)} ${[e.tool, e.target].filter(Boolean).join(' · ')}`), h('pre', {}, e.error ?? '')))) : null,
-    d.edits.length ? section('Changes',
-      d.edits.slice(-30).reverse().map((e) => h('details', {},
-        h('summary', {}, `${clock(e.at)} ${inside(e.file, cwd)}${e.agent ? ` · ${e.agent}` : ''}`),
-        e.before ? h('pre', { class: 'del' }, e.before) : null,
-        e.after ? h('pre', { class: 'add' }, e.after) : null))) : null,
-    section('What ran', h('div', { class: 'thread' }, thread.map((x) => x.prompt
-      ? h('p', { class: 'bubble' }, x.prompt)
-      : h('p', { class: `step${x.step.error ? ' bad' : ''}` }, `${clock(x.at)} ${[x.step.tool, x.step.target].filter(Boolean).join(' · ')}`)))),
-    d.runs.length > 1 ? section('Workflow history', h('div', { class: 'scroll' }, h('table', {},
-      h('thead', {}, h('tr', {}, ['Workflow', 'Started', 'Duration', 'Status', 'Agents'].map((t) => h('th', {}, t)))),
-      h('tbody', {}, [...d.runs].reverse().map((r) => h('tr', {},
-        h('td', {}, r.name), h('td', {}, r.start ? new Date(r.start).toLocaleString() : ''), h('td', {}, r.durationMs ? span(r.durationMs) : ''),
-        h('td', {}, RUN_STATUS[r.status] ?? r.status), h('td', {}, r.agents.length))))))) : null))
-  document.querySelectorAll('#detail details > summary').forEach((x) => { if (open.has(x.textContent)) x.parentElement.open = true })
-}
-
-let detailTimer
-let detailKey = ''
-async function loadDetail(id) {
-  try {
-    const res = await fetch(`/api/session/${encodeURIComponent(id)}`)
-    const body = await res.json().catch(() => ({ error: res.statusText }))
-    const key = JSON.stringify([body, sessions.get(id)])
-    if (key === detailKey) return
-    detailKey = key
-    // A session that has not run a turn yet has no transcript: show what the board knows.
-    const fresh = res.status === 404 && sessions.has(id) ? { prompts: [], steps: [], edits: [], errors: [], loops: [], runs: [], agents: [], model: sessions.get(id).model } : null
-    renderDetail(id, res.ok ? body : fresh, body.error)
-  } catch {}
-}
-
-// Brings the session's Windows Terminal tab to the front, or says which tab to look for.
-const goTo = (id) => async (e) => {
-  const res = await fetch('/api/focus', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ session: id }) })
-  const body = await res.json().catch(() => ({}))
-  const status = $('#focus-status')
-  if (status) status.textContent = !res.ok ? (body.error ?? res.statusText) : body.found ? 'Tab brought to the front.' : `Tab not found: look for "${body.titles?.join('" or "')}".`
-}
-
-// Kept outside the refreshed part of the detail, so that typing survives updates.
-function instructForm(id) {
-  const text = h('textarea', { rows: 2, 'aria-label': 'Instruction for this session', placeholder: 'Sent to the session as if you typed it' })
-  const status = h('p', { class: 'meta', id: 'instruct-status', role: 'status' })
-  return h('form', {
-    class: 'card instruct',
-    onsubmit: async (e) => {
-      e.preventDefault()
-      const error = await post('/api/instruct', { session: id, text: text.value })
-      if (error) return void (status.textContent = error)
-      text.value = ''
-    },
-  }, h('h3', {}, 'Send an instruction'), text, h('div', { class: 'actions' }, h('button', { class: 'primary', type: 'submit' }, 'Send')), status)
-}
-
-// What the companion mod did with the last instruction, or why one would wait.
-function instructState(s) {
-  const status = $('#instruct-status')
-  if (status) status.textContent = instructText(s)
-}
-
-// sent: just queued, before the next snapshot shows it.
-function instructText(s, sent) {
-  const fresh = s?.usage && Date.now() - s.usage.at < 30_000
-  const i = s?.instruction
-  return sent ? (fresh ? 'Sent: it reaches the session within 5 s.' : 'Queued: no companion mod is running in this session, answer it in its terminal.')
-    : i?.delivered ? `Last instruction delivered at ${clock(i.delivered)}.`
-    : i ? `Queued at ${clock(i.at)}${fresh ? ', delivered within 5 s.' : ': no companion mod is running in this session.'}`
-    : fresh ? 'The companion mod runs in this session: an instruction arrives within 5 s.'
-    : 'No companion mod runs in this session: an instruction would wait for one.'
-}
-
-async function loadJournal() {
-  $('#journal').replaceChildren(h('p', { class: 'empty' }, 'Reading the journal and your approvals...'))
+async function openJournal() {
+  const body = h('div', {}, '…')
+  const layer = overlay(dialogHead('journal', t('journal.title')), body)
+  layer.firstChild.classList.add('wide')
   const res = await fetch('/api/journal')
-  const j = await res.json().catch(() => ({ error: res.statusText }))
-  if (!res.ok) return $('#journal').replaceChildren(h('p', { class: 'error' }, j.error))
-  const copy = (rule) => (e) => navigator.clipboard?.writeText(JSON.stringify(rule)).then(() => (e.target.textContent = 'Copied'))
-  const what = (d) => d.kind === 'decision' ? [d.request, d.tool, d.target].filter(Boolean).join(' · ') : d.kind === 'instruction' ? `instruction: ${d.text}` : 'instruction delivered'
-  $('#journal').replaceChildren(h('div', {},
-    h('a', { class: 'back', href: '#' }, 'Back to the board'),
-    h('section', { class: 'card' }, h('h3', {}, 'Suggested rules'),
-      h('p', { class: 'desc' }, 'What you approved by hand at least three times, from your transcripts. Copy the rules you want into permissions.allow in your settings: clearance never writes them, and never suggests one for an infrastructure write.'),
-      j.rules.length ? j.rules.map((r) => h('div', { class: 'rule' },
-        h('div', { class: 'actions' }, h('code', {}, r.rule), h('button', { onclick: copy(r.rule) }, 'Copy')),
-        h('span', { class: 'meta' }, `${r.count} approvals in ${r.sessions} session${r.sessions === 1 ? '' : 's'}, last on ${new Date(r.last).toLocaleDateString()}`),
-        h('pre', {}, r.example))) : h('p', { class: 'empty' }, 'Nothing approved often enough yet.')),
-    h('section', { class: 'card' }, h('h3', {}, 'Decisions taken here'),
-      j.decisions.length ? h('div', { class: 'scroll' }, h('table', {},
-        h('thead', {}, h('tr', {}, ['When', 'Session', 'What', 'Risk', 'Answer'].map((t) => h('th', {}, t)))),
-        h('tbody', {}, j.decisions.map((d) => h('tr', {},
-          h('td', {}, new Date(d.at).toLocaleString()), h('td', {}, nameOf(d.session, d.cwd)), h('td', {}, what(d)), h('td', {}, d.risk ?? ''), h('td', {}, d.action ?? ''))))))
-        : h('p', { class: 'empty' }, 'No decision taken from this page yet.'))))
+  const j = await res.json().catch(() => ({ decisions: [], rules: [] }))
+  const what = (d) => d.kind === 'decision' ? [d.request, d.tool, d.target].filter(Boolean).join(' · ') : d.kind === 'instruction' ? d.text : d.kind
+  fill(body,
+    h('h3', {}, t('journal.rules')),
+    j.rules.length ? j.rules.map((r) => h('p', {}, h('code', {}, r.rule), ' ', h('span', { class: 'meta' }, t('journal.rule', r)))) : h('p', { class: 'empty' }, '·'),
+    h('h3', {}, t('journal.decisions')),
+    j.decisions.length ? h('div', { style: 'overflow-x:auto' }, h('table', {}, h('thead', {}, h('tr', {}, [t('when'), t('session'), t('what'), t('risk'), t('action')].map((x) => h('th', {}, x)))),
+      h('tbody', {}, j.decisions.map((d) => h('tr', {}, h('td', {}, new Date(d.at).toLocaleString(lang)), h('td', {}, d.name || named(d.session)), h('td', {}, what(d)), h('td', {}, d.risk ? t(`risk.${d.risk}`) : ''), h('td', {}, d.action ?? '')))))) : h('p', { class: 'empty' }, t('journal.none')))
 }
 
-// #s=<session id> shows that session, #journal the journal; anything else, the board.
-let lastSnap
-function route() {
-  const id = /^#s=([\w-]+)$/.exec(location.hash)?.[1]
-  const journalView = location.hash === '#journal'
-  clearInterval(detailTimer)
-  detailKey = ''
-  $('#detail').hidden = !id
-  $('#journal').hidden = !journalView
-  for (const sel of ['.columns', '#asleep', '#ignored']) $(sel).hidden = !!(id || journalView)
-  scrollTo(0, 0)
-  if (journalView) return void loadJournal()
-  if (!id) return lastSnap && render(lastSnap)
-  $('#detail').replaceChildren(h('div', { id: 'detail-body' }, h('p', { class: 'empty' }, 'Reading the session...')), instructForm(id))
-  loadDetail(id)
-  detailTimer = setInterval(() => loadDetail(id), 3000)
-}
-addEventListener('hashchange', route)
-route()
-
-setInterval(() => document.querySelectorAll('time[data-at]').forEach((t) => (t.textContent = ago(Number(t.dataset.at)))), 15_000)
-
-const notifyButton = $('#notify')
-if ('Notification' in window && Notification.permission === 'default') {
-  notifyButton.hidden = false
-  notifyButton.onclick = () => Notification.requestPermission().then(() => (notifyButton.hidden = true))
+function openSettings() {
+  const pick = (label, value, options, onchange) => h('label', {}, label, h('select', { class: 'field', onchange: (e) => onchange(e.target.value) }, Object.entries(options).map(([v, l]) => h('option', { value: v, selected: v === value ? true : null }, l))))
+  overlay(dialogHead('sliders', t('settings')), h('div', { class: 'menu' },
+    pick(t('skin'), skin, SKINS, (v) => { skin = v; store.set('skin', v); document.documentElement.dataset.skin = v; render() }),
+    pick(t('lang'), lang, { en: 'English', fr: 'Français' }, (v) => { lang = v; store.set('lang', v); document.documentElement.lang = v; post('/api/prefs', { lang: v }); close(); render() }),
+    pick(t('pack'), packOf(), { manga: 'Manga', robots: 'Robots', halloween: 'Halloween' }, (v) => { store.set('pack', v); render() }),
+    'Notification' in window ? h('button', { type: 'button', class: 'btn', disabled: Notification.permission !== 'default', onclick: () => Notification.requestPermission().then(close) }, icon('bell'), Notification.permission === 'granted' ? t('notify.on') : t('notify')) : null))
 }
 
-// ponytail: switching packs reloads the page rather than redrawing the cards in place.
-const names = Object.keys(PACKS)
-const other = names[(names.indexOf(pack) + 1) % names.length]
-$('#pack').textContent = `Avatars: ${other}`
-$('#pack').onclick = () => {
-  try { localStorage.setItem('clearance-pack', other) } catch {}
-  location.reload()
+// ---- toast: what was just done, with a way back while it shows ----
+function toast(text, iconName, undo) {
+  clearTimeout(toastTimer)
+  const box = h('div', { class: 'toast', role: 'status' }, icon(iconName, 20), h('span', {}, text),
+    undo ? h('button', { type: 'button', class: 'undo', onclick: () => { undo(); $('#toast').replaceChildren() } }, t('undo')) : null, h('i'))
+  $('#toast').replaceChildren(box)
+  toastTimer = setTimeout(() => $('#toast').replaceChildren(), 5000)
 }
 
-// Start a session in a new Windows Terminal tab; the folder is remembered in this browser.
-const startForm = $('form.start')
-const field = startForm.elements // form.name would be the form's own name
-try { field.cwd.value = localStorage.getItem('clearance-cwd') ?? '' } catch {}
-
-// + Start a session, in the header, opens the form at the top of the page.
-$('#new').onclick = (e) => {
-  const open = $('#start').hidden
-  $('#start').hidden = !open
-  e.currentTarget.setAttribute('aria-expanded', open)
-  if (open) field.cwd.focus()
-}
-
-// Folder picker: the server lists sub-folders; recent folders are those of the live sessions and the
-// last one started from here.
-const picker = $('.picker', startForm)
-async function browse(path) {
-  const res = await fetch(`/api/folders?path=${encodeURIComponent(path ?? '')}`)
-  const at = await res.json().catch(() => ({ error: res.statusText }))
-  if (!res.ok) return picker.replaceChildren(h('p', { class: 'error' }, at.error), h('button', { type: 'button', onclick: () => browse('') }, 'Home'))
-  const go = (label, to, title) => h('button', { type: 'button', title, onclick: () => browse(to) }, label)
-  const recent = [...new Set([field.cwd.value, ...[...sessions.values()].map((s) => s.cwd)].filter(Boolean))]
-  picker.replaceChildren(
-    recent.length ? h('div', { class: 'actions' }, h('span', { class: 'meta' }, 'Recent'), recent.map((p) => go(project(p), p, p))) : null,
-    h('div', { class: 'actions' }, at.drives.map((d) => go(d, d)), at.parent ? go('Up', at.parent, at.parent) : null, h('code', {}, at.path)),
-    h('div', { class: 'folders' }, at.folders.length ? at.folders.map((f) => go(f, `${at.path.replace(/[\\/]$/, '')}${at.path.includes('\\') ? '\\' : '/'}${f}`)) : h('span', { class: 'meta' }, 'No folder here.')),
-    h('div', { class: 'actions' }, h('button', { type: 'button', class: 'primary', onclick: () => { field.cwd.value = at.path; picker.hidden = true } }, 'Use this folder')))
-}
-$('#browse').onclick = () => {
-  picker.hidden = !picker.hidden
-  if (!picker.hidden) browse(field.cwd.value.trim())
-}
-startForm.onsubmit = async (e) => {
+// ---- keyboard ----
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openSearch(); return }
+  if (e.key === 'Escape') { close(); return }
+  const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName ?? '')
+  if (typing || e.ctrlKey || e.metaKey || e.altKey || $('#layer').childElementCount) return
+  const queue = order(lists())
+  const click = (key) => $(`#pane [data-key="${key}"]`)
+  if (e.key === 'j' || e.key === 'k') { const i = queue.indexOf(sel); select(queue[Math.max(0, Math.min(queue.length - 1, i + (e.key === 'j' ? 1 : -1)))] ?? queue[0] ?? null) }
+  else if (e.key === 'a') { const go = $('#pane input[name=go]'); go && go.value.trim().toUpperCase() !== 'GO' ? go.focus() : click('a')?.click() }
+  else if (e.key === 'd') click('d')?.click()
+  else if (e.key === 'e') click('e')?.click()
+  else if (/^[1-9]$/.test(e.key)) $(`#pane [data-option="${e.key}"]`)?.click()
+  else if (e.key === 'r') $('#composer')?.focus()
+  else if (e.key === 'n') openPalette()
+  else if (e.key === 't') { tab = tab === 'thread' ? 'terminal' : 'thread'; renderPane() }
+  else if (e.key === '[') fold(!folded)
+  else return
   e.preventDefault()
-  const status = $('[role=status]', startForm)
-  const name = field.name.value.trim()
-  const error = await post('/api/start', { cwd: field.cwd.value.trim(), name, model: field.model.value, mode: field.mode.value, connect: field.connect.checked })
-  status.textContent = error ?? `Started: the tab "${name}" opened in Windows Terminal.`
-  if (!error) try { localStorage.setItem('clearance-cwd', field.cwd.value.trim()) } catch {}
+})
+
+// ---- updates ----
+let seen = new Set()
+function notify(fresh) {
+  if (!('Notification' in window) || Notification.permission !== 'granted' || !seen.size) return
+  for (const r of fresh) {
+    const s = sessionOf(r.session)
+    if (muted.has(groupOf(s ?? { cwd: r.cwd }))) continue
+    new Notification(`${nameOf(s ?? { cwd: r.cwd })}: ${t(`${r.kind === 'permission' ? 'perm' : r.kind}.kind`)}`, { body: String(cmdOf(r.input)).slice(0, 200), tag: `clearance-${r.id}` })
+  }
 }
+function render() { renderTop(); renderQueue(); if (!$('#pane').contains(document.activeElement) || !document.activeElement.matches('input, textarea, select')) renderPane() }
 
 const events = new EventSource('/events')
-events.onmessage = (e) => render((lastSnap = JSON.parse(e.data)))
-events.onerror = () => ($('#status').textContent = 'connection lost, retrying...')
+events.onmessage = (e) => {
+  const before = JSON.stringify(requestOf(sel) ?? null)
+  snap = JSON.parse(e.data)
+  if (snap.lang && !store.get('lang', null) && snap.lang !== lang && I18N[snap.lang]) { lang = snap.lang; document.documentElement.lang = lang }
+  const fresh = snap.requests.filter((r) => !seen.has(r.id))
+  notify(fresh)
+  seen = new Set(snap.requests.map((r) => r.id).concat(seen.size ? [...seen] : ['start']))
+  if (!sel) sel = order(lists())[0] ?? null
+  renderTop(); renderQueue()
+  // The pane is redrawn when what it shows changed, not under the user's typing.
+  const typing = $('#pane').contains(document.activeElement) && document.activeElement.matches('input, textarea, select')
+  if (!typing && (JSON.stringify(requestOf(sel) ?? null) !== before || !$('#view'))) renderPane()
+  else if (!typing) { renderThread(); renderInspector() }
+  if (detailOf !== sel) loadDetail()
+}
+events.onerror = () => toast(t('offline'), 'alert')
+render()
 </script>
 </body>
 </html>

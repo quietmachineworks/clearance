@@ -31,3 +31,13 @@
   browser; its requests still show in Waiting.
 - Start a session sits behind a button at the top of the page; Fable is one of the models offered.
 - A permission, question or plan stays on the page up to a day instead of 10 minutes (ADR-0009).
+- The server rewritten in Rust, standard library only (ADR-0010): one binary for Windows and macOS,
+  `clearance install` for the hooks; its state moves from `data/` to `~/.clearance`. The Node version
+  is removed.
+- The environment of an infrastructure write (PROD, STAGING, LOCAL or unknown, handled like PROD) from
+  patterns in `~/.clearance/environments.json`; a request answered in the terminal stays a while as
+  settled (ADR-0012).
+- The V2 page (BRIEF section 3b): a queue that holds still under the pointer, groups
+  with their counts, the session with its thread or its terminal view, an inspector (task, plan, files,
+  tests, agents, cost, model), every answer sent after 5 s with an undo, Ctrl K, keyboard shortcuts;
+  twelve skins, English and French, logo A of the design canvas, the same in every skin (ADR-0011).
