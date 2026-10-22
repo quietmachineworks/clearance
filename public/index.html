@@ -5,17 +5,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>clearance</title>
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400..800&family=Atkinson+Hyperlegible+Mono:wght@400..800&family=Dela+Gothic+One&display=swap">
 <style>
 :root { --ink: #141414; --paper: #FFFFFF; --dot: #E3E3E3; --muted: #4A4A4A; --red: #E8341C; --yellow: #FFC21A; --blue: #2F6FE0; --screen: #1C1F2B }
 * { box-sizing: border-box }
-body { margin: 0; color: var(--ink); background: var(--paper) radial-gradient(var(--dot) 1px, transparent 1px) 0 0 / 7px 7px; font: 500 15px/1.45 'M PLUS Rounded 1c', system-ui, sans-serif }
-header { max-width: 1100px; margin: 0 auto; padding: 20px 16px 8px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap }
+body { margin: 0; color: var(--ink); background: var(--paper) radial-gradient(var(--dot) 1px, transparent 1px) 0 0 / 7px 7px; font: 400 16px/1.5 'Atkinson Hyperlegible Next', system-ui, sans-serif }
+header { margin: 0 auto; padding: 20px 16px 8px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap }
 h1 { margin: 0; font: 400 36px/1 'Dela Gothic One', sans-serif; text-shadow: 3px 3px 0 var(--yellow) }
 #status { font-size: 13px; font-weight: 700; padding: 4px 10px; border: 2px solid var(--ink); border-radius: 999px; background: #FFF }
-main { max-width: 1100px; margin: 0 auto; padding: 8px 16px 48px; display: grid; gap: 28px }
+main { margin: 0 auto; padding: 8px 16px 48px; display: grid; gap: 28px }
 h2 { display: inline-block; margin: 0 0 12px; padding: 4px 12px; background: var(--ink); color: #FFF; font-size: 13px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase }
 .cards { display: grid; gap: 16px }
+/* The board across the whole screen: waiting, done, then a rail for the crews; they wrap on a narrow
+   screen. No request card: Waiting shrinks and Done, the one to read, takes the room. */
+.columns { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start }
+.columns[hidden] { display: none }
+.columns > * { min-width: 0 }
+#waiting { flex: 1.2 1 480px } #waiting:not(:has(.cards > *)) { flex: 0 1 340px }
+#done { flex: 2 1 460px }
+#done .cards { grid-template-columns: repeat(auto-fit, minmax(min(100%, 480px), 1fr)); align-items: start }
+.rail { flex: 1 0 280px; max-width: 320px; display: grid; gap: 28px }
 .card { background: #FFF; border: 3px solid var(--ink); border-radius: 6px; box-shadow: 5px 5px 0 var(--ink); padding: 14px 16px; display: grid; gap: 10px }
 .card.risk-infra { box-shadow: 5px 5px 0 var(--red) }
 .who { display: flex; align-items: center; gap: 12px; flex-wrap: wrap }
@@ -23,14 +32,14 @@ h2 { display: inline-block; margin: 0 0 12px; padding: 4px 12px; background: var
 .meta { color: var(--muted); font-size: 13px }
 .badge, .risk, .chip { font-size: 12px; font-weight: 800; padding: 2px 8px; border: 2px solid var(--ink); border-radius: 999px; letter-spacing: .04em; white-space: nowrap }
 .risk.read { background: #ECEEF2 } .risk.write { background: var(--yellow) } .risk.infra { background: var(--red); color: #FFF }
-pre { margin: 0; padding: 10px 12px; background: var(--screen); color: #F4F4F4; border-radius: 4px; font: 13px/1.5 ui-monospace, Consolas, monospace; white-space: pre-wrap; word-break: break-word; max-height: 320px; overflow: auto }
+pre { margin: 0; padding: 10px 12px; background: var(--screen); color: #F4F4F4; border-radius: 4px; font: 13px/1.5 'Atkinson Hyperlegible Mono', ui-monospace, Consolas, monospace; white-space: pre-wrap; word-break: break-word; max-height: 320px; overflow: auto }
 .cmd { font-size: 14px }
 .tool, .desc { margin: 0; color: var(--muted) }
 .question { margin: 0; font-weight: 700 }
 details summary { cursor: pointer; font-size: 13px; color: var(--muted) }
 details pre { margin-top: 6px }
 .actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center }
-button { min-height: 44px; padding: 0 16px; font: 800 14px 'M PLUS Rounded 1c', system-ui, sans-serif; color: var(--ink); background: #FFF; border: 2px solid var(--ink); border-radius: 999px; cursor: pointer }
+button { min-height: 44px; padding: 0 16px; font: 700 15px 'Atkinson Hyperlegible Next', system-ui, sans-serif; color: var(--ink); background: #FFF; border: 2px solid var(--ink); border-radius: 999px; cursor: pointer }
 button.primary { background: var(--ink); color: #FFF }
 button.quiet { border-color: transparent; background: transparent; text-decoration: underline }
 button:disabled { opacity: .4; cursor: not-allowed }
@@ -51,7 +60,9 @@ legend { margin-bottom: 6px; font-weight: 800 }
 .empty { margin: 0; color: var(--muted) }
 .terminal { display: grid; gap: 6px; margin-top: 12px }
 .terminal-wait { display: flex; align-items: center; gap: 10px; color: var(--muted) }
-.message { margin: 0; white-space: pre-wrap; max-height: 9em; overflow: auto }
+.message { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere }
+.message .heading { font-size: 17px }
+.message code { font: 14px 'Atkinson Hyperlegible Mono', ui-monospace, Consolas, monospace; padding: 0 4px; background: #F0F0F0; border-radius: 3px }
 .crew { display: flex; flex-wrap: wrap; gap: 18px }
 .worker { width: 120px; display: grid; justify-items: center; gap: 2px; text-align: center }
 .clones { display: flex; align-items: flex-end; gap: 2px; font-size: 12px; font-weight: 800 }
@@ -61,9 +72,10 @@ a.button { display: inline-flex; align-items: center; min-height: 44px; padding:
 .energy > span { display: block; height: 100%; background: var(--ink) }
 .energy.low > span { background: var(--red) }
 .rule { display: grid; gap: 4px; padding: 10px 0; border-bottom: 1px solid var(--dot) }
-.rule code { font: 800 14px ui-monospace, Consolas, monospace }
+.rule code { font: 800 14px 'Atkinson Hyperlegible Mono', ui-monospace, Consolas, monospace }
 #journal > div, #detail-body > div { display: grid; gap: 18px }
 form.instruct { display: grid; gap: 8px }
+form.instruct p { margin: 0 } form.instruct p:empty { display: none }
 form.start { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; align-items: end }
 form.start label { display: grid; gap: 4px; font-size: 13px; font-weight: 700 }
 form.start label.check { display: flex; align-items: center; gap: 8px; min-height: 44px }
@@ -72,7 +84,7 @@ form.start > .actions:last-of-type, form.start [role=status], .picker { grid-col
 .picker[hidden] { display: none }
 .picker .folders { display: flex; flex-wrap: wrap; gap: 6px; max-height: 260px; overflow: auto }
 .picker .folders button { min-height: 36px; font-weight: 700 }
-.picker code { font: 700 13px ui-monospace, Consolas, monospace; word-break: break-all }
+.picker code { font: 700 13px 'Atkinson Hyperlegible Mono', ui-monospace, Consolas, monospace; word-break: break-all }
 a.name { color: var(--ink); font-weight: 800; text-decoration: none; border-bottom: 2px solid var(--yellow) }
 a.name:hover { background: var(--yellow) }
 a.back { display: inline-block; margin-bottom: 14px; color: var(--ink); font-weight: 800 }
@@ -82,7 +94,7 @@ a.back { display: inline-block; margin-bottom: 14px; color: var(--ink); font-wei
 #detail h4 { margin: 4px 0 0; font-size: 15px }
 .head { display: flex; gap: 16px; align-items: center; flex-wrap: wrap }
 .head .grow { display: grid; gap: 6px; flex: 1 1 260px }
-.head h2 { margin: 0; padding: 0; background: none; color: var(--ink); font: 400 24px/1.2 'Dela Gothic One', sans-serif; letter-spacing: 0; text-transform: none }
+.head h2 { margin: 0; padding: 0; background: none; color: var(--ink); font: 800 24px/1.2 'Atkinson Hyperlegible Next', system-ui, sans-serif; letter-spacing: 0; text-transform: none }
 .chips { display: flex; flex-wrap: wrap; gap: 6px }
 .phases { display: flex; flex-wrap: wrap; gap: 6px 0 }
 .phase { padding: 6px 14px; margin-right: -3px; font-size: 13px; font-weight: 800; background: #FFF; border: 3px solid var(--ink) }
@@ -96,7 +108,7 @@ a.back { display: inline-block; margin-bottom: 14px; color: var(--ink); font-wei
 .bad { color: var(--red); font-weight: 800 }
 .thread { display: grid; gap: 4px }
 .bubble { justify-self: end; max-width: 80%; margin: 8px 0; padding: 8px 12px; white-space: pre-wrap; background: #FFF; border: 2px solid var(--ink); border-radius: 16px 16px 4px 16px }
-.step { margin: 0; font: 13px/1.4 ui-monospace, Consolas, monospace; color: var(--muted); word-break: break-word }
+.step { margin: 0; font: 13px/1.4 'Atkinson Hyperlegible Mono', ui-monospace, Consolas, monospace; color: var(--muted); word-break: break-word }
 .step.bad { color: var(--red) }
 pre.del { background: #4A1F1F } pre.add { background: #1E4A2B }
 .scroll { overflow-x: auto }
@@ -117,6 +129,7 @@ th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--dot)
 <body>
 <header>
   <h1>clearance</h1>
+  <button id="new" class="primary" aria-controls="start" aria-expanded="false">+ Start a session</button>
   <span id="status" role="status">connecting...</span>
   <span id="quota" class="chip" hidden></span>
   <a id="journal-link" class="button" href="#journal">Journal</a>
@@ -124,6 +137,25 @@ th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--dot)
   <button id="pack"></button>
 </header>
 <main>
+  <section id="start" aria-labelledby="h-start" hidden>
+    <h2 id="h-start">Start a session</h2>
+    <form class="card start">
+      <label>Folder <input type="text" name="cwd" required placeholder="The project's folder, full path"></label>
+      <div class="actions"><button type="button" id="browse">Browse...</button></div>
+      <div class="picker" hidden></div>
+      <label>Name <input type="text" name="name" required pattern="[\w.\-]{1,40}" placeholder="also the tab's title"></label>
+      <label>Model
+        <select name="model"><option value="">default</option><option value="fable">Fable</option><option value="opus">Opus</option><option value="sonnet">Sonnet</option><option value="haiku">Haiku</option></select>
+      </label>
+      <label>Mode
+        <select name="mode"><option value="">default</option><option value="default">ask</option><option value="acceptEdits">edits</option><option value="plan">plan</option><option value="auto">auto</option></select>
+      </label>
+      <label class="check"><input type="checkbox" name="connect" checked> Connect to clearance (hooks and companion mod)</label>
+      <div class="actions"><button class="primary" type="submit">Start in a new tab</button></div>
+      <p class="meta" role="status"></p>
+    </form>
+  </section>
+  <div class="columns">
   <section id="waiting" aria-labelledby="h-waiting">
     <h2 id="h-waiting">Waiting for you</h2>
     <p class="empty">Nobody is waiting for you.</p>
@@ -135,33 +167,22 @@ th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--dot)
     <p class="empty">Nothing left to read.</p>
     <div class="cards"></div>
   </section>
+  <div class="rail">
   <section id="working" aria-labelledby="h-working">
     <h2 id="h-working">Working</h2>
     <p class="empty">Nobody is working.</p>
+    <div class="crew"></div>
+  </section>
+  <section id="ignored" aria-labelledby="h-ignored" hidden>
+    <h2 id="h-ignored">Ignored</h2>
     <div class="crew"></div>
   </section>
   <section id="asleep" aria-labelledby="h-asleep" hidden>
     <h2 id="h-asleep">Asleep</h2>
     <div class="crew"></div>
   </section>
-  <section id="start" aria-labelledby="h-start">
-    <h2 id="h-start">Start a session</h2>
-    <form class="card start">
-      <label>Folder <input type="text" name="cwd" required placeholder="The project's folder, full path"></label>
-      <div class="actions"><button type="button" id="browse">Browse...</button></div>
-      <div class="picker" hidden></div>
-      <label>Name <input type="text" name="name" required pattern="[\w.\-]{1,40}" placeholder="also the tab's title"></label>
-      <label>Model
-        <select name="model"><option value="">default</option><option value="opus">Opus</option><option value="sonnet">Sonnet</option><option value="haiku">Haiku</option></select>
-      </label>
-      <label>Mode
-        <select name="mode"><option value="">default</option><option value="default">ask</option><option value="acceptEdits">edits</option><option value="plan">plan</option><option value="auto">auto</option></select>
-      </label>
-      <label class="check"><input type="checkbox" name="connect" checked> Connect to clearance (hooks and companion mod)</label>
-      <div class="actions"><button class="primary" type="submit">Start in a new tab</button></div>
-      <p class="meta" role="status"></p>
-    </form>
-  </section>
+  </div>
+  </div>
   <section id="detail" hidden></section>
   <section id="journal" hidden></section>
 </main>
@@ -484,7 +505,58 @@ function energy(s) {
 
 // ---- board ----
 const cards = new Map() // request id -> card, kept so a half-typed answer survives updates
+const doneCards = new Map() // session@end of turn -> card, same reason for a half-typed reply
 let first = true
+
+// Sessions ignored from this browser: out of Done, Working and Asleep, listed under Ignored. Their
+// requests still show in Waiting, so that none stalls unseen.
+// ponytail: by session id, so a relaunched session shows again; by folder if that gets tedious.
+let ignored = new Set()
+try { ignored = new Set(JSON.parse(localStorage.getItem('clearance-ignored') ?? '[]')) } catch {}
+function ignore(id, on) {
+  if (on) ignored.add(id)
+  else ignored.delete(id)
+  try { localStorage.setItem('clearance-ignored', JSON.stringify([...ignored])) } catch {}
+  if (lastSnap) render(lastSnap)
+}
+
+// A session's text with its light Markdown made readable: headings, bold, code and bullets. Built as
+// nodes, never as HTML: the text comes from the session.
+// ponytail: line by line, no nesting, tables or links; a Markdown parser if sessions need more.
+function prose(text) {
+  return text.split('\n').map((line, i) => {
+    const head = /^#{1,6}\s+(.*)$/.exec(line)
+    const parts = (head ? head[1] : line.replace(/^(\s*)[-*] /, '$1• ')).split(/(\*\*[^*]+\*\*|`[^`]+`)/).map((p) =>
+      /^\*\*.+\*\*$/.test(p) ? h('b', {}, p.slice(2, -2)) : /^`.+`$/.test(p) ? h('code', {}, p.slice(1, -1)) : p)
+    return [i ? '\n' : null, head ? h('b', { class: 'heading' }, parts) : parts]
+  })
+}
+
+// A finished turn: its last message in full, and a reply the companion mod types into the session,
+// which then turns busy and leaves Done on its own.
+function doneCard(d) {
+  const name = nameOf(d.session, d.cwd)
+  const text = h('textarea', { rows: 2, 'aria-label': `Reply to ${name}`, placeholder: 'Reply, sent to the session as if you typed it' })
+  const status = h('p', { class: 'meta', role: 'status' })
+  return h('article', { class: 'card' },
+    h('div', { class: 'who' },
+      avatar(d.failed ? 'stopped' : 'done', d.cwd, 56, `${name}: ${d.failed ? 'stopped on error' : 'done'}`, false, modelFor(d.session)),
+      h('div', {}, link(d.session, name), h('span', { class: 'meta' }, project(d.cwd), ' · ', h('time', { 'data-at': d.at }, ago(d.at)))),
+      d.failed ? h('span', { class: 'risk infra' }, 'stopped on error') : null),
+    d.message ? h('div', { class: 'message' }, prose(d.message)) : null,
+    h('form', {
+      class: 'instruct',
+      onsubmit: async (e) => {
+        e.preventDefault()
+        const error = await post('/api/instruct', { session: d.session, text: text.value })
+        if (!error) text.value = ''
+        status.textContent = error ?? instructText(sessions.get(d.session), true)
+      },
+    }, text, h('div', { class: 'actions' },
+      h('button', { class: 'primary', type: 'submit' }, 'Reply'),
+      h('button', { type: 'button', onclick: () => post('/api/read', { session: d.session }) }, 'Mark as read'),
+      h('button', { type: 'button', class: 'quiet', onclick: () => ignore(d.session, true) }, 'Ignore')), status))
+}
 
 function notify(r) {
   if (first || !('Notification' in window) || Notification.permission !== 'granted') return
@@ -512,19 +584,19 @@ function render(snap) {
       s.connected ? '' : h('span', { class: 'meta' }, ': not connected to clearance, answer it there')))))
   $('#waiting .empty').hidden = snap.requests.length + elsewhere.length > 0
 
-  $('#done .cards').replaceChildren(...snap.done.map((d) => {
-    const name = nameOf(d.session, d.cwd)
-    return h('article', { class: 'card' },
-      h('div', { class: 'who' },
-        avatar(d.failed ? 'stopped' : 'done', d.cwd, 56, `${name}: ${d.failed ? 'stopped on error' : 'done'}`, false, modelFor(d.session)),
-        h('div', {}, link(d.session, name), h('span', { class: 'meta' }, project(d.cwd), ' · ', h('time', { 'data-at': d.at }, ago(d.at)))),
-        d.failed ? h('span', { class: 'risk infra' }, 'stopped on error') : null),
-      d.message ? h('p', { class: 'message' }, d.message) : null,
-      h('div', { class: 'actions' }, h('button', { onclick: () => post('/api/read', { session: d.session }) }, 'Mark as read')))
-  }))
-  $('#done .empty').hidden = snap.done.length > 0
+  const done = snap.done.filter((d) => !ignored.has(d.session))
+  const turns = new Set(done.map((d) => `${d.session}@${d.at}`))
+  for (const [k, card] of doneCards) if (!turns.has(k)) { card.remove(); doneCards.delete(k) }
+  const doneList = $('#done .cards')
+  done.forEach((d, i) => {
+    const k = `${d.session}@${d.at}`
+    if (!doneCards.has(k)) doneCards.set(k, doneCard(d))
+    const card = doneCards.get(k)
+    if (doneList.children[i] !== card) doneList.insertBefore(card, doneList.children[i] ?? null)
+  })
+  $('#done .empty').hidden = done.length > 0
 
-  const busy = snap.sessions.filter((s) => s.status === 'busy')
+  const busy = snap.sessions.filter((s) => s.status === 'busy' && !ignored.has(s.sessionId))
   $('#working .crew').replaceChildren(...busy.map((s) => h('div', { class: 'worker' },
     avatar(used(s) >= 90 ? 'dizzy' : 'work', s.cwd, 64, `${s.name || project(s.cwd)}: working${s.agents ? ` with ${s.agents} subagents` : ''}`, false, s.model),
     energy(s),
@@ -535,12 +607,20 @@ function render(snap) {
 
   // Idle for hours and not waiting to be read: candidates to close.
   const unread = new Set(snap.done.map((d) => d.session))
-  const asleep = snap.sessions.filter((s) => s.status === 'idle' && !unread.has(s.sessionId) && s.lastActive && Date.now() - s.lastActive > ASLEEP_MS)
+  const asleep = snap.sessions.filter((s) => s.status === 'idle' && !ignored.has(s.sessionId) && !unread.has(s.sessionId) && s.lastActive && Date.now() - s.lastActive > ASLEEP_MS)
   $('#asleep .crew').replaceChildren(...asleep.map((s) => h('div', { class: 'worker' },
     avatar('sleep', s.cwd, 56, `${s.name || project(s.cwd)}: asleep`, false, s.model),
     link(s.sessionId, s.name || project(s.cwd)),
     h('span', { class: 'meta' }, `idle ${span(Date.now() - s.lastActive)}`))))
   $('#asleep').hidden = asleep.length === 0 || location.hash.length > 1
+
+  const shunned = snap.sessions.filter((s) => ignored.has(s.sessionId))
+  $('#ignored .crew').replaceChildren(...shunned.map((s) => h('div', { class: 'worker' },
+    avatar(s.status === 'busy' ? 'work' : s.status === 'waiting' ? 'wait' : 'sleep', s.cwd, 56, `${s.name || project(s.cwd)}: ignored, ${s.status}`, false, s.model),
+    link(s.sessionId, s.name || project(s.cwd)),
+    h('span', { class: 'meta' }, s.status),
+    h('button', { type: 'button', 'aria-label': `Stop ignoring ${s.name || project(s.cwd)}`, onclick: () => ignore(s.sessionId, false) }, 'Unignore'))))
+  $('#ignored').hidden = shunned.length === 0 || location.hash.length > 1
 
   const q = (snap.quota ?? []).filter((r) => QUOTA[r.kind])
   $('#quota').hidden = q.length === 0
@@ -688,10 +768,15 @@ function instructForm(id) {
 // What the companion mod did with the last instruction, or why one would wait.
 function instructState(s) {
   const status = $('#instruct-status')
-  if (!status) return
+  if (status) status.textContent = instructText(s)
+}
+
+// sent: just queued, before the next snapshot shows it.
+function instructText(s, sent) {
   const fresh = s?.usage && Date.now() - s.usage.at < 30_000
   const i = s?.instruction
-  status.textContent = i?.delivered ? `Last instruction delivered at ${clock(i.delivered)}.`
+  return sent ? (fresh ? 'Sent: it reaches the session within 5 s.' : 'Queued: no companion mod is running in this session, answer it in its terminal.')
+    : i?.delivered ? `Last instruction delivered at ${clock(i.delivered)}.`
     : i ? `Queued at ${clock(i.at)}${fresh ? ', delivered within 5 s.' : ': no companion mod is running in this session.'}`
     : fresh ? 'The companion mod runs in this session: an instruction arrives within 5 s.'
     : 'No companion mod runs in this session: an instruction would wait for one.'
@@ -729,7 +814,7 @@ function route() {
   detailKey = ''
   $('#detail').hidden = !id
   $('#journal').hidden = !journalView
-  for (const sel of ['#waiting', '#done', '#working', '#asleep', '#start']) $(sel).hidden = !!(id || journalView)
+  for (const sel of ['.columns', '#asleep', '#ignored']) $(sel).hidden = !!(id || journalView)
   scrollTo(0, 0)
   if (journalView) return void loadJournal()
   if (!id) return lastSnap && render(lastSnap)
@@ -761,6 +846,14 @@ $('#pack').onclick = () => {
 const startForm = $('form.start')
 const field = startForm.elements // form.name would be the form's own name
 try { field.cwd.value = localStorage.getItem('clearance-cwd') ?? '' } catch {}
+
+// + Start a session, in the header, opens the form at the top of the page.
+$('#new').onclick = (e) => {
+  const open = $('#start').hidden
+  $('#start').hidden = !open
+  e.currentTarget.setAttribute('aria-expanded', open)
+  if (open) field.cwd.focus()
+}
 
 // Folder picker: the server lists sub-folders; recent folders are those of the live sessions and the
 // last one started from here.

@@ -20,3 +20,14 @@
   marketplace for the mod. Only hooks that stay silent while clearance is stopped; turns read off
   `claude agents`; auto mode denials held only while a page is open; sessions not connected to
   clearance shown as such (ADR-0009).
+- Done cards show the session's last message in full and take a reply, typed into the session by the
+  companion mod.
+- Text in Atkinson Hyperlegible Next, commands in Atkinson Hyperlegible Mono, both drawn for low vision
+  readers, in place of M PLUS Rounded 1c; body text at 16px.
+- The board fills the whole screen: waiting, done, then a rail for working, ignored and asleep sessions;
+  Waiting narrows when no request card is shown, done cards sit side by side and render light Markdown
+  (headings, bold, code, bullets) as text nodes.
+- Ignore a session from its done card: it leaves Done, Working and Asleep for an Ignored row, in this
+  browser; its requests still show in Waiting.
+- Start a session sits behind a button at the top of the page; Fable is one of the models offered.
+- A permission, question or plan stays on the page up to a day instead of 10 minutes (ADR-0009).

@@ -3,7 +3,7 @@
 import { execFile } from 'node:child_process'
 import { existsSync, statSync } from 'node:fs'
 
-export const MODELS = ['', 'opus', 'sonnet', 'haiku']
+export const MODELS = ['', 'fable', 'opus', 'sonnet', 'haiku']
 export const MODES = ['', 'default', 'acceptEdits', 'plan', 'auto']
 
 export interface Start {

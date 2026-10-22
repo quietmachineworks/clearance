@@ -18,6 +18,10 @@ Claude Code's plugins, so clearance must be harmless whether it runs or not. Cla
   (`$.plugin.root/..`) does not lead back to clearance.
 - In auto mode, a denial held by clearance makes the session wait for the hook's timeout, even with no
   page open to answer it.
+- A request still pending at the `PermissionRequest` timeout (600 s, the default) leaves the page:
+  Claude Code closes the hook's request and the dialog stays alone in the terminal, out of clearance's
+  reach. With `timeout: 1200`, a held request was still open after 800 s: Claude Code does not cap it at
+  600 s.
 
 ## Decision
 
@@ -36,3 +40,5 @@ Claude Code's plugins, so clearance must be harmless whether it runs or not. Cla
   the user's own hooks, and replaces a previous clearance install; `--dry-run` only says what would
   change; `--remove` takes out the entries that point at clearance and nothing else.
 - A session waiting in its terminal that never sent clearance a hook event is shown as not connected.
+- `PermissionRequest` waits up to a day (`timeout: 86400`) instead of ADR-0003's 600 s. The terminal
+  keeps its dialog meanwhile, so holding longer blocks nobody.

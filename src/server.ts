@@ -25,12 +25,13 @@ const TOKEN = existsSync(tokenFile) ? readFileSync(tokenFile, 'utf8').trim() : r
 writeFileSync(tokenFile, TOKEN, { mode: 0o600 })
 
 // Hook settings for `claude --settings` or `node src/install.ts`. PermissionRequest (permissions,
-// questions, plans) runs in parallel with the terminal dialog, so it may wait; an auto mode denial is
+// questions, plans) runs in parallel with the terminal dialog, so it waits up to a day: past its timeout a
+// request leaves the page and only the terminal can answer it (ADR-0009). An auto mode denial is
 // held 60 s while a page is open. The others answer at once, with a short timeout. Only hooks that stay
 // silent while clearance is stopped: Stop and UserPromptSubmit would print an error in every session
 // (ADR-0009), so turns ending and starting are read off `claude agents` instead.
 const HOOKS: Record<string, { matcher?: string; timeout: number }> = {
-  PermissionRequest: { timeout: 600 },
+  PermissionRequest: { timeout: 86_400 },
   PermissionDenied: { timeout: 60 },
   StopFailure: { timeout: 5 },
   SubagentStart: { timeout: 5 },
