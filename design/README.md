@@ -10,6 +10,8 @@ names in them are invented.
 | `MangaGrammaire.dc.html` | how to read an avatar: states, models, projects, clones |
 | `Robot.dc.html` | the robots pack: same symbols, a screen for a face, paint for the project |
 | `RobotGrammaire.dc.html` | the same grammar board, in robot costume |
+| `QueueCompact.dc.html` | the compact queue: one line per session, no avatar, its width dragged (2026-10-30) |
+| `QueueCompactLines.dc.html` | a line in each state, the group header, drawers, the animations |
 
 The board, the session detail, the journal and the compact window were designed on the same canvas with
 real work data; they stay private and will be rebuilt here with invented fixtures.

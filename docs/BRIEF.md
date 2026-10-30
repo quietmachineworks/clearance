@@ -114,6 +114,13 @@ at once, mostly from the keyboard.
   first, then permissions, questions, plans), to watch (loops, repeated errors, context almost full),
   to read, working; asleep and ignored folded away. New requests do not move the queue while the pointer
   or focus is in it: a "new" marker shows them. A request answered in the terminal shows as settled.
+- **Compact queue** (2026-10-30, mockup `design/canvas/QueueCompact.dc.html`): about ten sessions per
+  group must fit. Outside the waiting cards, one 32 px line per session, no avatar: name, the session's
+  title, then its state on the right (context gauge of 5 cells while it works, the time it finished, a
+  cross when it failed, how long it has been idle). No state subheadings: to read, working, idle, in that
+  order. A slim group header, its mute and interrupt actions on hover or keyboard focus; asleep, stopped
+  and ignored as small counters that open in place. Waiting cards keep the command, with the request's
+  icon in place of the avatar. The queue's width is dragged between 300 and 640 px, kept per browser.
 - **Groups** (ADR-0015): made by the user, sessions moved into them, "No group" for the others. What
   waits for you and what needs watching stay on top across groups; below, one foldable block per group
   (to read, working, idle, asleep, stopped, ignored) with its counts and memory. Group actions: mute,
@@ -145,7 +152,11 @@ at once, mostly from the keyboard.
 
 ## 4. Visual grammar
 
-Manga style, chibi avatars drawn for the project. Every trait carries information, no decoration:
+Manga style, chibi avatars drawn for the project, where there is room for them: the session's header,
+the folded queue, the search. The compact queue has none: there, the state is said in words, a gauge and
+one small animation per state (dots that wave while it works, a flash when a request arrives, a slow pulse
+on what needs watching, a check that pops once a turn ends), nothing moving at rest. Every trait carries
+information, no decoration:
 
 | Trait | Meaning |
 |---|---|

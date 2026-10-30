@@ -131,3 +131,10 @@
 - The journal keeps about 10 MB, in two files; the Journal page says so.
 - CI on Windows and macOS (fmt, clippy, tests, release build); a `v*` tag publishes the binaries with the
   tag's CHANGELOG section as notes.
+- A compact queue for ten sessions a group (BRIEF 3b, mockup `design/canvas/QueueCompact.dc.html`): one
+  32 px line per session, no avatar, its state on the right (a 5-cell context gauge with dots that wave
+  while it works, a check that pops once its turn ends, a cross when it failed, how long it has been
+  idle); no state subheadings; slim group headers whose actions show on hover or focus; asleep, stopped
+  and ignored as counters that open in place. Waiting cards show the request's icon, flash once when they
+  arrive; what needs watching breathes. The queue's width is dragged between 300 and 640 px (arrow keys,
+  double-click for 420), kept per browser.
