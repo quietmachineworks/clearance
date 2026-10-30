@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Artefacts d'une session reprise</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;700;800&amp;family=Atkinson+Hyperlegible+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#2457C5}a:hover{color:#1A3F8F}
+.sec h3{margin:0 0 6px;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#141414}
+</style>
+</helmet>
+<div style="width: 760px; height: 660px; box-sizing: border-box; padding: 28px; display: flex; gap: 40px; background: #FFFFFF; font-family: 'Atkinson Hyperlegible Next', system-ui, sans-serif; font-size: 15px; color: #141414">
+  <sc-for list="{{cases}}" as="c" hint-placeholder-count="2">
+    <div style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+      <span style="font-size: 13px; font-weight: 800; color: #4A4A4A">{{c.label}}</span>
+      <aside aria-label="Détails de la session" style="width: 300px; box-sizing: border-box; padding: 14px 16px; display: flex; flex-direction: column; gap: 18px; border: 2px solid #141414; border-radius: 8px; background: #FAFAF7">
+        <section class="sec">
+          <h3>Tâche</h3>
+          <b style="display: block; font-size: 16px; line-height: 1.35">Pagination de l'export CSV des encaissements</b>
+          <p style="margin: 4px 0 0; font-size: 14px; line-height: 1.45; color: #4A4A4A">Ouvre la MR.</p>
+        </section>
+        <section class="sec">
+          <h3>{{c.head}}</h3>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <sc-if value="{{c.none}}" hint-placeholder-val="{{ false }}">
+              <span style="font-size: 13px; color: #4A4A4A">Aucun publié dans cette session.</span>
+            </sc-if>
+            <sc-for list="{{c.own}}" as="ar" hint-placeholder-count="1">
+              <a href="#" style="display: flex; align-items: center; gap: 10px; padding: 8px 10px; text-decoration: none; color: #141414; background: #FFFFFF; border: 2px solid #141414; border-radius: 8px">
+                <span style="flex: none; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 6px; background: #E4EDFB"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#141414" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v12H4zM8 20h8M12 16v4M8 9l3 3 5-5"></path></svg></span>
+                <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; line-height: 1.25"><b style="font-size: 14px; overflow-wrap: anywhere">{{ar.title}}</b><span style="font-size: 12px; color: #4A4A4A">{{ar.meta}}</span></span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#141414" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Ouvrir dans un nouvel onglet"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"></path></svg>
+              </a>
+            </sc-for>
+            <span style="display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 12px; font-weight: 800; color: #4A4A4A"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 3-6.2M4 4v4h4"></path></svg>Avant la reprise · 2</span>
+            <sc-for list="{{c.before}}" as="ar" hint-placeholder-count="2">
+              <a href="#" style="display: flex; align-items: center; gap: 10px; padding: 8px 10px; text-decoration: none; color: #2A2A2A; background: #FAFAF7; border: 2px dashed #6B6B6B; border-radius: 8px">
+                <span style="flex: none; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 6px; background: #ECEEF2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#141414" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v12H4zM8 20h8M12 16v4M8 9l3 3 5-5"></path></svg></span>
+                <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; line-height: 1.25"><b style="font-size: 14px; overflow-wrap: anywhere">{{ar.title}}</b><span style="font-size: 12px; color: #4A4A4A">{{ar.meta}}</span></span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#141414" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Ouvrir dans un nouvel onglet"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"></path></svg>
+              </a>
+            </sc-for>
+            <a href="#" style="align-self: flex-start; margin-top: 6px; display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 700">Tous mes artefacts <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Ouvrir dans un nouvel onglet"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"></path></svg></a>
+          </div>
+        </section>
+        <section class="sec">
+          <h3>Fichiers · 1</h3>
+          <div style="display: flex; gap: 8px; align-items: baseline; font-size: 13px"><code style="flex: 1 1 auto; min-width: 0; font-family: 'Atkinson Hyperlegible Mono', monospace">src/export/paging.ts</code><b style="color: #16683D">+4</b><b style="color: #A3200C">-1</b></div>
+        </section>
+      </aside>
+    </div>
+  </sc-for>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":760,"height":660}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const before = [
+      { title: 'Écran d’export', meta: 'version 3 · il y a 2 h' },
+      { title: 'Note de version 2.4', meta: 'version 1 · hier 17:40' },
+    ];
+    return {
+      cases: [
+        { label: 'Reprise, avec un artefact à elle', head: 'Artefacts · 1', none: false, own: [{ title: 'Export paginé : écran final', meta: 'version 1 · il y a 4 min' }], before },
+        { label: 'Reprise, rien publié depuis', head: 'Artefacts', none: true, own: [], before },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

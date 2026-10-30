@@ -150,6 +150,11 @@
 - Attachments wait as chips above the message field (thumbnail, size, remove), from a paste, a drop
   anywhere on the session or the paperclip, and go with the message. A message with an image now reaches
   a session in clearance's terminal: Enter is sent apart from the paste.
+- The right panel always shows its Artifacts section, with a link to all your artifacts on claude.ai.
+  A session a handoff plugin started also lists, dashed, the artifacts of the session it continues
+  (mockup `design/canvas/ThreadArtifactsResumed.dc.html`); one it publishes again keeps its name.
+- Durations over an hour read "5 h 01", not "5 h 1".
+- Files a session wrote in its scratchpad are no longer listed as changes.
 - Ctrl+Enter in a GO field allows the infrastructure write or launches the plan, once GO is typed.
 - An open drawer of the queue stays within it: Resume and Delete no longer slip out of view.
 - The page's script is compiled by the tests when node is installed.

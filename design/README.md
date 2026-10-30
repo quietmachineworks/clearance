@@ -14,6 +14,7 @@ names in them are invented.
 | `QueueCompactLines.dc.html` | a line in each state, the group header, drawers, the animations |
 | `ThreadTurns.dc.html` | the session's thread in turns, the right panel hidden or resized, attachments (2026-10-30) |
 | `ThreadTurnAnatomy.dc.html` | a turn's parts, each tool as a sentence, the panel and attachment rules |
+| `ThreadArtifactsResumed.dc.html` | the artifacts of a resumed session: its own, those before the resume (2026-10-30) |
 
 The board, the session detail, the journal and the compact window were designed on the same canvas with
 real work data; they stay private and will be rebuilt here with invented fixtures.

@@ -150,7 +150,8 @@ at once, mostly from the keyboard.
 - **Right panel**: hidden down to a column of icons with their counts, or dragged between 240 and 520 px,
   both kept per browser. Task: the session's title, then its first request on three lines. The
   artifacts the session published (title, version, when; opened on claude.ai, no preview: they are
-  private). Nothing overflows sideways.
+  private); when a handoff plugin started it, those of the session it continues, one handoff back, under
+  "Before the resume", dashed; then a link to the whole gallery on claude.ai. Nothing overflows sideways.
 - **Attachments**: an image pasted, a file dropped anywhere on the session or picked with the paperclip
   waits as a chip above the message field (thumbnail, size, remove), and goes with the message: its path
   at the end of the text. In the Terminal tab, paste and drop still type the path.

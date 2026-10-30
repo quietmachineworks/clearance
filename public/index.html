@@ -287,6 +287,7 @@ kbd { font-size: 12px; font-weight: 700; padding: 1px 6px; color: var(--ink); ba
 .clamp { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden }
 .textlink { align-self: flex-start; padding: 0; font: inherit; font-size: 13px; font-weight: 700; color: var(--blue); background: none; border: 0; cursor: pointer }
 .art { display: flex; align-items: center; gap: 10px; padding: 8px 10px; color: var(--ink); text-decoration: none; background: var(--paper); border: var(--bw) solid var(--edge); border-radius: var(--r) }
+.art.before { color: var(--text2); background: var(--panel); border-style: dashed; border-color: var(--line2) }
 .art > span { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; line-height: 1.25 }
 /* The thread, one turn per message (BRIEF 3b): what you asked, what it did, what it answered. */
 .turn { display: flex; flex-direction: column; gap: 8px }
@@ -534,7 +535,7 @@ const I18N = {
     'attach.failed': 'The file was not added: {error}', 'term.ended': 'The session ended.', server: 'clearance', 'restart.go': 'Restart clearance', 'restart.note': 'A restart waits until the sessions running in clearance are idle, then reopens them. Stopping clearance ends them; they reopen at its next start.', 'restart.waiting': 'Restart once {n} session(s) are idle', 'restart.force': 'Now', 'restart.cancel': 'Cancel', 'quit.go': 'Stop clearance', 'quit.sure': 'Click again: its sessions end', 'queue.width': 'Width of the queue: drag it, or use the arrow keys; double-click for 420 px', failed: 'Stopped on an error', 'turn.done': 'Done in {d} · {n} actions', 'turn.live': 'Working for {d}', 'turn.show': 'What it did', 'turn.hide': 'Hide the detail', 'turn.files': '{n} files changed', 'turn.tests.ok': 'tests pass', 'turn.tests.ko': 'tests fail', 'turn.commits': '{n} commit(s)', 'turn.failed': '{n} failed', resumed: 'Resumed after its context was compacted', you: 'You',
     'do.read': 'Read', 'do.edit': 'Edited', 'do.write': 'Wrote', 'do.run': 'Ran', 'do.search': 'Searched', 'do.web': 'Looked up', 'do.agent': 'Handed to an agent:', 'do.workflow': 'Ran the workflow', 'do.skill': 'Used the skill', 'do.plan': 'Updated the plan', 'do.ask': 'Asked you:', 'do.artifact': 'Published the artifact', 'do.artifact.read': 'Read an artifact', 'do.tool': 'Used', 'do.more': 'and {n} more', 'do.version': 'version {n}',
     'asked.you': 'allowed by you at {time}', 'asked.clearance': 'allowed from clearance at {time}', 'asked.refused': 'refused at {time}', 'asked.blocked': 'blocked by auto mode', 'asked.cancelled': 'interrupted',
-    'panel.hide': 'Hide the panel', 'panel.show': 'Show the panel', 'panel.width': 'Width of the panel: drag it, or use the arrow keys; double-click for 320 px', 'task.more': 'See the whole request', 'task.less': 'Show less', artifacts: 'Artifacts', 'artifact.meta': 'version {v} · {ago}', 'open.tab': 'Opens in a new tab',
+    'panel.hide': 'Hide the panel', 'panel.show': 'Show the panel', 'panel.width': 'Width of the panel: drag it, or use the arrow keys; double-click for 320 px', 'task.more': 'See the whole request', 'task.less': 'Show less', artifacts: 'Artifacts', 'artifact.meta': 'version {v} · {ago}', 'open.tab': 'Opens in a new tab', 'artifacts.none': 'None published in this session.', 'artifacts.all': 'All my artifacts', 'artifacts.before': 'Before the resume · {n}',
     attach: 'Attach a file', 'attach.remove': 'Remove {name}', 'attach.drop': 'Drop to attach to {name}', 'attach.hint': 'Paste an image, drop a file on the session or use the paperclip: files go with the message, their paths at the end.',
     'thread.mine': 'My messages', 'thread.all': 'Whole thread', actions: '{n} actions', 'actions.failed': '{n} failed', 'copy.md': 'Copy as Markdown',
     shortcuts: 'Shortcuts', 'shortcuts.note': 'Sent to the session on screen, from the chips above its message field or Ctrl+Shift+1 to 0. 10 at most.', 'shortcut.label': 'Label', 'shortcut.text': 'Text to send',
@@ -606,7 +607,7 @@ const I18N = {
     'attach.failed': "Le fichier n'a pas été ajouté : {error}", 'term.ended': 'La session est terminée.', server: 'clearance', 'restart.go': 'Redémarrer clearance', 'restart.note': 'Un redémarrage attend que les sessions qui tournent dans clearance soient au repos, puis les rouvre. Arrêter clearance les termine ; elles se rouvrent à son prochain démarrage.', 'restart.waiting': 'Redémarrage quand {n} session(s) seront au repos', 'restart.force': 'Maintenant', 'restart.cancel': 'Annuler', 'quit.go': 'Arrêter clearance', 'quit.sure': 'Clique encore : ses sessions se terminent', 'queue.width': 'Largeur de la file : tire-la, ou utilise les flèches ; double-clic pour 420 px', failed: 'Arrêtée sur une erreur', 'turn.done': 'Terminé en {d} · {n} actions', 'turn.live': 'En cours depuis {d}', 'turn.show': "Ce qu'il a fait", 'turn.hide': 'Masquer le détail', 'turn.files': '{n} fichiers modifiés', 'turn.tests.ok': 'tests verts', 'turn.tests.ko': 'tests en échec', 'turn.commits': '{n} commit(s)', 'turn.failed': '{n} en échec', resumed: 'Reprise après compactage du contexte', you: 'Toi',
     'do.read': 'Lu', 'do.edit': 'Modifié', 'do.write': 'Écrit', 'do.run': 'Lancé', 'do.search': 'Cherché', 'do.web': 'Consulté', 'do.agent': 'Confié à un agent :', 'do.workflow': 'Lancé le workflow', 'do.skill': 'Utilisé la compétence', 'do.plan': 'Mis à jour le plan', 'do.ask': "T'a demandé :", 'do.artifact': "Publié l'artefact", 'do.artifact.read': 'Consulté un artefact', 'do.tool': 'Utilisé', 'do.more': 'et {n} autres', 'do.version': 'version {n}',
     'asked.you': 'autorisée par toi à {time}', 'asked.clearance': 'autorisée depuis clearance à {time}', 'asked.refused': 'refusée à {time}', 'asked.blocked': 'bloquée par le mode auto', 'asked.cancelled': 'interrompue',
-    'panel.hide': 'Masquer le panneau', 'panel.show': 'Afficher le panneau', 'panel.width': 'Largeur du panneau : tire-la, ou utilise les flèches ; double-clic pour 320 px', 'task.more': 'Voir la demande entière', 'task.less': 'Moins', artifacts: 'Artefacts', 'artifact.meta': 'version {v} · {ago}', 'open.tab': "S'ouvre dans un nouvel onglet",
+    'panel.hide': 'Masquer le panneau', 'panel.show': 'Afficher le panneau', 'panel.width': 'Largeur du panneau : tire-la, ou utilise les flèches ; double-clic pour 320 px', 'task.more': 'Voir la demande entière', 'task.less': 'Moins', artifacts: 'Artefacts', 'artifact.meta': 'version {v} · {ago}', 'open.tab': "S'ouvre dans un nouvel onglet", 'artifacts.none': 'Aucun publié dans cette session.', 'artifacts.all': 'Tous mes artefacts', 'artifacts.before': 'Avant la reprise · {n}',
     attach: 'Joindre un fichier', 'attach.remove': 'Retirer {name}', 'attach.drop': 'Dépose pour joindre à {name}', 'attach.hint': 'Colle une image, dépose un fichier sur la session ou clique le trombone : les fichiers partent avec le message, leur chemin à la fin.',
     'thread.mine': 'Mes messages', 'thread.all': 'Tout le fil', actions: '{n} actions', 'actions.failed': '{n} en échec', 'copy.md': 'Copier en Markdown',
     shortcuts: 'Raccourcis', 'shortcuts.note': 'Envoyés à la session affichée, par les puces au-dessus de son champ de message ou Ctrl+Maj+1 à 0. 10 au plus.', 'shortcut.label': 'Nom', 'shortcut.text': 'Texte à envoyer',
@@ -675,7 +676,7 @@ const t = (key, vars = {}) => (I18N[lang][key] ?? I18N.en[key] ?? key).replace(/
 const ERRORS = { 'Already answered, or the session moved on.': 'err.gone', 'type GO to allow an infrastructure write': 'err.go', 'type GO to approve a plan': 'err.go' }
 const error = (message) => (ERRORS[message] ? t(ERRORS[message]) : message)
 const clock = (ms) => (ms ? new Date(ms).toLocaleTimeString(lang, { hour: '2-digit', minute: '2-digit' }) : '')
-const ago = (ms) => { const m = Math.max(0, Math.round((Date.now() - ms) / 60000)); return m < 1 ? '<1 min' : m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${m % 60}` }
+const ago = (ms) => minutes(Date.now() - ms)
 document.documentElement.lang = lang
 document.documentElement.dataset.skin = skin
 
@@ -716,6 +717,11 @@ const btn = (cls, label, iconName, onclick, attrs = {}) => h('button', { type: '
 const PALETTE = [['#3D7BE0', '#1F4E9E', '#E4EDFB'], ['#8B5CF6', '#5B2FC0', '#EFE8FE'], ['#13A3A3', '#0B6B6B', '#DDF4F4'], ['#F06292', '#B0305C', '#FDE6EE'], ['#3BAA5C', '#22743A', '#E2F4E7'], ['#F08A24', '#A85A0C', '#FDEEDC'], ['#8A94A6', '#4F5869', '#ECEEF2']]
 const folderName = (cwd = '') => cwd.split(/[\\/]/).filter(Boolean).pop() || '?'
 // ---- pure: no DOM, run by src/page.rs under node ----
+// Milliseconds as "<1 min", "12 min" or "5 h 01".
+function minutes(ms) {
+  const m = Math.max(0, Math.round(ms / 60000))
+  return m < 1 ? '<1 min' : m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')}`
+}
 // Search: case and accents ignored, every word of the query, in any order.
 const plain = (text) => String(text ?? '').normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase()
 const matches = (query, text) => { const hay = plain(text); return plain(query).split(/\s+/).filter(Boolean).every((w) => hay.includes(w)) }
@@ -1337,7 +1343,7 @@ function renderView() {
   const cut1 = (text, n) => { const line = String(text).split('\n')[0]; return line.length > n || String(text).includes('\n') ? `${line.slice(0, n)}…` : line }
   const turns = turnsOf(items)
   const busy = s?.status === 'busy'
-  const span = (a, b) => { const m = Math.max(0, Math.round((Date.parse(b) - Date.parse(a)) / 60000)); return m < 1 ? '<1 min' : m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${m % 60}` }
+  const span = (a, b) => minutes(Date.parse(b) - Date.parse(a))
   const arts = new Map((detailOf === sel ? detail?.artifacts ?? [] : []).map((a) => [a.url, a]))
   const ICONS = { read: 'read', write: 'pencil', edit: 'pencil', run: 'play', search: 'search', web: 'external', agent: 'agents', workflow: 'agents', skill: 'flag', plan: 'todo', ask: 'question', artifact: 'art', 'artifact.read': 'art', tool: 'chip', say: 'chat' }
   // One action as a phrase, with how a permission it needed was settled.
@@ -1803,10 +1809,13 @@ function renderInspector(box = $('#inspector')) {
   const usd = s.usage?.cost?.usd
   const section = (iconName, title, ...body) => h('section', {}, h('h3', {}, icon(iconName, 16), title), body)
   const arts = d?.artifacts ?? []
+  const before = d?.artifactsBefore ?? []
+  const artItem = (a, cls) => h('a', { class: cls, href: a.url, target: '_blank', rel: 'noopener noreferrer', title: t('open.tab') },
+    icon('art', 18), h('span', {}, h('b', {}, a.title || a.url), h('span', { class: 'meta' }, t('artifact.meta', { v: a.version, ago: ago(Date.parse(a.at)) }))), icon('external', 16))
   if (!inspOpen && !narrow.matches) {
     // Hidden: one icon per section that has something, with its count; any of them opens the panel.
     const railBtn = (iconName, label, n) => btn('icon sm flat', label, iconName, () => showInsp(true), { text: null }, n)
-    fill(box, [['flag', t('task'), 0], ['art', t('artifacts'), arts.length], ['plan', t('plan'), steps.length], ['diff', t('files', { n: files.length }), files.length], ['coin', t('cost'), 0]]
+    fill(box, [['flag', t('task'), 0], ['art', t('artifacts'), arts.length + before.length], ['plan', t('plan'), steps.length], ['diff', t('files', { n: files.length }), files.length], ['coin', t('cost'), 0]]
       .filter(([, , n], i) => i === 0 || i === 4 || n)
       .map(([i, label, n]) => { const b = railBtn(i, label, n); if (n) b.append(h('span', { class: 'n', 'aria-hidden': 'true' }, n)); return b }))
     return
@@ -1817,8 +1826,10 @@ function renderInspector(box = $('#inspector')) {
     section('flag', t('task'), (s.title || d?.title) ? h('b', { style: 'font-size:16px;line-height:1.35' }, s.title || d.title) : null,
       first ? h('p', { class: taskOpen ? '' : 'clamp', style: 'margin:0;font-size:14px;line-height:1.45;color:var(--muted)' }, first) : null,
       first.length > 180 ? h('button', { type: 'button', class: 'textlink', onclick: () => { taskOpen = !taskOpen; renderInspector() } }, t(taskOpen ? 'task.less' : 'task.more')) : null),
-    arts.length ? section('art', `${t('artifacts')} · ${arts.length}`, arts.slice(0, 8).map((a) => h('a', { class: 'art', href: a.url, target: '_blank', rel: 'noopener noreferrer', title: t('open.tab') },
-      icon('art', 18), h('span', {}, h('b', {}, a.title || a.url), h('span', { class: 'meta' }, t('artifact.meta', { v: a.version, ago: ago(Date.parse(a.at)) }))), icon('external', 16)))) : null,
+    // The session's own, those of the session it continues, then the whole gallery on claude.ai.
+    section('art', arts.length ? `${t('artifacts')} · ${arts.length}` : t('artifacts'), arts.length ? arts.slice(0, 8).map((a) => artItem(a, 'art')) : h('span', { class: 'meta' }, t('artifacts.none')),
+      before.length ? [h('span', { class: 'meta', style: 'display:flex;align-items:center;gap:6px;margin-top:6px;font-weight:800' }, icon('loop', 14), t('artifacts.before', { n: before.length })), before.slice(0, 8).map((a) => artItem(a, 'art before'))] : null,
+      h('a', { class: 'textlink', href: 'https://claude.ai/code/artifacts', target: '_blank', rel: 'noopener noreferrer', title: t('open.tab') }, t('artifacts.all'), ' ', icon('external', 14))),
     links.filter((l) => !arts.some((a) => a.url === l.url)).length ? section('external', `${t('links')} · ${links.length}`, links.filter((l) => !arts.some((a) => a.url === l.url)).slice(0, 12).map(linkItem)) : null,
     steps.length ? section('plan', t('plan'), steps.map((x) => h('div', { class: `step ${x.state}` }, icon(x.state === 'done' ? 'check' : x.state === 'now' ? 'now' : 'todo', 16), h('span', {}, x.text)))) : null,
     section('diff', `${t('files', { n: files.length })}`, files.length ? files.slice(-20).map((x) => h('div', { class: 'file', title: x.file }, h('code', {}, rel(x.file, s.cwd)), h('span', { class: 'plus' }, `+${x.plus}`), h('span', { class: 'minus' }, `-${x.minus}`))) : h('span', { class: 'meta' }, '·')),

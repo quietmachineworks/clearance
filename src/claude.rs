@@ -214,6 +214,7 @@ pub struct Transcript {
     todos: Json,                  // the last TodoWrite list: the session's plan and where it is
     links: Vec<(String, String)>, // what the session pointed to, and when: once each, the latest last
     artifacts: Vec<Artifact>,     // the claude.ai artifacts it published, the latest last
+    previous: Option<String>,     // the session a handoff plugin says this one continues
 }
 
 /// A claude.ai artifact the session published: its link, a name, its version, when.
@@ -223,6 +224,17 @@ struct Artifact {
     title: String,
     version: u64,
     at: String,
+}
+
+impl Artifact {
+    fn to_json(&self) -> Json {
+        obj([("url", self.url.as_str().into()), ("title", self.title.as_str().into()), ("version", self.version.into()), ("at", self.at.as_str().into())])
+    }
+}
+
+/// A session id: 36 characters, hexadecimal digits in five groups.
+fn is_uuid(s: &str) -> bool {
+    s.len() == 36 && s.split('-').map(str::len).eq([8, 4, 4, 4, 12]) && s.chars().all(|c| c == '-' || c.is_ascii_hexdigit())
 }
 
 // How a permission was settled, from the `permissionDecision` of a tool result; automatic ones (settings,
@@ -488,6 +500,13 @@ fn parse(records: Vec<Json>) -> Transcript {
                 let typed = if results.is_empty() { text_of(content).trim().to_string() } else { String::new() };
                 if typed.starts_with("This session is being continued from a previous conversation") {
                     t.thread.push(Item::Resumed { at: at.clone() });
+                } else if e.get("origin").get("kind").str() == Some("plugin") {
+                    // ponytail: the first other session id a plugin's message names is the one this continues;
+                    // a plugin that names sessions for another reason would link the wrong one.
+                    if t.previous.is_none() {
+                        let own = e.get("sessionId").str();
+                        t.previous = typed.split(|c: char| !(c == '-' || c.is_ascii_hexdigit())).find(|w| is_uuid(w) && Some(*w) != own).map(String::from);
+                    }
                 } else if !typed.is_empty()
                     && e.get("isMeta").bool() != Some(true)
                     && !typed.starts_with('<')
@@ -677,6 +696,13 @@ pub fn recent_loop(t: &Transcript, now: u64) -> Option<(String, String, usize)> 
 const TEST_COMMANDS: [&str; 13] =
     ["npm test", "npm run test", "pnpm test", "yarn test", "cargo test", "pytest", "go test", "node --test", "mvn test", "gradle test", "dotnet test", "vitest", "jest"];
 
+/// A file in a session's scratchpad (`<temp>/claude/<project>/<session id>/scratchpad/...`): scratch work,
+/// not a change to the project.
+fn in_scratchpad(path: &str) -> bool {
+    let path = path.replace('\\', "/");
+    path.split("/scratchpad/").next().is_some_and(|head| head.len() < path.len() && head.rsplit('/').next().is_some_and(is_uuid))
+}
+
 /// What the last turn leaves to check: its last test run, commits, a merge request link, files changed.
 /// ponytail: words in the commands and their output; a project with another test runner reads as none.
 pub fn facts(t: &Transcript) -> Json {
@@ -706,7 +732,7 @@ pub fn facts(t: &Transcript) -> Json {
         {
             mr = Some(url.to_string());
         }
-        if EDIT_TOOLS.contains(&tool.as_str()) && !error && !files.contains(target) {
+        if EDIT_TOOLS.contains(&tool.as_str()) && !error && !files.contains(target) && !in_scratchpad(target) {
             files.push(target.clone());
         }
     }
@@ -747,13 +773,14 @@ pub fn detail(projects: &Path, id: &str, cwd: Option<&str>) -> Option<Json> {
     edits.sort_by(|a, b| a.at.cmp(&b.at));
     // Lines added and removed per file, for the inspector.
     let mut files: Vec<(String, usize, usize)> = Vec::new();
-    for e in &edits {
+    for e in edits.iter().filter(|e| !in_scratchpad(&e.file)) {
         match files.iter_mut().find(|f| f.0 == e.file) {
             Some(f) => (f.1, f.2) = (f.1 + e.lines.0, f.2 + e.lines.1),
             None => files.push((e.file.clone(), e.lines.0, e.lines.1)),
         }
     }
     let errors: Vec<&Step> = t.steps.iter().filter(|s| s.error.is_some()).collect();
+    let before = t.previous.as_deref().and_then(|p| transcript_of(projects, p, cwd)).map(|f| read_transcript(&f).artifacts.clone()).unwrap_or_default();
     Some(obj([
         ("title", t.title.as_deref().into()),
         ("branch", t.branch.as_deref().into()),
@@ -775,16 +802,22 @@ pub fn detail(projects: &Path, id: &str, cwd: Option<&str>) -> Option<Json> {
         ("todos", t.todos.clone()),
         ("runs", Json::Arr(runs)),
         ("agents", Json::Arr(agents)),
+        // One published again keeps the name it had before the handoff: a publish without a title only has its file's.
         (
             "artifacts",
             Json::Arr(
                 t.artifacts
                     .iter()
                     .rev()
-                    .map(|a| obj([("url", a.url.as_str().into()), ("title", a.title.as_str().into()), ("version", a.version.into()), ("at", a.at.as_str().into())]))
+                    .map(|a| match before.iter().find(|b| b.url == a.url) {
+                        Some(b) => Artifact { title: b.title.clone(), ..a.clone() }.to_json(),
+                        None => a.to_json(),
+                    })
                     .collect(),
             ),
         ),
+        // Those of the session it continues, one handoff back, but the ones it published again.
+        ("artifactsBefore", Json::Arr(before.iter().rev().filter(|a| !t.artifacts.iter().any(|o| o.url == a.url)).map(Artifact::to_json).collect())),
         ("links", Json::Arr(t.links.iter().rev().take(30).map(|(url, at)| obj([("url", url.as_str().into()), ("at", at.as_str().into())])).collect())),
     ]))
 }
@@ -1092,7 +1125,7 @@ mod tests {
                 r#"{"type":"user","timestamp":"2026-10-30T09:59:00Z","message":{"content":"This session is being continued from a previous conversation that ran out of context."}}"#,
             ),
             j(
-                r#"{"type":"user","timestamp":"2026-10-30T09:59:30Z","origin":{"kind":"plugin","name":"handoff"},"message":{"content":"The handoff plugin sent a message: carry on."}}"#,
+                r#"{"type":"user","timestamp":"2026-10-30T09:59:30Z","sessionId":"9b2e4c1a-0d3f-4e5a-8b6c-7d8e9f0a1b2c","origin":{"kind":"plugin","name":"handoff"},"message":{"content":"The handoff plugin sent a message: this is 9b2e4c1a-0d3f-4e5a-8b6c-7d8e9f0a1b2c, carry on from (0f8fad5b-d9cb-469f-a165-70867728950e)."}}"#,
             ),
             call("a", "Bash", r#"{"command":"git push"}"#),
             result("a", "ok", r#"{"decision":"accept","source":"user_temporary"}"#),
@@ -1106,6 +1139,7 @@ mod tests {
             result("e", "Updated the Artifact at https://claude.ai/artifact/A1 (Version 3, version id 9) with files", "null"),
         ]);
         assert!(t.prompts.is_empty(), "neither a resume summary nor a plugin's message is a request");
+        assert_eq!(t.previous.as_deref(), Some("0f8fad5b-d9cb-469f-a165-70867728950e"), "the session a handoff continues, not its own");
         assert!(matches!(t.thread[0], Item::Resumed { .. }));
         let how: Vec<Option<&str>> = t.thread.iter().filter_map(|i| if let Item::Tool { asked, .. } = i { Some(asked.as_ref().map(|(h, _)| *h)) } else { None }).collect();
         assert_eq!(how, [Some("you"), None, Some("refused"), None, None], "automatic yeses are left out");
@@ -1115,6 +1149,14 @@ mod tests {
         assert_eq!(a.title, "Export screen", "a later publish without a title keeps its name");
         assert_eq!(published("Created a new Artifact at https://claude.ai/artifact/Z9 (version 1)"), Some(("https://claude.ai/artifact/Z9".into(), 1)));
         assert_eq!(published("read it"), None);
+    }
+
+    #[test]
+    fn scratchpad_files_are_not_changes() {
+        assert!(in_scratchpad(r"C:\Temp\claude\C--work-orchard\0f8fad5b-d9cb-469f-a165-70867728950e\scratchpad\notes.txt"));
+        assert!(in_scratchpad("/tmp/claude/-work-orchard/0f8fad5b-d9cb-469f-a165-70867728950e/scratchpad/a/b.md"));
+        assert!(!in_scratchpad("/work/orchard/scratchpad/notes.txt"), "a project's own scratchpad folder is part of it");
+        assert!(!in_scratchpad("/work/orchard/src/main.rs"));
     }
 
     #[test]
