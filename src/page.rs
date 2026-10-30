@@ -176,10 +176,10 @@ fn the_contrast_check_measures_what_wcag_does() {
     assert!((contrast("#777777", "#FFFFFF").unwrap() - 4.48).abs() < 0.01);
 }
 
-/// The page's pure helpers (search, folded tool runs), run under node when it is installed: the
+/// The page's pure helpers (search, the thread in turns), run under node when it is installed: the
 /// repository needs no JS tool, so without node this check says it was skipped.
 #[test]
-fn search_and_folded_runs_behave() {
+fn search_and_the_thread_in_turns_behave() {
     let (start, end) = (PAGE.find("// ---- pure:").unwrap(), PAGE.find("// ---- end pure ----").unwrap());
     let checks = r#"
 const assert = (ok, what) => { if (!ok) { console.error('FAILED: ' + what); process.exit(1) } }
@@ -187,11 +187,18 @@ assert(matches('eloi cafe', 'Café chez Éloi'), 'accents and case ignored');
 assert(matches('chez cafe', 'Café chez Éloi'), 'any order');
 assert(!matches('cafe the', 'Café chez Éloi'), 'every word');
 assert(matches('  ', 'anything'), 'an empty query finds all');
-const tool = (name, error = false) => ({ kind: 'tool', tool: name, error, at: name });
-const folded = foldTools([{ kind: 'user' }, tool('Read'), { kind: 'text' }, tool('Bash'), tool('Read'), tool('Bash', true), { kind: 'text' }]);
-assert(JSON.stringify(folded.map((x) => x.kind)) === '["user","tool","text","tools","text"]', 'a lone call stays, a run folds: ' + JSON.stringify(folded.map((x) => x.kind)));
-const run = runOf(folded[3].items);
-assert(run.n === 3 && run.tools.join() === 'Bash,Read' && run.failed === 1, 'a run counts its calls, tools and failures');
+const tool = (name, target = '', error = false) => ({ kind: 'tool', tool: name, target, error, at: name });
+const said = (text) => ({ kind: 'text', text, at: text });
+const turns = turnsOf([{ kind: 'resumed', at: '0' }, { kind: 'user', text: 'Ship it', at: '1' }, tool('Read', 'a.rs'), tool('Read', 'b.rs'), said('Looking.'),
+  tool('Bash', 'cargo test', true), tool('Edit', 'a.rs'), tool('Bash', 'cargo test'), tool('Bash', 'git commit -m x'), said('Shipped.'), { kind: 'user', text: 'More?', at: '2' }, tool('Grep', 'x'), said('Wait'), tool('Read', 'c.rs')]);
+assert(turns.length === 3 && turns[0].resumed && !turns[0].ask, 'a resume opens a turn of its own');
+assert(turns[1].reply?.text === 'Shipped.' && turns[1].steps.length === 7, 'the last text is the reply, the rest are steps');
+assert(turns[2].reply === null, 'a text followed by more work is not a reply yet');
+const b = bilanOf(turns[1].steps);
+assert(b.n === 6 && b.files === 1 && b.tests === true && b.commits === 1 && b.failed === 1 && !b.mr, 'a turn sums up: ' + JSON.stringify(b));
+const acts = actsOf(turns[1].steps);
+assert(acts[0].verb === 'read' && acts[0].more === 1 && acts[1].verb === 'say' && acts[2].verb === 'run' && acts[2].error, 'reads in a row become one: ' + JSON.stringify(acts.map((a) => a.verb)));
+assert(verbOf({ tool: 'mcp__tracker__create_issue' }) === 'tool' && verbOf({ tool: 'Artifact', artifact: 'u' }) === 'artifact', 'verbs');
 console.log('pure helpers ok');
 "#;
     let script = format!("{}\n{checks}", &PAGE[start..end]);
@@ -199,4 +206,24 @@ console.log('pure helpers ok');
         Ok(out) => assert!(out.status.success(), "{}{}", String::from_utf8_lossy(&out.stdout), String::from_utf8_lossy(&out.stderr)),
         Err(_) => eprintln!("node not found: the page's pure helpers were not run"),
     }
+}
+
+/// The page's whole script compiles (not run), under node when it is installed: a syntax error there
+/// leaves a blank page that no other check sees.
+#[test]
+fn the_page_script_compiles() {
+    use std::io::Write;
+    let open = r#"<script nonce="__NONCE__">"#;
+    let start = PAGE.find(open).unwrap() + open.len();
+    let script = &PAGE[start..start + PAGE[start..].find("</script>").unwrap()];
+    let child = std::process::Command::new("node")
+        .args(["-e", "new (require('vm').Script)(require('fs').readFileSync(0, 'utf8'), { filename: 'index.html' })"])
+        .stdin(std::process::Stdio::piped())
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::piped())
+        .spawn();
+    let Ok(mut child) = child else { return eprintln!("node not found: the page's script was not compiled") };
+    child.stdin.take().unwrap().write_all(script.as_bytes()).unwrap();
+    let out = child.wait_with_output().unwrap();
+    assert!(out.status.success(), "{}", String::from_utf8_lossy(&out.stderr));
 }

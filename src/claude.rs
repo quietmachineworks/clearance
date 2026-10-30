@@ -170,7 +170,11 @@ struct Launch {
 enum Item {
     User { at: String, text: String },
     Said { at: String, text: String },
-    Tool { at: String, tool: String, target: String, out: Option<String>, error: bool },
+    // `asked`: how a permission it needed was settled, when it was not automatic; `artifact`: the claude.ai
+    // artifact it published.
+    Tool { at: String, tool: String, target: String, out: Option<String>, error: bool, asked: Option<(&'static str, String)>, artifact: Option<String> },
+    // The summary Claude Code writes when a session goes on after its context was compacted: not a message.
+    Resumed { at: String },
 }
 
 impl Item {
@@ -178,14 +182,17 @@ impl Item {
         match self {
             Item::User { at, text } => obj([("kind", "user".into()), ("at", at.as_str().into()), ("text", text.as_str().into())]),
             Item::Said { at, text } => obj([("kind", "text".into()), ("at", at.as_str().into()), ("text", text.as_str().into())]),
-            Item::Tool { at, tool, target, out, error } => obj([
+            Item::Tool { at, tool, target, out, error, asked, artifact } => obj([
                 ("kind", "tool".into()),
                 ("at", at.as_str().into()),
                 ("tool", tool.as_str().into()),
                 ("target", target.as_str().into()),
                 ("out", out.as_deref().into()),
                 ("error", error.then_some(true).into()),
+                ("asked", asked.as_ref().map(|(how, at)| obj([("how", (*how).into()), ("at", at.as_str().into())])).unwrap_or(Json::Null)),
+                ("artifact", artifact.as_deref().into()),
             ]),
+            Item::Resumed { at } => obj([("kind", "resumed".into()), ("at", at.as_str().into())]),
         }
     }
 }
@@ -206,6 +213,38 @@ pub struct Transcript {
     thread: Vec<Item>,
     todos: Json,                  // the last TodoWrite list: the session's plan and where it is
     links: Vec<(String, String)>, // what the session pointed to, and when: once each, the latest last
+    artifacts: Vec<Artifact>,     // the claude.ai artifacts it published, the latest last
+}
+
+/// A claude.ai artifact the session published: its link, a name, its version, when.
+#[derive(Debug, Clone)]
+struct Artifact {
+    url: String,
+    title: String,
+    version: u64,
+    at: String,
+}
+
+// How a permission was settled, from the `permissionDecision` of a tool result; automatic ones (settings,
+// mode, rules, the classifier's yes) are left out.
+fn asked(d: &Json) -> Option<&'static str> {
+    match (d.get("decision").str()?, d.get("source").str()?) {
+        ("accept", "user_temporary" | "user_permanent") => Some("you"),
+        ("accept", "hook") => Some("clearance"),
+        ("reject", "user_reject") => Some("refused"),
+        ("reject", "config") if d.get("reasonType").str() == Some("classifier") => Some("blocked"),
+        ("cancelled", _) => Some("cancelled"),
+        _ => None,
+    }
+}
+
+/// The artifact link and version an Artifact publish answered with: "Created a new Artifact at <url>" or
+/// "Updated the Artifact at <url> (Version 4, ...".
+fn published(out: &str) -> Option<(String, u64)> {
+    let rest = ["Created a new Artifact at ", "Updated the Artifact at "].iter().find_map(|p| out.find(p).map(|i| &out[i + p.len()..]))?;
+    let url = rest.split(|c: char| c.is_whitespace() || c == '(').next()?.trim_end_matches(['.', ',']);
+    let version = rest.split_once("(Version ").and_then(|(_, v)| v.split(|c: char| !c.is_ascii_digit()).next()?.parse().ok()).unwrap_or(1);
+    url.starts_with("https://").then(|| (url.to_string(), version))
 }
 
 impl Transcript {
@@ -337,6 +376,7 @@ fn parse(records: Vec<Json>) -> Transcript {
     let mut t = Transcript::default();
     let mut calls: HashMap<String, (usize, usize)> = HashMap::new(); // tool_use id -> step, thread item
     let mut launches: HashMap<String, usize> = HashMap::new();
+    let mut publishes: HashMap<String, (Option<String>, Option<String>)> = HashMap::new(); // Artifact call -> its title, its file
     for e in records {
         let at = e.get("timestamp").str().unwrap_or("").to_string();
         if !at.is_empty() {
@@ -375,7 +415,11 @@ fn parse(records: Vec<Json>) -> Transcript {
                     }
                     let (name, input) = (c.get("name").str().unwrap_or(""), c.get("input"));
                     let step = Step { at: at.clone(), tool: name.into(), target: target(input), error: None };
-                    t.thread.push(Item::Tool { at: at.clone(), tool: name.into(), target: step.target.clone(), out: None, error: false });
+                    t.thread.push(Item::Tool { at: at.clone(), tool: name.into(), target: step.target.clone(), out: None, error: false, asked: None, artifact: None });
+                    if name == "Artifact" {
+                        let file = input.get("file_path").str().and_then(|f| Path::new(f).file_name()?.to_str()?.split('.').next().map(String::from));
+                        publishes.insert(c.get("id").str().unwrap_or("").into(), (opt(input.get("title")), file));
+                    }
                     calls.insert(c.get("id").str().unwrap_or("").into(), (t.steps.len(), t.thread.len() - 1));
                     t.steps.push(step);
                     if EDIT_TOOLS.contains(&name) {
@@ -420,9 +464,20 @@ fn parse(records: Vec<Json>) -> Transcript {
                         if error {
                             t.steps[step].error = Some(cut(&out, 400));
                         }
-                        if let Item::Tool { out: o, error: err, .. } = &mut t.thread[item] {
+                        let how = asked(e.get("permissionDecision")).map(|how| (how, at.clone()));
+                        let artifact = publishes.get(id).and_then(|title| Some((published(&out)?, title.clone())));
+                        if let Item::Tool { out: o, error: err, asked: a, artifact: art, .. } = &mut t.thread[item] {
                             *o = Some(cut(out.trim(), 300)).filter(|s| !s.is_empty());
                             *err = error;
+                            *a = how;
+                            *art = artifact.as_ref().map(|((url, _), _)| url.clone());
+                        }
+                        if let Some(((url, version), (title, file))) = artifact {
+                            // Its title, else the name it already has, else its file's.
+                            let known = t.artifacts.iter().find(|a| a.url == url).map(|a| a.title.clone());
+                            let title = title.or(known).or(file).unwrap_or_default();
+                            t.artifacts.retain(|a| a.url != url);
+                            t.artifacts.push(Artifact { url, title, version, at: at.clone() });
                         }
                     }
                     if let (Some(&l), Some(run)) = (launches.get(id), e.get("toolUseResult").get("runId").str()) {
@@ -431,7 +486,14 @@ fn parse(records: Vec<Json>) -> Transcript {
                 }
                 // What the user typed; injected context (reminders, command output) starts with a tag.
                 let typed = if results.is_empty() { text_of(content).trim().to_string() } else { String::new() };
-                if !typed.is_empty() && e.get("isMeta").bool() != Some(true) && !typed.starts_with('<') {
+                if typed.starts_with("This session is being continued from a previous conversation") {
+                    t.thread.push(Item::Resumed { at: at.clone() });
+                } else if !typed.is_empty()
+                    && e.get("isMeta").bool() != Some(true)
+                    && !typed.starts_with('<')
+                    // ponytail: a message a plugin, a notification or a continuation sent in the user's place is not a request
+                    && e.get("origin").get("kind").str().is_none_or(|k| k == "human")
+                {
                     let text = cut(&typed, 2000);
                     t.prompts.push((at.clone(), text.clone()));
                     t.thread.push(Item::User { at: at.clone(), text });
@@ -713,6 +775,16 @@ pub fn detail(projects: &Path, id: &str, cwd: Option<&str>) -> Option<Json> {
         ("todos", t.todos.clone()),
         ("runs", Json::Arr(runs)),
         ("agents", Json::Arr(agents)),
+        (
+            "artifacts",
+            Json::Arr(
+                t.artifacts
+                    .iter()
+                    .rev()
+                    .map(|a| obj([("url", a.url.as_str().into()), ("title", a.title.as_str().into()), ("version", a.version.into()), ("at", a.at.as_str().into())]))
+                    .collect(),
+            ),
+        ),
         ("links", Json::Arr(t.links.iter().rev().take(30).map(|(url, at)| obj([("url", url.as_str().into()), ("at", at.as_str().into())])).collect())),
     ]))
 }
@@ -1003,6 +1075,46 @@ mod tests {
         ]);
         let urls: Vec<&str> = t.links.iter().map(|(u, _)| u.as_str()).collect();
         assert_eq!(urls, ["https://forge.example.org/orchard/-/merge_requests/7", "https://example.org/page"], "named again, the page moves to the end");
+    }
+
+    #[test]
+    fn how_permissions_were_settled_artifacts_and_resumes() {
+        let call = |id: &str, name: &str, input: &str| {
+            j(&format!(r#"{{"type":"assistant","timestamp":"2026-10-30T10:00:00Z","message":{{"content":[{{"type":"tool_use","id":"{id}","name":"{name}","input":{input}}}]}}}}"#))
+        };
+        let result = |id: &str, out: &str, decision: &str| {
+            j(&format!(
+                r#"{{"type":"user","timestamp":"2026-10-30T10:01:00Z","permissionDecision":{decision},"message":{{"content":[{{"type":"tool_result","tool_use_id":"{id}","content":"{out}"}}]}}}}"#
+            ))
+        };
+        let t = parse(vec![
+            j(
+                r#"{"type":"user","timestamp":"2026-10-30T09:59:00Z","message":{"content":"This session is being continued from a previous conversation that ran out of context."}}"#,
+            ),
+            j(
+                r#"{"type":"user","timestamp":"2026-10-30T09:59:30Z","origin":{"kind":"plugin","name":"handoff"},"message":{"content":"The handoff plugin sent a message: carry on."}}"#,
+            ),
+            call("a", "Bash", r#"{"command":"git push"}"#),
+            result("a", "ok", r#"{"decision":"accept","source":"user_temporary"}"#),
+            call("b", "Bash", r#"{"command":"npm test"}"#),
+            result("b", "ok", r#"{"decision":"accept","source":"config","reasonType":"rule"}"#),
+            call("c", "Bash", r#"{"command":"kubectl apply"}"#),
+            result("c", "no", r#"{"decision":"reject","source":"user_reject"}"#),
+            call("d", "Artifact", r#"{"action":"publish","title":"Export screen","type_url":"https://claude.ai/artifact/T1"}"#),
+            result("d", "Created a new Artifact at https://claude.ai/artifact/A1 (version 17) from the type", "null"),
+            call("e", "Artifact", r#"{"action":"publish","url":"https://claude.ai/artifact/A1","file_path":"/tmp/x/project/Main.dc.html"}"#),
+            result("e", "Updated the Artifact at https://claude.ai/artifact/A1 (Version 3, version id 9) with files", "null"),
+        ]);
+        assert!(t.prompts.is_empty(), "neither a resume summary nor a plugin's message is a request");
+        assert!(matches!(t.thread[0], Item::Resumed { .. }));
+        let how: Vec<Option<&str>> = t.thread.iter().filter_map(|i| if let Item::Tool { asked, .. } = i { Some(asked.as_ref().map(|(h, _)| *h)) } else { None }).collect();
+        assert_eq!(how, [Some("you"), None, Some("refused"), None, None], "automatic yeses are left out");
+        assert_eq!(t.artifacts.len(), 1, "one artifact, published twice");
+        let a = &t.artifacts[0];
+        assert_eq!((a.url.as_str(), a.version), ("https://claude.ai/artifact/A1", 3));
+        assert_eq!(a.title, "Export screen", "a later publish without a title keeps its name");
+        assert_eq!(published("Created a new Artifact at https://claude.ai/artifact/Z9 (version 1)"), Some(("https://claude.ai/artifact/Z9".into(), 1)));
+        assert_eq!(published("read it"), None);
     }
 
     #[test]

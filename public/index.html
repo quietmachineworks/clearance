@@ -219,7 +219,8 @@ details.fold summary { min-height: 28px; display: inline-flex; align-items: cent
 details.fold summary::-webkit-details-marker { display: none }
 details.fold[open] summary { color: var(--onPrimary); background: var(--primary); border-color: var(--primary) }
 .folds { display: flex; flex-wrap: wrap; gap: 4px; padding: 2px 4px 0 }
-.folds details { flex: 0 0 auto }
+.folds details { flex: 0 0 auto; min-width: 0 }
+/* Open, a drawer takes the row and no more: a long title is cut, Resume and Delete stay in view. */
 .folds details[open] { flex-basis: 100% }
 .foldrow { display: flex; align-items: center; gap: 8px; min-height: 32px; padding: 0 8px }
 .foldrow > .grow { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
@@ -274,7 +275,44 @@ kbd { font-size: 12px; font-weight: 700; padding: 1px 6px; color: var(--ink); ba
 .metas { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; font-size: 13px; color: var(--muted) }
 .metas span { display: inline-flex; align-items: center; gap: 5px }
 .split { flex: 1 1 auto; min-height: 0; display: flex }
-.center { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column }
+.center { position: relative; flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column }
+/* Files dragged over a session: the whole of it takes them (BRIEF 3b). */
+.center.dropping::after { content: attr(data-drop); position: absolute; inset: 8px; z-index: 3; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 800; color: var(--ink); background: var(--sel); border: 3px dashed var(--accent); border-radius: var(--r); pointer-events: none }
+/* The right panel: hidden down to a column of icons, or dragged between 240 and 520 px. */
+.inspector.shut { flex: 0 0 48px; padding: 10px 4px; align-items: center; gap: 6px }
+.inspector.shut .btn { position: relative }
+.inspector.shut .n { position: absolute; top: -2px; right: -2px; color: var(--onPrimary); background: var(--primary) }
+.grip.left { margin: 0 -12px 0 0 }
+.grip.left::after { left: 0; right: auto; border: var(--bw) solid var(--edge); border-left: 0; border-radius: 0 var(--rs) var(--rs) 0 }
+.clamp { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden }
+.textlink { align-self: flex-start; padding: 0; font: inherit; font-size: 13px; font-weight: 700; color: var(--blue); background: none; border: 0; cursor: pointer }
+.art { display: flex; align-items: center; gap: 10px; padding: 8px 10px; color: var(--ink); text-decoration: none; background: var(--paper); border: var(--bw) solid var(--edge); border-radius: var(--r) }
+.art > span { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; line-height: 1.25 }
+/* The thread, one turn per message (BRIEF 3b): what you asked, what it did, what it answered. */
+.turn { display: flex; flex-direction: column; gap: 8px }
+.turn .bilan { display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; border: var(--bw) solid var(--line); border-radius: var(--r); background: var(--panel) }
+.turn .bilan.live { border-color: var(--blue) }
+.bilan > .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap }
+.tchip { display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 9px; font-size: 13px; font-weight: 800; white-space: nowrap; color: var(--text2); background: var(--soft); border-radius: var(--pill) }
+.tchip.ok { color: var(--okInk); background: var(--okBg) }
+.tchip.bad { color: var(--danger); background: var(--badBg) }
+.acts { display: flex; flex-direction: column; gap: 5px }
+.act { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 8px; align-items: start; font-size: 14px; line-height: 1.45; color: var(--text2) }
+.act > svg { margin-top: 3px }
+.act.bad { color: var(--danger) }
+.act.say { color: var(--muted); font-style: italic }
+.act code { font-family: var(--mono); font-size: 13px; padding: 0 4px; background: var(--soft); border-radius: 3px; overflow-wrap: anywhere }
+.act .asked { font-weight: 700; color: var(--okInk) }
+.act .asked.no { color: var(--danger) }
+.resumed { align-self: center; font-size: 13px; color: var(--muted) }
+.seg2 { align-self: flex-end; display: flex; border: var(--bw) solid var(--edge); border-radius: var(--pill); overflow: hidden }
+.seg2 button { height: 30px; padding: 0 14px; font: inherit; font-size: 13px; font-weight: 800; color: var(--ink); background: var(--paper); border: 0; cursor: pointer }
+.seg2 button + button { border-left: var(--bw) solid var(--edge) }
+.seg2 button[aria-pressed=true] { color: var(--onPrimary); background: var(--primary) }
+.att { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 2px 0 4px; background: var(--paper); border: var(--bw) solid var(--edge); border-radius: var(--r) }
+.att .thumb { width: 36px; height: 34px; display: flex; align-items: center; justify-content: center; object-fit: cover; border-radius: 5px; background: var(--soft) }
+.att > span { display: flex; flex-direction: column; line-height: 1.15; font-size: 13px }
+.inspector .file > :not(code) { flex: none; white-space: nowrap; overflow-wrap: normal }
 .tabs { flex: none; display: flex; gap: 4px; padding: 0 24px; border-bottom: var(--bw) solid var(--edge) }
 .tab { display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 16px; margin-bottom: calc(-1 * var(--bw)); font-weight: 600; color: var(--ink); background: transparent; border: 0; border-bottom: 4px solid transparent; cursor: pointer }
 .tab[aria-selected=true] { font-weight: 800; border-bottom-color: var(--sel-edge) }
@@ -332,7 +370,7 @@ legend { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font
 .composer { flex: none; display: flex; flex-direction: column; gap: 6px; padding: 12px 24px 14px; border-top: var(--bw) solid var(--edge) }
 .composer .row { display: flex; align-items: flex-end; gap: 10px }
 .send { width: 52px; height: 52px }
-.inspector { flex: 0 0 340px; min-width: 0; overflow: auto; padding: 16px; display: flex; flex-direction: column; gap: 18px; border-left: var(--bw) solid var(--edge); background: var(--panel) }
+.inspector { flex: 0 0 var(--insp-w, 320px); min-width: 0; max-width: 520px; overflow-x: hidden; overflow-y: auto; overflow-wrap: anywhere; padding: 16px; display: flex; flex-direction: column; gap: 18px; border-left: var(--bw) solid var(--edge); background: var(--panel) }
 .insp h3, .setting h3 { margin: 0; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase }
 .insp section { display: flex; flex-direction: column; gap: 6px }
 .step { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; line-height: 1.4; color: var(--muted) }
@@ -492,8 +530,12 @@ const I18N = {
     search: 'Go to a session or a command', journal: 'Journal', settings: 'Settings', 'new.task': 'New task', fold: 'Fold the queue', unfold: 'Unfold the queue',
     skin: 'Look', lang: 'Language', pack: 'Avatars', notify: 'Turn on notifications', 'notify.on': 'Notifications are on',
     browsers: 'Signed-in browsers', 'browser.this': 'this browser', 'browser.seen': 'last used {date}', 'sign.out': 'Sign out', 'sign.out.others': 'Sign out the others', 'signed.out': 'This browser is not signed in to clearance any more.', 'signed.out.how': 'Run this command in a terminal: the page opens here, signed in.',
-    'group.none': 'No group', 'group.new': 'New group', 'group.name': 'Group name', 'group.create': 'Create', 'group.delete': 'Delete the group', 'group.move': 'Put in a group', 'group.empty': 'Nothing here yet: put a session in it from its header.', 'groups.none': 'No group yet.', stopped: 'Stopped', 'forget.title': 'Delete from clearance (its transcript stays)', forgot: 'Deleted from clearance · {name}', 'mem.total': 'Memory of every session', 'mem.group': 'Memory of the group', 'unit.mb': 'MB', 'unit.gb': 'GB', 'close.asleep': 'Close the asleep sessions ({n})', 'stop.frees': 'Quitting frees about {mem}.', 'n.review': '{n} to read', 'n.working': '{n} working', 'n.stopped': '{n} stopped',
-    'attach.failed': 'The file was not added: {error}', 'term.ended': 'The session ended.', server: 'clearance', 'restart.go': 'Restart clearance', 'restart.note': 'A restart waits until the sessions running in clearance are idle, then reopens them. Stopping clearance ends them; they reopen at its next start.', 'restart.waiting': 'Restart once {n} session(s) are idle', 'restart.force': 'Now', 'restart.cancel': 'Cancel', 'quit.go': 'Stop clearance', 'quit.sure': 'Click again: its sessions end', 'queue.width': 'Width of the queue: drag it, or use the arrow keys; double-click for 420 px', failed: 'Stopped on an error',
+    'group.none': 'No group', 'group.new': 'New group', 'group.name': 'Group name', 'group.create': 'Create', 'group.delete': 'Delete the group', 'group.move': 'Put in a group', 'group.empty': 'Nothing here yet: put a session in it from its header.', 'groups.none': 'No group yet.', stopped: 'Stopped', 'forget.title': 'Delete from clearance (its transcript stays)', forgot: 'Deleted from clearance · {name}', 'mem.total': 'Memory of every session', 'mem.group': 'Memory of the group', 'unit.mb': 'MB', 'unit.kb': 'KB', 'unit.gb': 'GB', 'close.asleep': 'Close the asleep sessions ({n})', 'stop.frees': 'Quitting frees about {mem}.', 'n.review': '{n} to read', 'n.working': '{n} working', 'n.stopped': '{n} stopped',
+    'attach.failed': 'The file was not added: {error}', 'term.ended': 'The session ended.', server: 'clearance', 'restart.go': 'Restart clearance', 'restart.note': 'A restart waits until the sessions running in clearance are idle, then reopens them. Stopping clearance ends them; they reopen at its next start.', 'restart.waiting': 'Restart once {n} session(s) are idle', 'restart.force': 'Now', 'restart.cancel': 'Cancel', 'quit.go': 'Stop clearance', 'quit.sure': 'Click again: its sessions end', 'queue.width': 'Width of the queue: drag it, or use the arrow keys; double-click for 420 px', failed: 'Stopped on an error', 'turn.done': 'Done in {d} · {n} actions', 'turn.live': 'Working for {d}', 'turn.show': 'What it did', 'turn.hide': 'Hide the detail', 'turn.files': '{n} files changed', 'turn.tests.ok': 'tests pass', 'turn.tests.ko': 'tests fail', 'turn.commits': '{n} commit(s)', 'turn.failed': '{n} failed', resumed: 'Resumed after its context was compacted', you: 'You',
+    'do.read': 'Read', 'do.edit': 'Edited', 'do.write': 'Wrote', 'do.run': 'Ran', 'do.search': 'Searched', 'do.web': 'Looked up', 'do.agent': 'Handed to an agent:', 'do.workflow': 'Ran the workflow', 'do.skill': 'Used the skill', 'do.plan': 'Updated the plan', 'do.ask': 'Asked you:', 'do.artifact': 'Published the artifact', 'do.artifact.read': 'Read an artifact', 'do.tool': 'Used', 'do.more': 'and {n} more', 'do.version': 'version {n}',
+    'asked.you': 'allowed by you at {time}', 'asked.clearance': 'allowed from clearance at {time}', 'asked.refused': 'refused at {time}', 'asked.blocked': 'blocked by auto mode', 'asked.cancelled': 'interrupted',
+    'panel.hide': 'Hide the panel', 'panel.show': 'Show the panel', 'panel.width': 'Width of the panel: drag it, or use the arrow keys; double-click for 320 px', 'task.more': 'See the whole request', 'task.less': 'Show less', artifacts: 'Artifacts', 'artifact.meta': 'version {v} · {ago}', 'open.tab': 'Opens in a new tab',
+    attach: 'Attach a file', 'attach.remove': 'Remove {name}', 'attach.drop': 'Drop to attach to {name}', 'attach.hint': 'Paste an image, drop a file on the session or use the paperclip: files go with the message, their paths at the end.',
     'thread.mine': 'My messages', 'thread.all': 'Whole thread', actions: '{n} actions', 'actions.failed': '{n} failed', 'copy.md': 'Copy as Markdown',
     shortcuts: 'Shortcuts', 'shortcuts.note': 'Sent to the session on screen, from the chips above its message field or Ctrl+Shift+1 to 0. 10 at most.', 'shortcut.label': 'Label', 'shortcut.text': 'Text to send',
     'shortcut.add': 'Add a shortcut', 'shortcut.remove': 'Remove', save: 'Save', 'shortcuts.saved': 'Shortcuts saved', 'shortcut.sent': '{label} sent to {name}', 'shortcut.nosession': 'Open a session first',
@@ -560,8 +602,12 @@ const I18N = {
     search: 'Aller à une session ou à une commande', journal: 'Journal', settings: 'Réglages', 'new.task': 'Nouvelle tâche', fold: 'Replier la file', unfold: 'Déplier la file',
     skin: 'Apparence', lang: 'Langue', pack: 'Avatars', notify: 'Activer les notifications', 'notify.on': 'Notifications activées',
     browsers: 'Navigateurs connectés', 'browser.this': 'ce navigateur', 'browser.seen': 'utilisé le {date}', 'sign.out': 'Déconnecter', 'sign.out.others': 'Déconnecter les autres', 'signed.out': "Ce navigateur n'est plus connecté à clearance.", 'signed.out.how': "Lancez cette commande dans un terminal : la page s'ouvre ici, connectée.",
-    'group.none': 'Sans groupe', 'group.new': 'Nouveau groupe', 'group.name': 'Nom du groupe', 'group.create': 'Créer', 'group.delete': 'Supprimer le groupe', 'group.move': 'Ranger dans un groupe', 'group.empty': 'Rien ici pour l\'instant : range une session depuis son en-tête.', 'groups.none': 'Aucun groupe pour l\'instant.', stopped: 'Arrêtées', 'forget.title': 'Supprimer de clearance (son transcript reste)', forgot: 'Supprimée de clearance · {name}', 'mem.total': 'Mémoire de toutes les sessions', 'mem.group': 'Mémoire du groupe', 'unit.mb': 'Mo', 'unit.gb': 'Go', 'close.asleep': 'Fermer les sessions endormies ({n})', 'stop.frees': 'Quitter libère environ {mem}.', 'n.review': '{n} à relire', 'n.working': '{n} au travail', 'n.stopped': '{n} arrêtées',
-    'attach.failed': "Le fichier n'a pas été ajouté : {error}", 'term.ended': 'La session est terminée.', server: 'clearance', 'restart.go': 'Redémarrer clearance', 'restart.note': 'Un redémarrage attend que les sessions qui tournent dans clearance soient au repos, puis les rouvre. Arrêter clearance les termine ; elles se rouvrent à son prochain démarrage.', 'restart.waiting': 'Redémarrage quand {n} session(s) seront au repos', 'restart.force': 'Maintenant', 'restart.cancel': 'Annuler', 'quit.go': 'Arrêter clearance', 'quit.sure': 'Clique encore : ses sessions se terminent', 'queue.width': 'Largeur de la file : tire-la, ou utilise les flèches ; double-clic pour 420 px', failed: 'Arrêtée sur une erreur',
+    'group.none': 'Sans groupe', 'group.new': 'Nouveau groupe', 'group.name': 'Nom du groupe', 'group.create': 'Créer', 'group.delete': 'Supprimer le groupe', 'group.move': 'Ranger dans un groupe', 'group.empty': 'Rien ici pour l\'instant : range une session depuis son en-tête.', 'groups.none': 'Aucun groupe pour l\'instant.', stopped: 'Arrêtées', 'forget.title': 'Supprimer de clearance (son transcript reste)', forgot: 'Supprimée de clearance · {name}', 'mem.total': 'Mémoire de toutes les sessions', 'mem.group': 'Mémoire du groupe', 'unit.mb': 'Mo', 'unit.kb': 'Ko', 'unit.gb': 'Go', 'close.asleep': 'Fermer les sessions endormies ({n})', 'stop.frees': 'Quitter libère environ {mem}.', 'n.review': '{n} à relire', 'n.working': '{n} au travail', 'n.stopped': '{n} arrêtées',
+    'attach.failed': "Le fichier n'a pas été ajouté : {error}", 'term.ended': 'La session est terminée.', server: 'clearance', 'restart.go': 'Redémarrer clearance', 'restart.note': 'Un redémarrage attend que les sessions qui tournent dans clearance soient au repos, puis les rouvre. Arrêter clearance les termine ; elles se rouvrent à son prochain démarrage.', 'restart.waiting': 'Redémarrage quand {n} session(s) seront au repos', 'restart.force': 'Maintenant', 'restart.cancel': 'Annuler', 'quit.go': 'Arrêter clearance', 'quit.sure': 'Clique encore : ses sessions se terminent', 'queue.width': 'Largeur de la file : tire-la, ou utilise les flèches ; double-clic pour 420 px', failed: 'Arrêtée sur une erreur', 'turn.done': 'Terminé en {d} · {n} actions', 'turn.live': 'En cours depuis {d}', 'turn.show': "Ce qu'il a fait", 'turn.hide': 'Masquer le détail', 'turn.files': '{n} fichiers modifiés', 'turn.tests.ok': 'tests verts', 'turn.tests.ko': 'tests en échec', 'turn.commits': '{n} commit(s)', 'turn.failed': '{n} en échec', resumed: 'Reprise après compactage du contexte', you: 'Toi',
+    'do.read': 'Lu', 'do.edit': 'Modifié', 'do.write': 'Écrit', 'do.run': 'Lancé', 'do.search': 'Cherché', 'do.web': 'Consulté', 'do.agent': 'Confié à un agent :', 'do.workflow': 'Lancé le workflow', 'do.skill': 'Utilisé la compétence', 'do.plan': 'Mis à jour le plan', 'do.ask': "T'a demandé :", 'do.artifact': "Publié l'artefact", 'do.artifact.read': 'Consulté un artefact', 'do.tool': 'Utilisé', 'do.more': 'et {n} autres', 'do.version': 'version {n}',
+    'asked.you': 'autorisée par toi à {time}', 'asked.clearance': 'autorisée depuis clearance à {time}', 'asked.refused': 'refusée à {time}', 'asked.blocked': 'bloquée par le mode auto', 'asked.cancelled': 'interrompue',
+    'panel.hide': 'Masquer le panneau', 'panel.show': 'Afficher le panneau', 'panel.width': 'Largeur du panneau : tire-la, ou utilise les flèches ; double-clic pour 320 px', 'task.more': 'Voir la demande entière', 'task.less': 'Moins', artifacts: 'Artefacts', 'artifact.meta': 'version {v} · {ago}', 'open.tab': "S'ouvre dans un nouvel onglet",
+    attach: 'Joindre un fichier', 'attach.remove': 'Retirer {name}', 'attach.drop': 'Dépose pour joindre à {name}', 'attach.hint': 'Colle une image, dépose un fichier sur la session ou clique le trombone : les fichiers partent avec le message, leur chemin à la fin.',
     'thread.mine': 'Mes messages', 'thread.all': 'Tout le fil', actions: '{n} actions', 'actions.failed': '{n} en échec', 'copy.md': 'Copier en Markdown',
     shortcuts: 'Raccourcis', 'shortcuts.note': 'Envoyés à la session affichée, par les puces au-dessus de son champ de message ou Ctrl+Maj+1 à 0. 10 au plus.', 'shortcut.label': 'Nom', 'shortcut.text': 'Texte à envoyer',
     'shortcut.add': 'Ajouter un raccourci', 'shortcut.remove': 'Retirer', save: 'Enregistrer', 'shortcuts.saved': 'Raccourcis enregistrés', 'shortcut.sent': '{label} envoyé à {name}', 'shortcut.nosession': "Ouvre d'abord une session",
@@ -655,7 +701,7 @@ const ICON = {
   commit: 'M3 12h6M15 12h6M9 12a3 3 0 1 0 6 0a3 3 0 1 0-6 0', mr: 'M6 3v12M4 19a2 2 0 1 0 4 0a2 2 0 1 0-4 0M16 19a2 2 0 1 0 4 0a2 2 0 1 0-4 0M18 17V9a4 4 0 0 0-4-4H9M12 2L9 5l3 3',
   agents: 'M6 8a3 3 0 1 0 6 0a3 3 0 1 0-6 0M3 20a6 6 0 0 1 12 0M14.5 9a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0-5 0M15.5 14.5A5 5 0 0 1 21 19', flag: 'M5 21V4M5 4h11l-2 4 2 4H5',
   flask: 'M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8-3l-5-9V3', check: 'M5 12l5 5 9-10', checks: 'M2 12l5 5 9-10M12 16l1 1 9-10', x: 'M6 6l12 12M18 6L6 18',
-  send: 'M4 12l16-8-6 16-3-6zM11 14l9-10', copy: 'M9 9h11v11H9zM5 15H4V4h11v1', play: 'M7 4l13 8-13 8z', pencil: 'M4 20l1-5L16 4l4 4L9 19z', clock: RING + 'M12 7v5l3 2',
+  send: 'M4 12l16-8-6 16-3-6zM11 14l9-10', copy: 'M9 9h11v11H9zM5 15H4V4h11v1', clip: 'M20 11l-8 8a5 5 0 0 1-7-7l8-8a3.5 3.5 0 0 1 5 5l-8 8a2 2 0 0 1-3-3l7-7', panel: 'M4 4h16v16H4zM15 4v16', art: 'M4 4h16v12H4zM8 20h8M12 16v4M8 9l3 3 5-5', image: 'M4 5h16v14H4zM4 15l5-5 5 5 3-3 3 3', doc: 'M6 3h9l4 4v14H6zM14 3v5h5', read: 'M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2zM4 19V5M8 7h6', play: 'M7 4l13 8-13 8z', pencil: 'M4 20l1-5L16 4l4 4L9 19z', clock: RING + 'M12 7v5l3 2',
   next: 'M6 6l8 6-8 6zM18 6v12', now: 'M8 5l10 7-10 7z', todo: 'M12 12m-7 0a7 7 0 1 0 14 0a7 7 0 1 0-14 0', updown: 'M8 9l4-4 4 4M8 15l4 4 4-4',
 }
 function icon(name, size = 18) {
@@ -673,19 +719,58 @@ const folderName = (cwd = '') => cwd.split(/[\\/]/).filter(Boolean).pop() || '?'
 // Search: case and accents ignored, every word of the query, in any order.
 const plain = (text) => String(text ?? '').normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase()
 const matches = (query, text) => { const hay = plain(text); return plain(query).split(/\s+/).filter(Boolean).every((w) => hay.includes(w)) }
-// The thread: two tool calls or more in a row become one entry, { kind: 'tools', items }.
-function foldTools(items) {
-  const out = []
+// The thread in turns (BRIEF 3b): one per message the user sent, or per resume; in each, what the session
+// did and said in order, and its reply: its last text, once nothing came after it.
+function turnsOf(items) {
+  const turns = []
   for (const x of items) {
+    if (x.kind === 'user' || x.kind === 'resumed' || !turns.length) turns.push({ ask: x.kind === 'user' ? x : null, resumed: x.kind === 'resumed', steps: [], reply: null })
+    if (x.kind === 'tool' || x.kind === 'text') turns.at(-1).steps.push(x)
+  }
+  for (const turn of turns) if (turn.steps.at(-1)?.kind === 'text') turn.reply = turn.steps.pop()
+  return turns
+}
+const EDITS = ['Edit', 'Write', 'MultiEdit', 'NotebookEdit']
+// What a turn came to: files changed, the last test run, commits, a merge request, failures.
+function bilanOf(steps) {
+  const tools = steps.filter((x) => x.kind === 'tool')
+  const runs = tools.filter((x) => ['Bash', 'PowerShell'].includes(x.tool))
+  const tests = runs.filter((x) => /\b(test|tests|pytest|jest|vitest|mvn|gradle)\b/i.test(x.target)).at(-1)
+  return {
+    n: tools.length,
+    files: new Set(tools.filter((x) => EDITS.includes(x.tool) && !x.error).map((x) => x.target)).size,
+    tests: tests ? !tests.error : null,
+    commits: runs.filter((x) => /\bgit\b.*\bcommit\b/.test(x.target) && !x.error).length,
+    mr: runs.some((x) => /\b(gh pr create|glab mr create)\b/.test(x.target) && !x.error),
+    failed: tools.filter((x) => x.error).length,
+  }
+}
+// An action as a phrase: the key of its verb, what it is about; reads and searches in a row become one.
+function verbOf(x) {
+  if (x.tool === 'Read') return 'read'
+  if (x.tool === 'Write') return 'write'
+  if (EDITS.includes(x.tool)) return 'edit'
+  if (['Bash', 'PowerShell'].includes(x.tool)) return 'run'
+  if (['Grep', 'Glob'].includes(x.tool)) return 'search'
+  if (['WebFetch', 'WebSearch'].includes(x.tool)) return 'web'
+  if (['Agent', 'Task'].includes(x.tool)) return 'agent'
+  if (x.tool === 'Workflow') return 'workflow'
+  if (x.tool === 'Skill') return 'skill'
+  if (x.tool === 'TodoWrite') return 'plan'
+  if (x.tool === 'AskUserQuestion') return 'ask'
+  if (x.tool === 'Artifact') return x.artifact ? 'artifact' : 'artifact.read'
+  return 'tool'
+}
+function actsOf(steps) {
+  const out = []
+  for (const x of steps) {
+    const verb = x.kind === 'text' ? 'say' : verbOf(x)
     const last = out.at(-1)
-    if (x.kind === 'tool' && last?.kind === 'tool') out[out.length - 1] = { kind: 'tools', items: [last, x] }
-    else if (x.kind === 'tool' && last?.kind === 'tools') last.items.push(x)
-    else out.push(x)
+    if (last && (verb === 'read' || verb === 'search') && last.verb === verb && !x.error && !x.asked && !last.error) { last.more += 1; continue }
+    out.push({ verb, x, more: 0, error: !!x.error })
   }
   return out
 }
-// What a folded run says: how many calls, the tools by first use, how many failed.
-const runOf = (items) => ({ n: items.length, tools: [...new Set(items.map((x) => x.tool))], failed: items.filter((x) => x.error).length })
 // ---- end pure ----
 const colours = (name) => PALETTE[[...name].reduce((n, c) => (n * 31 + c.charCodeAt(0)) >>> 0, 7) % PALETTE.length]
 const NONE = 'M0 0'
@@ -1183,11 +1268,20 @@ function renderPane() {
       h('div', { class: 'center' },
         h('div', { class: 'tabs', role: 'tablist' },
           tabs.map(([k, i]) => h('button', { type: 'button', class: 'tab', role: 'tab', 'aria-selected': String(tab === k), title: t(`tab.${k}`), onclick: () => { tab = k; renderPane() } },
-            icon(i), h('span', { class: 'label' }, t(`tab.${k}`)), k === 'action' && hasAction(sel) ? h('span', { class: 'n w', 'aria-hidden': 'true' }) : null))),
+            icon(i), h('span', { class: 'label' }, t(`tab.${k}`)), k === 'action' && hasAction(sel) ? h('span', { class: 'n w', 'aria-hidden': 'true' }) : null)),
+          narrow.matches ? null : [h('span', { class: 'spacer' }), btn('icon sm flat', t(inspOpen ? 'panel.hide' : 'panel.show'), 'panel', () => showInsp(!inspOpen), { 'aria-pressed': String(inspOpen) })]),
         h('div', { id: 'view', class: tab === 'terminal' ? 'term' : tab === 'details' ? 'thread insp' : 'thread' }),
         // On a phone the card needs the room: the message field lives in the thread.
         tab === 'settings' || tab === 'details' || (phone.matches && tab === 'action') ? null : composer(view)),
-      narrow.matches ? null : h('aside', { class: 'inspector insp', id: 'inspector', 'aria-label': t('task') })))
+      narrow.matches || !inspOpen ? null : inspGrip,
+      narrow.matches ? null : h('aside', { class: `inspector insp${inspOpen ? '' : ' shut'}`, id: 'inspector', 'aria-label': t('task') })))
+  // Files pasted or dropped anywhere on the session wait above its message field (BRIEF 3b); the terminal
+  // takes its own, typed as paths.
+  const center = $('#pane .center')
+  if (center && tab !== 'terminal' && tab !== 'settings') {
+    center.dataset.drop = t('attach.drop', { name: nameOf(view) })
+    acceptFiles(center, (got) => addFiles(sel, got))
+  }
   renderView(); renderInspector()
 }
 
@@ -1206,7 +1300,7 @@ function short(text = '', cwd) {
   const local = c ? text.split(c).join('.').split(c.replace(/\\/g, '/')).join('.') : text
   return local.replace(/(?<![\w:/\\])(?:[A-Za-z]:)?(?:[\\/][^\\/\s"'`]+){3,}/g, (p) => `…/${p.split(/[\\/]/).slice(-2).join('/')}`)
 }
-// The thread's folded runs the reader opened or closed, and whether it shows only what the user wrote.
+// The thread's turns the reader opened or closed, and whether it shows only what the user wrote.
 const openRuns = new Map()
 let mineOnly = false
 function renderView() {
@@ -1223,7 +1317,7 @@ function renderView() {
     for (const x of items) {
       if (x.kind === 'user') lines.push(`> ${x.text}`, '')
       else if (x.kind === 'text') lines.push(`● ${x.text}`, '')
-      else lines.push(`● ${x.tool}(${x.target})`, `  ⎿  ${x.out ?? ''}`, '')
+      else if (x.kind === 'tool') lines.push(`● ${x.tool}(${x.target})`, `  ⎿  ${x.out ?? ''}`, '')
     }
     // Like a terminal: it follows the end, unless the reader scrolled up; unchanged, it is left alone.
     const text = lines.join('\n'), old = view.querySelector('pre')
@@ -1238,31 +1332,63 @@ function renderView() {
   const stick = view.scrollHeight - view.scrollTop - view.clientHeight < 60
   const s = sessionOf(sel)
   const cwd = s?.cwd ?? requestOf(sel)?.cwd
-  const tool = (x) => {
-    const target = short(x.target, cwd), out = x.out ? short(x.out.split('\n')[0], cwd) : ''
-    return h('div', { class: `tool${x.error ? ' bad' : ''}`, title: `${x.target}${x.out ? `\n→ ${x.out.split('\n')[0]}` : ''}` },
-      h('b', {}, `${x.error ? '✗' : '✓'} ${x.tool}`), h('code', {}, target), out ? h('span', {}, `→ ${out}`) : null)
-  }
-  // A folded run keeps the state the reader gave it across the 3 s refresh; one with a failure opens.
-  const run = (x) => {
-    const key = `${sel}:${x.items[0].at}:${x.items[0].tool}`, r = runOf(x.items)
-    return h('details', { class: 'tools', open: openRuns.get(key) ?? r.failed > 0, ontoggle: (e) => openRuns.set(key, e.target.open) },
-      h('summary', {}, t('actions', { n: r.n }), ' · ', r.tools.map((n) => n.replace(/^mcp__.*__/, '')).join(', '), r.failed ? h('span', { class: 'bad' }, ` · ✗ ${t('actions.failed', { n: r.failed })}`) : null),
-      x.items.map(tool))
-  }
   const copyMd = (text) => navigator.clipboard?.writeText(text).then(() => toast(t('copied'), 'check'), () => {})
+  // One line, cut: the whole of it shows on hover.
+  const cut1 = (text, n) => { const line = String(text).split('\n')[0]; return line.length > n || String(text).includes('\n') ? `${line.slice(0, n)}…` : line }
+  const turns = turnsOf(items)
+  const busy = s?.status === 'busy'
+  const span = (a, b) => { const m = Math.max(0, Math.round((Date.parse(b) - Date.parse(a)) / 60000)); return m < 1 ? '<1 min' : m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${m % 60}` }
+  const arts = new Map((detailOf === sel ? detail?.artifacts ?? [] : []).map((a) => [a.url, a]))
+  const ICONS = { read: 'read', write: 'pencil', edit: 'pencil', run: 'play', search: 'search', web: 'external', agent: 'agents', workflow: 'agents', skill: 'flag', plan: 'todo', ask: 'question', artifact: 'art', 'artifact.read': 'art', tool: 'chip', say: 'chat' }
+  // One action as a phrase, with how a permission it needed was settled.
+  const act = (a) => {
+    const x = a.x
+    if (a.verb === 'say') return h('div', { class: 'act say' }, icon('chat', 16), h('span', {}, x.text.split('\n')[0]))
+    const art = a.verb === 'artifact' ? arts.get(x.artifact) : null
+    const what = art ? art.title : x.tool.startsWith('mcp__') ? `${x.tool.split('__')[1]} : ${x.tool.split('__').slice(2).join('_')} ${x.target}` : cut1(short(x.target, cwd), 90)
+    const out = x.error && x.out ? ` → ✕ ${short(x.out.split('\n')[0], cwd).slice(0, 120)}` : ''
+    const asked = x.asked ? h('span', { class: `asked${['refused', 'blocked', 'cancelled'].includes(x.asked.how) ? ' no' : ''}` }, ` · ${t(`asked.${x.asked.how}`, { time: clock(Date.parse(x.asked.at)) })}`) : null
+    return h('div', { class: `act${a.error ? ' bad' : ''}`, title: `${x.tool} ${x.target}` }, icon(x.asked ? 'shield' : ICONS[a.verb], 16),
+      h('span', {}, t(`do.${a.verb}`), what ? [' ', h('code', {}, what)] : null, a.more ? ` ${t('do.more', { n: a.more })}` : '',
+        art ? [' ', t('do.version', { n: art.version }), ' ', h('a', { href: art.url, target: '_blank', rel: 'noopener noreferrer', title: t('open.tab') }, '↗')] : null, out, asked))
+  }
+  const bilan = (turn, i) => {
+    const last = i === turns.length - 1, live = last && busy
+    const b = bilanOf(turn.steps)
+    if (!b.n && !live) return null
+    const key = `${sel}:${turn.ask?.at ?? turn.steps[0]?.at}`
+    const failedLast = turn.steps.filter((x) => x.kind === 'tool').at(-1)?.error
+    const open = openRuns.get(key) ?? (live || !!failedLast)
+    const end = turn.reply?.at ?? turn.steps.at(-1)?.at
+    const start = turn.ask?.at ?? turn.steps[0]?.at
+    const chips = [b.files ? h('span', { class: 'tchip' }, t('turn.files', { n: b.files })) : null,
+      b.tests == null ? null : h('span', { class: `tchip ${b.tests ? 'ok' : 'bad'}` }, b.tests ? '✓ ' : '✕ ', t(b.tests ? 'turn.tests.ok' : 'turn.tests.ko')),
+      b.commits ? h('span', { class: 'tchip' }, t('turn.commits', { n: b.commits })) : null, b.mr ? h('span', { class: 'tchip' }, 'MR') : null,
+      b.failed ? h('span', { class: 'tchip bad' }, t('turn.failed', { n: b.failed })) : null]
+    return h('div', { class: `bilan${live ? ' live' : ''}` },
+      h('div', { class: 'row' }, live ? h('span', { class: 'busy', 'aria-hidden': 'true' }, h('i'), h('i'), h('i')) : null,
+        h('b', { style: 'font-size:14px' }, live ? t('turn.live', { d: span(start, new Date().toISOString()) }) : t('turn.done', { d: span(start, end), n: b.n })), chips,
+        h('span', { class: 'spacer' }), live ? null : btn('sm', t(open ? 'turn.hide' : 'turn.show'), null, () => { openRuns.set(key, !open); renderView() }, { text: t(open ? 'turn.hide' : 'turn.show'), 'aria-expanded': String(open) })),
+      open ? h('div', { class: 'acts' }, actsOf(live ? turn.steps.slice(-12) : turn.steps).map(act)) : null)
+  }
+  const ask = (turn, i) => turn.resumed ? h('p', { class: 'resumed' }, icon('loop', 14), ' ', t('resumed'))
+    : turn.ask ? h('div', { class: 'bubble' },
+      mineOnly ? h('button', { type: 'button', class: 'btn flat', style: 'padding:10px 14px;text-align:left;white-space:pre-wrap', onclick: () => { mineOnly = false; renderView(); $(`#view [data-turn="${i}"]`)?.scrollIntoView({ block: 'start' }) } }, turn.ask.text) : h('div', {}, turn.ask.text),
+      h('span', { class: 'meta' }, `${t('you')} · ${clock(Date.parse(turn.ask.at))}`, !mineOnly ? ''
+        : i === turns.length - 1 && busy ? ` · ${t('turn.live', { d: span(turn.ask.at, new Date().toISOString()) })}`
+        : bilanOf(turn.steps).n ? ` · ${t('turn.done', { d: span(turn.ask.at, turn.reply?.at ?? turn.steps.at(-1)?.at ?? turn.ask.at), n: bilanOf(turn.steps).n })}` : '')) : null
   fill(view,
-    items.length ? h('div', { class: 'threadbar' }, btn('sm quiet', t(mineOnly ? 'thread.all' : 'thread.mine'), mineOnly ? 'chat' : 'speech', () => { mineOnly = !mineOnly; renderView() }, { text: t(mineOnly ? 'thread.all' : 'thread.mine'), 'aria-pressed': String(mineOnly) })) : null,
+    items.length ? h('div', { class: 'seg2', role: 'group' },
+      h('button', { type: 'button', 'aria-pressed': String(!mineOnly), onclick: () => { mineOnly = false; renderView() } }, t('thread.all')),
+      h('button', { type: 'button', 'aria-pressed': String(mineOnly), onclick: () => { mineOnly = true; renderView() } }, t('thread.mine'))) : null,
     detailOf === sel && !detail ? h('p', { class: 'empty' }, t('no.transcript')) : null,
-    (mineOnly ? items.filter((x) => x.kind === 'user') : foldTools(items)).map((x) => {
-      if (x.kind === 'user') return h('div', { class: 'bubble' }, h('div', {}, x.text))
-      if (x.kind === 'text') return h('div', { class: 'saidrow' }, h('p', { class: 'said' }, prose(x.text)), btn('icon sm quiet', t('copy.md'), 'copy', () => copyMd(x.text), { size: 16 }))
-      if (x.kind === 'tools') return run(x)
-      return tool(x)
-    }),
+    turns.map((turn, i) => h('article', { class: 'turn', 'data-turn': i },
+      ask(turn, i),
+      mineOnly ? null : [bilan(turn, i),
+        turn.reply ? h('div', { class: 'saidrow' }, h('p', { class: 'said' }, prose(turn.reply.text)), btn('icon sm quiet', t('copy.md'), 'copy', () => copyMd(turn.reply.text), { size: 16 })) : null])),
     (sent.get(sel) ?? []).map((m) => h('div', { class: 'bubble' }, h('div', {}, m.text), h('span', { class: 'meta' }, sentStatus(s, m)))),
-    s?.status === 'busy' ? h('p', { class: 'working' }, h('i'), s.title || t('working')) : null)
-  if (stick) view.scrollTop = view.scrollHeight
+    busy && !turns.length ? h('p', { class: 'working' }, h('i'), s.title || t('working')) : null)
+  if (stick && !mineOnly) view.scrollTop = view.scrollHeight
 }
 
 // Only what the session needs from you: the card to answer, the alert to look at, or nothing.
@@ -1357,10 +1483,12 @@ function decisionCard() {
       h('pre', { class: 'cmd' }, cmdOf(r.input)),
       h('div', { class: 'actions' }, h('button', { type: 'button', class: 'btn', 'data-key': 'd', title: `${t('deny')}  d`, onclick: () => decide({ action: 'deny' }, 'deny') }, icon('x'), t('deny'))))
   }
+  // Ctrl+Enter in the GO field does what its button does, once GO is typed.
+  const goEnter = (e, button) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !button.disabled) { e.preventDefault(); button.click() } }
   if (r.kind === 'permission' || r.kind === 'denied') {
     const env = envLabel(r)
     const infra = r.risk === 'infra'
-    const go = infra ? h('input', { class: 'field go', name: 'go', autocomplete: 'off', spellcheck: 'false', placeholder: t('go.ph'), 'aria-label': t('go.label'), oninput: () => { allow.disabled = go.value.trim().toUpperCase() !== 'GO' } }) : null
+    const go = infra ? h('input', { class: 'field go', name: 'go', autocomplete: 'off', spellcheck: 'false', placeholder: t('go.ph'), 'aria-label': t('go.label'), oninput: () => { allow.disabled = go.value.trim().toUpperCase() !== 'GO' }, onkeydown: (e) => goEnter(e, allow) }) : null
     const mode = h('select', { class: 'field', 'aria-label': t('mode.after') }, MODES.map((m) => h('option', { value: m }, t(m ? `mode.${m}` : 'mode.keep'))))
     const reason = h('input', { class: 'field grow', placeholder: t('why'), 'aria-label': t('why') })
     const typed = () => (go ? go.value.trim().toUpperCase() : undefined)
@@ -1388,7 +1516,7 @@ function decisionCard() {
   const qs = r.input?.questions ?? []
   if (r.kind === 'plan') {
     const q = qs[0] ?? {}
-    const go = h('input', { class: 'field go', name: 'go', autocomplete: 'off', spellcheck: 'false', placeholder: t('go.ph'), 'aria-label': t('go.label'), oninput: () => { launch.disabled = go.value.trim().toUpperCase() !== 'GO' } })
+    const go = h('input', { class: 'field go', name: 'go', autocomplete: 'off', spellcheck: 'false', placeholder: t('go.ph'), 'aria-label': t('go.label'), oninput: () => { launch.disabled = go.value.trim().toUpperCase() !== 'GO' }, onkeydown: (e) => goEnter(e, launch) })
     const yes = (q.options ?? []).find((o) => isGo(o.label))
     const no = (q.options ?? []).find((o) => !isGo(o.label))
     const launch = h('button', { type: 'button', class: 'btn primary', 'data-key': 'a', disabled: true, onclick: () => decide({ action: 'answer', answers: { [q.question]: yes?.label ?? 'GO' }, typed: go.value.trim().toUpperCase() }, 'launch') }, icon('play'), t('launch'))
@@ -1478,31 +1606,34 @@ function composer(s) {
   const delivery = termOf(id) ? t('delivery.term') : !fresh ? t('delivery.nomod') : s.status === 'busy' ? t('delivery.busy') : r ? t('delivery.waits') : t('delivery.ready')
   const area = h('textarea', { id: 'composer', class: 'field', rows: 2, 'aria-label': t('write.to', { name: nameOf(s) }), placeholder: t('write.to', { name: nameOf(s) }), value: drafts.get(id) ?? '',
     oninput: () => drafts.set(id, area.value), onkeydown: (e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); submit() } } })
-  acceptFiles(area, (paths) => {
-    const at = area.selectionStart ?? area.value.length
-    const add = `${at && !/\s$/.test(area.value.slice(0, at)) ? ' ' : ''}${paths.join(' ')} `
-    area.value = area.value.slice(0, at) + add + area.value.slice(at)
-    drafts.set(id, area.value)
-    area.focus()
-  })
+  // The files go with the message: their paths at the end of its text.
   async function submit() {
-    const text = area.value.trim()
+    const files = pendingFiles.get(id) ?? []
+    const text = [area.value.trim(), files.map((f) => f.path).join(' ')].filter(Boolean).join('\n\n')
     if (!text || !(await sendText(id, text))) return
     drafts.delete(id)
+    pendingFiles.delete(id)
     area.value = ''
+    drawAttached(id)
   }
+  const picker = h('input', { type: 'file', multiple: true, hidden: true, onchange: async (e) => { const list = await attachFiles([...e.target.files]); if (list.length) addFiles(id, list); e.target.value = '' } })
+  const attached = h('div', { id: 'attached', class: 'chips', 'data-session': id, 'aria-label': t('attach') })
   const chips = (snap.prompts ?? []).map((p, i) => btn('sm', `${p.text}\n\nCtrl+Shift+${(i + 1) % 10}`, 'send', () => sendShortcut(i), { text: p.label, size: 14 }))
   return h('div', { class: 'composer' },
     chips.length ? h('div', { class: 'chips', role: 'group', 'aria-label': t('shortcuts') }, chips) : null,
-    h('div', { class: 'row' }, area, h('button', { type: 'button', class: 'btn icon primary send', 'aria-label': t('send'), title: `${t('send')}  Ctrl Enter`, onclick: submit }, icon('send', 22))),
-    h('span', { class: 'meta', style: 'display:inline-flex;align-items:center;gap:6px' }, icon('clock', 14), delivery))
+    attached,
+    h('div', { class: 'row' }, btn('icon', t('attach'), 'clip', () => picker.click()), picker, area, h('button', { type: 'button', class: 'btn icon primary send', 'aria-label': t('send'), title: `${t('send')}  Ctrl Enter`, onclick: submit }, icon('send', 22))),
+    h('span', { class: 'meta', style: 'display:inline-flex;align-items:center;gap:6px' }, icon('clock', 14), delivery, ' · ', t('attach.hint')))
 }
 
 // In clearance's own terminal the text is typed there, as a paste then Enter (ADR-0016); elsewhere the
 // companion mod submits it, in turn with the others queued for the session.
 async function sendText(id, text) {
   const term = termOf(id)
-  const err = term ? await post(`/api/term/${term.id}/input`, { data: `\x1b[200~${text}\x1b[201~\r` }) : await post('/api/instruct', { session: id, text })
+  // Enter goes on its own a moment after the paste: Claude Code takes a pasted image path in as an
+  // attachment and drops an Enter that came with it.
+  const typed = async () => (await post(`/api/term/${term.id}/input`, { data: `\x1b[200~${text}\x1b[201~` })) || (await new Promise((ok) => setTimeout(ok, 400)), post(`/api/term/${term.id}/input`, { data: '\r' }))
+  const err = term ? await typed() : await post('/api/instruct', { session: id, text })
   if (err) { toast(error(err), 'alert'); return false }
   const list = sent.get(id) ?? []
   list.push({ text, at: Date.now(), busy: sessionOf(id)?.status === 'busy' })
@@ -1518,15 +1649,42 @@ async function sendShortcut(i) {
 }
 
 // ---- files pasted or dropped: kept by clearance where a session can read them, their path in the text ----
+// Kept by clearance where the session can read them; each comes back with its path (quoted when it has a space).
 async function attachFiles(files) {
-  const paths = []
+  const got = []
   for (const f of files) {
     const res = await fetch('/api/attach', { method: 'POST', headers: { 'x-name': encodeURIComponent(f.name || 'pasted.png') }, body: f }).catch(() => null)
     const out = res ? await res.json().catch(() => ({})) : {}
-    if (out.path) paths.push(/\s/.test(out.path) ? `"${out.path}"` : out.path)
+    if (out.path) got.push({ path: /\s/.test(out.path) ? `"${out.path}"` : out.path, name: f.name || 'pasted.png', size: f.size, file: f })
     else toast(t('attach.failed', { error: error(out.error ?? res?.statusText ?? '?') }), 'alert')
   }
-  return paths
+  return got
+}
+// Files waiting to go with a session's next message, shown above its field, a thumbnail for an image.
+const pendingFiles = new Map()
+function addFiles(id, got) {
+  const list = pendingFiles.get(id) ?? []
+  for (const g of got) {
+    const item = { path: g.path, name: g.name, size: g.size, image: /^image\//.test(g.file?.type ?? ''), thumb: null }
+    list.push(item)
+    // A data URL, which the page's policy allows for images (ADR-0014); big ones get the icon only.
+    if (item.image && g.size < 3_000_000) {
+      const reader = new FileReader()
+      reader.onload = () => { item.thumb = reader.result; drawAttached(id) }
+      reader.readAsDataURL(g.file)
+    }
+  }
+  pendingFiles.set(id, list)
+  drawAttached(id)
+}
+function drawAttached(id) {
+  const box = $('#attached')
+  if (!box || box.dataset.session !== id) return
+  const kb = (n) => (n >= 1e6 ? `${(n / 1e6).toLocaleString(lang, { maximumFractionDigits: 1 })} ${t('unit.mb')}` : `${Math.max(1, Math.round(n / 1e3))} ${t('unit.kb')}`)
+  fill(box, (pendingFiles.get(id) ?? []).map((f, i) => h('span', { class: 'att' },
+    f.thumb ? h('img', { class: 'thumb', src: f.thumb, alt: '' }) : h('span', { class: 'thumb' }, icon(f.image ? 'image' : 'doc', 18)),
+    h('span', {}, h('b', {}, f.name), h('span', { class: 'meta' }, kb(f.size))),
+    btn('icon sm flat', t('attach.remove', { name: f.name }), 'x', () => { pendingFiles.get(id).splice(i, 1); drawAttached(id) }))))
 }
 function acceptFiles(el, put) {
   const files = (list) => [...(list ?? [])]
@@ -1535,8 +1693,8 @@ function acceptFiles(el, put) {
     const got = files(e.clipboardData?.files)
     if (!got.length) return
     e.preventDefault(); e.stopPropagation()
-    const paths = await attachFiles(got)
-    if (paths.length) put(paths)
+    const list = await attachFiles(got)
+    if (list.length) put(list)
   }, true)
   el.addEventListener('dragover', (e) => { if (files(e.dataTransfer?.types).includes('Files')) { e.preventDefault(); el.classList.add('dropping') } })
   el.addEventListener('dragleave', () => el.classList.remove('dropping'))
@@ -1544,9 +1702,9 @@ function acceptFiles(el, put) {
     el.classList.remove('dropping')
     const got = files(e.dataTransfer?.files)
     if (!got.length) return
-    e.preventDefault()
-    const paths = await attachFiles(got)
-    if (paths.length) put(paths)
+    e.preventDefault(); e.stopPropagation()
+    const list = await attachFiles(got)
+    if (list.length) put(list)
   })
 }
 
@@ -1592,13 +1750,32 @@ async function showTerm(view, t0) {
   source.addEventListener('end', () => { source.close(); term.write(`\r\n\x1b[2m${t('term.ended')}\x1b[0m\r\n`) })
   const watch = new ResizeObserver(() => { try { fit.fit() } catch {} })
   watch.observe(host)
-  acceptFiles(host, (paths) => input(` ${paths.join(' ')} `))
+  acceptFiles(host, (list) => input(` ${list.map((f) => f.path).join(' ')} `))
   liveTerm = { id: t0.id, term, fit, source, host, watch }
   fit.fit()
   term.focus()
 }
 
-// ---- inspector: the task, the plan, files, tests, agents, cost ----
+// ---- inspector: the task, the artifacts, the plan, files, tests, agents, cost ----
+// Hidden down to a column of icons, or dragged between 240 and 520 px; both kept in this browser.
+let inspOpen = store.get('insp', true)
+let taskOpen = false
+const showInsp = (on) => { inspOpen = on; store.set('insp', on); renderPane() }
+const inspWidth = (w) => { const v = Math.max(240, Math.min(520, Math.round(w))); document.documentElement.style.setProperty('--insp-w', `${v}px`); return v }
+inspWidth(store.get('inspW', 320))
+const inspGrip = h('button', { type: 'button', class: 'grip left', 'aria-label': t('panel.width'), title: t('panel.width'),
+  onpointerdown: (e) => {
+    e.currentTarget.setPointerCapture(e.pointerId)
+    const right = $('#inspector').getBoundingClientRect().right
+    const move = (m) => inspWidth(right - m.clientX)
+    const up = (u) => { e.target.removeEventListener('pointermove', move); e.target.removeEventListener('pointerup', up); store.set('inspW', inspWidth(right - u.clientX)) }
+    e.target.addEventListener('pointermove', move); e.target.addEventListener('pointerup', up)
+  },
+  ondblclick: () => store.set('inspW', inspWidth(320)),
+  onkeydown: (e) => {
+    const step = e.key === 'ArrowLeft' ? 20 : e.key === 'ArrowRight' ? -20 : 0
+    if (step) { e.preventDefault(); store.set('inspW', inspWidth($('#inspector').getBoundingClientRect().width + step)) }
+  } })
 // What the session pointed to, newest first: an artifact, a merge request, a local server, a page.
 const LINKS = [[/^https:\/\/claude\.ai\/.*artifact/, 'journal', 'links.artifact'], [/\/merge_requests\/\d+|\/pull\/\d+/, 'mr', 'links.mr'], [/^http:\/\/(localhost|127\.0\.0\.1)[:/]/, 'terminal', 'links.local']]
 function linkItem(l) {
@@ -1625,9 +1802,24 @@ function renderInspector(box = $('#inspector')) {
   const f = s.facts ?? {}
   const usd = s.usage?.cost?.usd
   const section = (iconName, title, ...body) => h('section', {}, h('h3', {}, icon(iconName, 16), title), body)
+  const arts = d?.artifacts ?? []
+  if (!inspOpen && !narrow.matches) {
+    // Hidden: one icon per section that has something, with its count; any of them opens the panel.
+    const railBtn = (iconName, label, n) => btn('icon sm flat', label, iconName, () => showInsp(true), { text: null }, n)
+    fill(box, [['flag', t('task'), 0], ['art', t('artifacts'), arts.length], ['plan', t('plan'), steps.length], ['diff', t('files', { n: files.length }), files.length], ['coin', t('cost'), 0]]
+      .filter(([, , n], i) => i === 0 || i === 4 || n)
+      .map(([i, label, n]) => { const b = railBtn(i, label, n); if (n) b.append(h('span', { class: 'n', 'aria-hidden': 'true' }, n)); return b }))
+    return
+  }
+  // The session's title, then its first request: not a resume summary, which is not a request.
+  const first = prompts[0]?.text ?? ''
   fill(box,
-    section('flag', t('task'), h('p', { style: 'margin:0;font-size:15px;line-height:1.45' }, prompts.at(-1)?.text ?? s.title ?? '')),
-    links.length ? section('external', `${t('links')} · ${links.length}`, links.slice(0, 12).map(linkItem)) : null,
+    section('flag', t('task'), (s.title || d?.title) ? h('b', { style: 'font-size:16px;line-height:1.35' }, s.title || d.title) : null,
+      first ? h('p', { class: taskOpen ? '' : 'clamp', style: 'margin:0;font-size:14px;line-height:1.45;color:var(--muted)' }, first) : null,
+      first.length > 180 ? h('button', { type: 'button', class: 'textlink', onclick: () => { taskOpen = !taskOpen; renderInspector() } }, t(taskOpen ? 'task.less' : 'task.more')) : null),
+    arts.length ? section('art', `${t('artifacts')} · ${arts.length}`, arts.slice(0, 8).map((a) => h('a', { class: 'art', href: a.url, target: '_blank', rel: 'noopener noreferrer', title: t('open.tab') },
+      icon('art', 18), h('span', {}, h('b', {}, a.title || a.url), h('span', { class: 'meta' }, t('artifact.meta', { v: a.version, ago: ago(Date.parse(a.at)) }))), icon('external', 16)))) : null,
+    links.filter((l) => !arts.some((a) => a.url === l.url)).length ? section('external', `${t('links')} · ${links.length}`, links.filter((l) => !arts.some((a) => a.url === l.url)).slice(0, 12).map(linkItem)) : null,
     steps.length ? section('plan', t('plan'), steps.map((x) => h('div', { class: `step ${x.state}` }, icon(x.state === 'done' ? 'check' : x.state === 'now' ? 'now' : 'todo', 16), h('span', {}, x.text)))) : null,
     section('diff', `${t('files', { n: files.length })}`, files.length ? files.slice(-20).map((x) => h('div', { class: 'file', title: x.file }, h('code', {}, rel(x.file, s.cwd)), h('span', { class: 'plus' }, `+${x.plus}`), h('span', { class: 'minus' }, `-${x.minus}`))) : h('span', { class: 'meta' }, '·')),
     section('flask', t('tests'), h('span', { class: `pill ${f.tests ? (f.tests.ok ? 'ok' : 'ko') : 'none'}`, style: 'align-self:flex-start' }, f.tests ? `${f.tests.ok ? t('tests.ok') : t('tests.ko')}${f.tests.summary ? ` · ${f.tests.summary}` : ''}` : t('tests.none'))),

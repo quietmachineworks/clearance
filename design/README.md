@@ -12,6 +12,8 @@ names in them are invented.
 | `RobotGrammaire.dc.html` | the same grammar board, in robot costume |
 | `QueueCompact.dc.html` | the compact queue: one line per session, no avatar, its width dragged (2026-10-30) |
 | `QueueCompactLines.dc.html` | a line in each state, the group header, drawers, the animations |
+| `ThreadTurns.dc.html` | the session's thread in turns, the right panel hidden or resized, attachments (2026-10-30) |
+| `ThreadTurnAnatomy.dc.html` | a turn's parts, each tool as a sentence, the panel and attachment rules |
 
 The board, the session detail, the journal and the compact window were designed on the same canvas with
 real work data; they stay private and will be rebuilt here with invented fixtures.

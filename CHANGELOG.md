@@ -138,3 +138,18 @@
   and ignored as counters that open in place. Waiting cards show the request's icon, flash once when they
   arrive; what needs watching breathes. The queue's width is dragged between 300 and 640 px (arrow keys,
   double-click for 420), kept per browser.
+- The thread in turns (BRIEF 3b, mockup `design/canvas/ThreadTurns.dc.html`): each message you sent, a
+  summary line with result chips (files, tests, commits, MR, failures), the reply in full; what it did
+  as sentences, with how each permission was settled (by you, from clearance, refused, blocked by auto
+  mode) and the artifacts it published; folded but the running turn and a failed one; "All | My
+  messages"; a resume after compaction is a line, not a message, and what a plugin sent in your place is
+  not shown as yours.
+- The right panel hides down to a column of icons, or is dragged between 240 and 520 px; its task is the
+  session's title and first request on three lines; it lists the artifacts the session published; nothing
+  overflows sideways.
+- Attachments wait as chips above the message field (thumbnail, size, remove), from a paste, a drop
+  anywhere on the session or the paperclip, and go with the message. A message with an image now reaches
+  a session in clearance's terminal: Enter is sent apart from the paste.
+- Ctrl+Enter in a GO field allows the infrastructure write or launches the plan, once GO is typed.
+- An open drawer of the queue stays within it: Resume and Delete no longer slip out of view.
+- The page's script is compiled by the tests when node is installed.

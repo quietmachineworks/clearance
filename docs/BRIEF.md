@@ -137,9 +137,23 @@ at once, mostly from the keyboard.
   the diff.
 - **New task**: instruction, recent folder, group from the folder, model, mode; the session opens in a
   terminal inside the page (ADR-0016); folders are browsed in the page, never through a system dialog.
-- **Thread**: two tool calls or more in a row fold into one line ("5 actions · Bash, Read", failures
-  counted; unfolded when one failed); "My messages" shows only what you wrote; a reply copies as
-  Markdown.
+- **Thread** (2026-10-30, mockup `design/canvas/ThreadTurns.dc.html`): told in turns, not the terminal
+  copied. Each message you sent opens one: below it, a summary line (how long, how many actions) and
+  result chips (files changed, tests, commits, merge request, failures), then the reply in full, which
+  copies as Markdown. What it did unfolds as sentences ("Read 6 files", "Ran `npm test` → 32 pass", a
+  failure in red with its first line, "Published the artifact « Export screen » (version 3)"), each with
+  how a permission it needed was settled when it was not automatic (by you, from clearance, refused,
+  blocked by auto mode: the transcript's `permissionDecision`). Turns are folded but the running one and
+  one whose last action failed. "All | My messages" keeps only your requests with their summary line. A
+  resume after compaction is a line, not a message; what a plugin, a notification or a continuation sent
+  in your place (the transcript's `origin`) is not a request and stays out.
+- **Right panel**: hidden down to a column of icons with their counts, or dragged between 240 and 520 px,
+  both kept per browser. Task: the session's title, then its first request on three lines. The
+  artifacts the session published (title, version, when; opened on claude.ai, no preview: they are
+  private). Nothing overflows sideways.
+- **Attachments**: an image pasted, a file dropped anywhere on the session or picked with the paperclip
+  waits as a chip above the message field (thumbnail, size, remove), and goes with the message: its path
+  at the end of the text. In the Terminal tab, paste and drop still type the path.
 - **Shortcuts**: one global list of prompts (`~/.clearance/prompts.json`), as chips above the message
   field and on Ctrl+Shift+1 to 0, sent to the session on screen. Messages for a session queue up and
   are delivered one by one, none overwrites another.
