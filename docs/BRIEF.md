@@ -219,12 +219,13 @@ Mockups: `design/`.
 | Claude Code version | `claude --version`, checked against the validated range (ADR-0017) | tested |
 | A session's terminal | clearance's own pseudo-terminal: ConPTY on Windows, `openpty` on macOS (ADR-0016) | tested |
 | Relay in parallel with the terminal | channels declaring `claude/channel/permission` | research preview, dev flag, organisation policy |
-| A session's plan and current step | the last `TodoWrite` call of the transcript (`todos`: `content`, `status`) | to check in R1 |
+| A session's plan and current step | the last `TodoWrite` call of the transcript (`todos`: `content`, `status`) | observed |
 | Tests, commits, merge request of a turn | the turn's `Bash` calls and their results (test commands, `git commit`, a merge request URL) | heuristic, R2 |
-| Model for the next turn | `/model <name>` sent as an instruction through the companion mod | to check in R2 |
+| Model for the next turn | `/model <name>` sent as an instruction through the companion mod | tested |
 | Interrupt, stop a session | companion mod: `$.turn.abort`, `$.command.run('exit')` | tested |
 | Memory of a session | `pid` from `claude agents --json`, the system's process table (Toolhelp32, `ps`) | ADR-0015 |
-| A session going on under a new id | the same `pid` with another `sessionId` | to check on real `/clear` |
+| A session going on under a new id | the same `pid` with another `sessionId` | observed on a real `/clear`: same terminal, not always the same work |
+| The session a handoff continues | the first other session id in the message a plugin sent in the user's place | observed, one plugin |
 
 Internal files (`~/.claude/sessions/`, transcripts) may change between versions: prefer a documented
 source whenever one exists, and keep every read of internal files in a single module.

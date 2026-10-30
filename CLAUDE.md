@@ -26,6 +26,13 @@ of scope. Decisions taken outside the brief: `docs/adr/`.
   environments of infrastructure writes (ADR-0012). **R1 done**: the server in Rust (ADR-0010). **R2**: the
   V2 page with logo A. The Rust binary serves the live page since 2026-10-22; the Node version is
   removed (in git history up to 0242ec5).
+- **R3 built**: two secrets and browser sessions (ADR-0013), a strict CSP (ADR-0014), groups and memory
+  (ADR-0015), sessions in a terminal of the page (ADR-0016), interrupt and stop through the mod, what
+  clearance knows and says when it does not (ADR-0017). Its exit, a day of work without a terminal
+  application, is not validated yet.
+- **2026-10-30**: the compact queue, the thread in turns, the right panel folded or resized, attachments
+  as chips, the artifacts of the session a handoff continues (BRIEF 3b, mockups in `design/canvas/`).
+  Open: question 3 (`PermissionDenied`) still waits for a real denial.
 
 ## Working rules
 
