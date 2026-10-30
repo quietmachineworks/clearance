@@ -188,7 +188,31 @@ pub struct Transcript {
     pub edits: Vec<Edit>,
     launches: Vec<Launch>,
     thread: Vec<Item>,
-    todos: Json, // the last TodoWrite list: the session's plan and where it is
+    todos: Json,                  // the last TodoWrite list: the session's plan and where it is
+    links: Vec<(String, String)>, // what the session pointed to, and when: once each, the latest last
+}
+
+impl Transcript {
+    fn link(&mut self, url: &str, at: &str) {
+        self.links.retain(|(u, _)| u != url);
+        self.links.push((url.to_string(), at.to_string()));
+    }
+}
+
+/// The web addresses in a text, without the punctuation or the Markdown around them.
+fn urls_in(text: &str) -> Vec<&str> {
+    let mut out = Vec::new();
+    let mut rest = text;
+    while let Some(i) = rest.find("http") {
+        let tail = &rest[i..];
+        let end = tail.find(|c: char| c.is_whitespace() || "\"'<>()[]{}`|".contains(c)).unwrap_or(tail.len());
+        let url = tail[..end].trim_end_matches(|c: char| ".,;:!?*_".contains(c));
+        if (url.starts_with("https://") || url.starts_with("http://")) && url.len() > "https://".len() {
+            out.push(url);
+        }
+        rest = &tail[end.max(4)..];
+    }
+    out
 }
 
 const EDIT_TOOLS: [&str; 4] = ["Edit", "Write", "MultiEdit", "NotebookEdit"];
@@ -309,6 +333,12 @@ fn parse(records: Vec<Json>) -> Transcript {
         match e.get("type").str() {
             Some("ai-title") => t.title = opt(e.get("aiTitle")),
             Some("permission-mode") => t.mode = opt(e.get("permissionMode")),
+            // A merge request or pull request Claude Code noticed the session open or use.
+            Some("pr-link") => {
+                if let Some(url) = e.get("prUrl").str() {
+                    t.link(url, &at);
+                }
+            }
             Some("assistant") => {
                 let message = e.get("message");
                 if let Some(m) = message.get("model").str().filter(|m| m.starts_with("claude-")) {
@@ -317,6 +347,9 @@ fn parse(records: Vec<Json>) -> Transcript {
                 for c in message.get("content").items() {
                     if c.get("type").str() == Some("text") {
                         if let Some(text) = c.get("text").str().filter(|s| !s.is_empty()) {
+                            for url in urls_in(text) {
+                                t.link(url, &at);
+                            }
                             t.last_text = Some(text.into());
                             t.thread.push(Item::Said { at: at.clone(), text: cut(text, 4000) });
                         }
@@ -395,6 +428,24 @@ fn parse(records: Vec<Json>) -> Transcript {
 }
 
 // ---- subagents and workflows ----
+
+/// A subagent or a workflow agent that wrote to its transcript this recently is still at work.
+pub const AGENT_ACTIVE_MS: u64 = 120_000;
+
+/// How many of a session's subagents and workflow agents are at work, read from when their transcripts
+/// last changed: `claude agents` says idle once the main loop waits, even while they run.
+pub fn agents_at_work(transcript: &Path, now: u64) -> usize {
+    let sub = transcript.with_extension("").join("subagents");
+    let runs = list(&sub.join("workflows")).into_iter().map(|r| sub.join("workflows").join(r));
+    std::iter::once(sub.clone())
+        .chain(runs)
+        .flat_map(|dir| list(&dir).into_iter().filter(|f| f.starts_with("agent-") && f.ends_with(".jsonl")).map(move |f| dir.join(f)))
+        .filter(|f| {
+            let at = fs::metadata(f).and_then(|m| m.modified()).ok().and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok());
+            at.is_some_and(|t| now.saturating_sub(t.as_millis() as u64) < AGENT_ACTIVE_MS)
+        })
+        .count()
+}
 
 #[derive(Clone, Debug, Default)]
 pub struct Agent {
@@ -646,6 +697,7 @@ pub fn detail(projects: &Path, id: &str, cwd: Option<&str>) -> Option<Json> {
         ("todos", t.todos.clone()),
         ("runs", Json::Arr(runs)),
         ("agents", Json::Arr(agents)),
+        ("links", Json::Arr(t.links.iter().rev().take(30).map(|(url, at)| obj([("url", url.as_str().into()), ("at", at.as_str().into())])).collect())),
     ]))
 }
 
@@ -913,6 +965,33 @@ mod tests {
         jsonl(&file, &[use_("u1", "Bash", j(r#"{"command":"npm test"}"#), 39, "claude-sonnet-5-5"), accepted]);
         let found = approvals(&home.join("projects"));
         assert_eq!(found.iter().map(|a| (a.tool.as_str(), a.input.get("command").str().unwrap_or(""))).collect::<Vec<_>>(), [("Bash", "npm test")]);
+        let _ = fs::remove_dir_all(home);
+    }
+
+    #[test]
+    fn links_the_session_pointed_to_newest_first() {
+        assert_eq!(
+            urls_in("See **https://example.org/a**, the [doc](https://example.org/doc). Dev: http://localhost:5173/. Not httpd, not https://"),
+            ["https://example.org/a", "https://example.org/doc", "http://localhost:5173/"]
+        );
+        let t = parse(vec![
+            j(r#"{"type":"assistant","timestamp":"2026-10-20T10:00:00Z","message":{"content":[{"type":"text","text":"Page: https://example.org/page"}]}}"#),
+            j(r#"{"type":"pr-link","timestamp":"2026-10-20T10:01:00Z","prUrl":"https://forge.example.org/orchard/-/merge_requests/7"}"#),
+            j(r#"{"type":"assistant","timestamp":"2026-10-20T10:02:00Z","message":{"content":[{"type":"text","text":"Again https://example.org/page."}]}}"#),
+        ]);
+        let urls: Vec<&str> = t.links.iter().map(|(u, _)| u.as_str()).collect();
+        assert_eq!(urls, ["https://forge.example.org/orchard/-/merge_requests/7", "https://example.org/page"], "named again, the page moves to the end");
+    }
+
+    #[test]
+    fn agents_writing_lately_are_at_work() {
+        let home = home();
+        let file = home.join("projects").join("-work-orchard").join(format!("{ID}.jsonl"));
+        let now = sys::now_ms();
+        // One subagent beside the session and two in its workflow, all just written.
+        assert_eq!(agents_at_work(&file, now), 3);
+        assert_eq!(agents_at_work(&file, now + AGENT_ACTIVE_MS + 1_000), 0);
+        assert_eq!(agents_at_work(&home.join("nowhere.jsonl"), now), 0);
         let _ = fs::remove_dir_all(home);
     }
 }

@@ -1,6 +1,6 @@
 # ADR-0004 - A companion mod for usage and instructions, terminal tabs by title
 
-Date: 2026-10-20. Status: accepted.
+Date: 2026-10-20. Status: accepted; the terminal tab part is replaced by ADR-0016.
 
 ## Context
 

@@ -1,6 +1,6 @@
 # ADR-0008 - Terminal tabs from the tower
 
-Date: 2026-10-21. Status: accepted. Builds on ADR-0004.
+Date: 2026-10-21. Status: replaced by ADR-0016 (sessions run in a terminal inside the page). Builds on ADR-0004.
 
 ## Context
 

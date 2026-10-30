@@ -1,6 +1,7 @@
 # ADR-0007 - Companion mod, journal and suggested rules
 
-Date: 2026-10-21. Status: accepted.
+Date: 2026-10-21. Status: accepted; closing asleep sessions amended by ADR-0015 (the companion mod can
+now quit a session).
 
 ## Context
 

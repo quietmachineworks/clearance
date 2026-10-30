@@ -7,8 +7,28 @@ const PAGE: &str = include_str!("../public/index.html");
 const END_OF_SKINS: &str = "/* ---- end of skins ---- */";
 
 fn style() -> &'static str {
-    let start = PAGE.find("<style>").unwrap() + 7;
+    let open = PAGE.find("<style").unwrap();
+    let start = open + PAGE[open..].find('>').unwrap() + 1;
     &PAGE[start..PAGE.find("</style>").unwrap()]
+}
+
+#[test]
+fn the_page_runs_only_its_own_script_and_styles() {
+    // One script and one style block, both carrying the nonce the server replaces (ADR-0014).
+    assert_eq!(PAGE.matches("<script").count(), 1);
+    assert_eq!(PAGE.matches("<style").count(), 1);
+    assert!(PAGE.contains("<script nonce=\"__NONCE__\">") && PAGE.contains("<style nonce=\"__NONCE__\">"));
+    // No style attribute (the policy refuses it) and nothing loaded from another site.
+    assert!(!PAGE.contains(" style=\""), "a style attribute: use a class, or h()'s style through the CSSOM");
+    assert!(!PAGE.contains("setAttribute('style'"));
+    for far in ["https://fonts.", "src=\"http", "href=\"http", "url(http"] {
+        assert!(!PAGE.contains(far), "loaded from another site: {far}");
+    }
+    let fonts: Vec<&str> = PAGE.match_indices("url(/fonts/").map(|(i, _)| &PAGE[i + 11..i + PAGE[i..].find(')').unwrap()]).collect();
+    assert_eq!(fonts.len(), 13);
+    for f in fonts {
+        assert!(std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("public/fonts").join(f).is_file(), "missing font {f}");
+    }
 }
 
 /// Each skin's variables, the defaults of `:root` filled in.
@@ -133,7 +153,50 @@ fn both_languages_say_everything() {
 }
 
 #[test]
+fn xterm_is_the_frozen_copy_its_readme_lists() {
+    // ADR-0016: copied from the npm registry, never edited.
+    let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("public/vendor/xterm");
+    let readme = std::fs::read_to_string(dir.join("README.md")).unwrap();
+    let rows: Vec<(&str, &str)> = readme
+        .lines()
+        .filter_map(|l| {
+            let cells: Vec<&str> = l.split('|').map(|c| c.trim().trim_matches('`')).collect();
+            (cells.len() > 4 && cells[3].len() == 64).then(|| (cells[1], cells[3]))
+        })
+        .collect();
+    assert_eq!(rows.len(), 5, "{rows:?}");
+    for (file, hash) in rows {
+        assert_eq!(crate::sys::sha256(&std::fs::read(dir.join(file)).unwrap()), hash, "{file} differs from the copy listed");
+    }
+}
+
+#[test]
 fn the_contrast_check_measures_what_wcag_does() {
     assert!((contrast("#000000", "#FFFFFF").unwrap() - 21.0).abs() < 1e-9);
     assert!((contrast("#777777", "#FFFFFF").unwrap() - 4.48).abs() < 0.01);
+}
+
+/// The page's pure helpers (search, folded tool runs), run under node when it is installed: the
+/// repository needs no JS tool, so without node this check says it was skipped.
+#[test]
+fn search_and_folded_runs_behave() {
+    let (start, end) = (PAGE.find("// ---- pure:").unwrap(), PAGE.find("// ---- end pure ----").unwrap());
+    let checks = r#"
+const assert = (ok, what) => { if (!ok) { console.error('FAILED: ' + what); process.exit(1) } }
+assert(matches('eloi cafe', 'Café chez Éloi'), 'accents and case ignored');
+assert(matches('chez cafe', 'Café chez Éloi'), 'any order');
+assert(!matches('cafe the', 'Café chez Éloi'), 'every word');
+assert(matches('  ', 'anything'), 'an empty query finds all');
+const tool = (name, error = false) => ({ kind: 'tool', tool: name, error, at: name });
+const folded = foldTools([{ kind: 'user' }, tool('Read'), { kind: 'text' }, tool('Bash'), tool('Read'), tool('Bash', true), { kind: 'text' }]);
+assert(JSON.stringify(folded.map((x) => x.kind)) === '["user","tool","text","tools","text"]', 'a lone call stays, a run folds: ' + JSON.stringify(folded.map((x) => x.kind)));
+const run = runOf(folded[3].items);
+assert(run.n === 3 && run.tools.join() === 'Bash,Read' && run.failed === 1, 'a run counts its calls, tools and failures');
+console.log('pure helpers ok');
+"#;
+    let script = format!("{}\n{checks}", &PAGE[start..end]);
+    match std::process::Command::new("node").args(["-e", &script]).output() {
+        Ok(out) => assert!(out.status.success(), "{}{}", String::from_utf8_lossy(&out.stdout), String::from_utf8_lossy(&out.stderr)),
+        Err(_) => eprintln!("node not found: the page's pure helpers were not run"),
+    }
 }

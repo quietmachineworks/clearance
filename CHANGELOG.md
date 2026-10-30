@@ -36,8 +36,85 @@
   is removed.
 - The environment of an infrastructure write (PROD, STAGING, LOCAL or unknown, handled like PROD) from
   patterns in `~/.clearance/environments.json`; a request answered in the terminal stays a while as
-  settled (ADR-0012).
+  settled, one line per session (ADR-0012).
 - The V2 page (BRIEF section 3b): a queue that holds still under the pointer, groups
   with their counts, the session with its thread or its terminal view, an inspector (task, plan, files,
   tests, agents, cost, model), every answer sent after 5 s with an undo, Ctrl K, keyboard shortcuts;
   twelve skins, English and French, logo A of the design canvas, the same in every skin (ADR-0011).
+- A session opens on an Action tab that shows only what it needs from you; its thread, terminal view
+  and a Settings tab come after. Settings: rename (`/rename`), model, compact the context, group of its
+  folder, notifications, ignore, the command to resume it elsewhere. The companion mod runs a slash
+  command typed for a session as a command; a renamed session's tab is still found by its old title.
+- The terminal view follows the end of the session, and stays where the reader scrolled up to.
+- The thread shows one line per tool call, paths shortened to the session's folder or their last two
+  parts.
+- The page works on a tablet (details in a tab) and a phone (the queue or one session, larger touch
+  targets).
+- Stop sessions from the page through their companion mod: the running turn ends with its tools, and on
+  request the session quits (`/exit`), its transcript kept for `claude --resume`. A button at the top
+  stops every running agent at the end of the day; the Interrupt and Stop buttons of a session and of a
+  group work. A stop not picked up within a minute is dropped. Sessions without the mod are listed with
+  a way to their tab.
+- A session waiting in its terminal says why: not connected to clearance (with the command to resume it
+  connected), or its request asked while clearance was restarting. Connected sessions are remembered
+  across restarts, and clearance's tab says when stopping it would drop held requests.
+- An Idle section lists the sessions done with their turn and already read, newest first: they no longer
+  vanish from the queue until they fall asleep.
+- The Asleep and Ignored drawers stay open across redraws; a session in them opens on a click, and an
+  ignored one has a labelled Stop ignoring button.
+- The start form picks its folder in the system's folder dialog in place of a list of buttons.
+- Sessions quit from the stop dialog are kept in the browser; a button at the top lists them and
+  resumes one or all in new terminal tabs (`claude --resume`).
+- The companion mod follows its session through `/resume` and `/clear`, which change its id; a message
+  sent from the page reads delivered only once the mod took it, and says so while it waits.
+- A session whose subagents or workflow wrote in the last two minutes is at work, with how many of them,
+  even while `claude agents` says its main loop is idle: no early To read card, no false stall.
+- The companion mod says its version; the page offers to stop a session only when its mod can, and
+  otherwise says why (no mod, or a mod loaded before stopping existed: `/reload-plugins`).
+- A Connection block in a session's Settings: hooks received or not, companion mod up to date, old or
+  absent, with what to do and a way to its tab.
+- The inspector lists the links a session pointed to, newest first: artifacts, merge and pull requests
+  (Claude Code's own `pr-link` records), local servers, pages named in its replies.
+- Rename, model and compact are offered only when the session's companion mod can run a slash command;
+  otherwise they are greyed out with the reason and what to type in its terminal.
+- A field being typed in a session's view (rename, group, GO) keeps its focus while the session works;
+  the view catches up once it is left.
+- Two secrets (ADR-0013): the token of the hooks no longer opens the page nor answers a request, so a
+  session that reads it cannot approve its own permission. Browsers sign in through a single-use link
+  (5 minutes) and keep a session of their own, stored as a SHA-256 only; the Settings list the signed-in
+  browsers and sign them out. `clearance open` opens the page signed in; a second `clearance` does the
+  same. The settings clearance writes deny the file tools on its folder. `/?token=` no longer signs in.
+- A strict content security policy (ADR-0014): only the page's own script and styles, through a nonce
+  drawn at each load; the twelve fonts are served by clearance with their OFL licences, nothing comes
+  from Google any more.
+- Groups made by the user (ADR-0015): create, rename, delete, put a session in one (from its header, its
+  Settings or the start form); the others are in "No group". The queue keeps what waits for you and what
+  needs watching on top, across groups; below, one foldable block per group with its counts and memory.
+  The former folder groups are set aside (`groups.json.old`).
+- A session that stops, from clearance or not, stays in its group as stopped, with Resume (a new tab,
+  `claude --resume`) and Delete (forgotten in clearance, its transcript kept). One that goes on under a
+  new id (`/clear`, `/resume`) keeps its group and name. Replaces the stopped list kept in the browser.
+- Memory: each session's processes, per group and in total; "Close the asleep sessions" says how much
+  memory quitting them frees.
+- A session without a name is called after its folder, numbered when the folder has several.
+- The browser tab's title counts what waits for you: "(3) clearance".
+- Sessions run inside the page (ADR-0016): a new task or a resumed session starts the real Claude Code in a
+  pseudo-terminal of clearance's own (ConPTY on Windows, `openpty` on macOS), drawn by xterm.js 5.5.0 in
+  its Terminal tab, shown at once (a folder to trust, for one). Text from the message field is typed in it.
+  clearance drives no terminal application, PowerShell or AppleScript any more: no "go to its tab", folders
+  are browsed in the page. xterm.js is frozen in `public/vendor/xterm` with its licence and hashes.
+  The instruction of a new task is the session's first prompt (`claude -- <text>`): no companion mod
+  needed for it.
+- Images and documents pasted or dropped on the message field or on a terminal are kept by clearance where
+  sessions can read them, and their path goes in the text.
+- clearance runs without a window by default (`--foreground` keeps it in the terminal). The Settings
+  restart it once its sessions are idle (they reopen with `claude --resume`) or stop it; its terminals
+  are reopened at its next start. The page follows a restart, a terminal it shows included.
+- The thread folds two tool calls or more in a row into one line ("5 actions · Bash, Read", failures
+  counted, opened when one failed, kept open or closed across refreshes); "My messages" shows only what
+  you wrote; each reply copies as Markdown.
+- Shortcuts: one global list of prompts (`~/.clearance/prompts.json`), edited in the Settings, sent to
+  the session on screen from chips above its message field or with Ctrl+Shift+1 to 0, from a terminal
+  too. Messages for a session queue up and reach it one by one: none overwrites another.
+- Ctrl K finds with case and accents ignored, every word in any order.
+- The Settings show clearance's version, the commit it was built from (`build.rs`) and when it started.

@@ -87,7 +87,7 @@ pub struct Board {
     pub done: HashMap<String, Done>,
     pub agents: HashMap<String, HashSet<String>>, // session -> running subagents
     pub usage: HashMap<String, (u64, Json)>,      // session -> last report of its companion mod
-    pub inbox: HashMap<String, Instruction>,      // session -> last instruction typed for it
+    pub inbox: HashMap<String, Vec<Instruction>>, // session -> instructions typed for it, oldest first
     pub connected: HashSet<String>,               // sessions that sent a hook event
     pub environments: Json,                       // the user's patterns, ~/.clearance/environments.json
     settled: Vec<(u64, Request)>,                 // requests answered in the terminal, shown for a while
@@ -155,15 +155,24 @@ impl Board {
         (per_ms > 0.0).then(|| t1 + ((100.0 - v1).max(0.0) / per_ms) as u64)
     }
 
+    /// Queues an instruction: none overwrites another. The delivered ones are kept for the page to say so.
     pub fn instruct(&mut self, session: &str, text: &str, now: u64) {
-        self.inbox.insert(session.to_string(), Instruction { text: text.to_string(), at: now, delivered: None });
+        self.inbox.entry(session.to_string()).or_default().push(Instruction { text: text.to_string(), at: now, delivered: None });
     }
 
-    /// The instruction waiting for this session, handed out once.
+    /// The oldest instruction waiting for this session, handed out once: one per sync of its mod.
     pub fn take(&mut self, session: &str, now: u64) -> Option<String> {
-        let i = self.inbox.get_mut(session).filter(|i| i.delivered.is_none())?;
+        let list = self.inbox.get_mut(session)?;
+        let i = list.iter_mut().find(|i| i.delivered.is_none())?;
         i.delivered = Some(now);
-        Some(i.text.clone())
+        let text = i.text.clone();
+        // ponytail: the 10 newest delivered are enough to show what became of the last messages sent.
+        if list.iter().filter(|i| i.delivered.is_some()).count() > 10
+            && let Some(old) = list.iter().position(|i| i.delivered.is_some())
+        {
+            list.remove(old);
+        }
+        Some(text)
     }
 
     /// A hook event arrived: the request to hold, if any, and the requests it ends.
@@ -329,8 +338,9 @@ impl Board {
                     u.set("at", (*at).into());
                     s.set("usage", u);
                 }
-                if let Some(i) = self.inbox.get(&id) {
-                    s.set("instruction", obj([("text", i.text.as_str().into()), ("at", i.at.into()), ("delivered", i.delivered.into())]));
+                if let Some(list) = self.inbox.get(&id) {
+                    let all = list.iter().map(|i| obj([("text", i.text.as_str().into()), ("at", i.at.into()), ("delivered", i.delivered.into())]));
+                    s.set("instructions", Json::Arr(all.collect()));
                 }
                 s.set("connected", self.connected.contains(&id).into());
                 s
@@ -610,9 +620,17 @@ mod tests {
         assert_eq!(snap.get("quota").to_string(), r#"[{"kind":"five_hour","percentUsed":42}]"#);
         assert_eq!(b.take(S, 250), None);
         b.instruct(S, "Run the linter too.", 300);
+        b.instruct(S, "Run the linter too.", 301); // a shortcut sent twice: both arrive, in turn
         assert_eq!(b.take(S, 310).as_deref(), Some("Run the linter too."));
+        assert_eq!(b.take(S, 315).as_deref(), Some("Run the linter too."));
         assert_eq!(b.take(S, 320), None);
-        assert_eq!(b.inbox[S].delivered, Some(310));
+        assert_eq!(b.inbox[S].iter().map(|i| i.delivered).collect::<Vec<_>>(), [Some(310), Some(315)]);
+        for n in 0..12 {
+            b.instruct(S, &format!("step {n}"), 330 + n);
+            b.take(S, 340 + n);
+        }
+        assert_eq!(b.inbox[S].len(), 10, "only the 10 newest delivered are kept");
+        assert_eq!(b.inbox[S][0].text, "step 2");
         b.sync(vec![status("sess-quarry", "idle")], 400); // the session ended
         assert!(!b.usage.contains_key(S));
         assert!(!b.inbox.contains_key(S));

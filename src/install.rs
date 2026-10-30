@@ -35,6 +35,30 @@ pub fn hooks(base: &str, token: &str) -> Json {
     )
 }
 
+/// The deny rules that keep a session's file tools out of clearance's folder (ADR-0013): `Edit` covers
+/// every tool that writes, `Read` the ones that read, Grep and Glob included.
+pub fn deny(home: &Path) -> Vec<String> {
+    let posix = |p: &Path| p.display().to_string().replace('\\', "/");
+    // The long form of each path (no `C:\Users\NAME~1`, no `\\?\`), as Claude Code compares them.
+    let real = |p: &Path| std::fs::canonicalize(p).ok().map(|c| PathBuf::from(c.display().to_string().trim_start_matches(r"\\?\"))).unwrap_or_else(|| p.to_path_buf());
+    let (home, base) = (&real(home), real(&sys::home()));
+    let at = match home.strip_prefix(&base) {
+        Ok(rest) if !base.as_os_str().is_empty() => format!("~/{}", posix(rest)),
+        // Claude Code matches Windows paths in POSIX form: C:\x becomes /c/x.
+        _ => match posix(home).split_once(":/") {
+            Some((drive, rest)) => format!("//{}/{rest}", drive.to_ascii_lowercase()),
+            None => format!("/{}", posix(home)),
+        },
+    };
+    ["Read", "Edit"].iter().map(|tool| format!("{tool}({}/**)", at.trim_end_matches('/'))).collect()
+}
+
+// ponytail: a deny rule is ours when it guards a `.clearance` folder; a custom CLEARANCE_HOME elsewhere is
+// recognised by the exact rules `deny` gives for it.
+fn our_rule(rule: &str) -> bool {
+    (rule.starts_with("Read(") || rule.starts_with("Edit(")) && rule.ends_with("/.clearance/**)")
+}
+
 fn clearance_url(url: &str) -> bool {
     url.strip_prefix("http://127.0.0.1:")
         .and_then(|r| r.split_once("/hook/"))
@@ -45,9 +69,24 @@ fn ours(group: &Json) -> bool {
     group.get("hooks").items().iter().any(|h| h.get("type").str() == Some("http") && h.get("url").str().is_some_and(clearance_url))
 }
 
-/// The settings with every clearance entry taken out, and nothing else.
-pub fn without_hooks(settings: &Json) -> Json {
+/// The settings with every clearance entry taken out (hooks, and deny rules on its folder or among
+/// `deny`), and nothing else.
+pub fn without_hooks(settings: &Json, deny: &[String]) -> Json {
     let mut out = settings.clone();
+    let mut permissions = out.get("permissions").clone();
+    if let Json::Arr(rules) = permissions.get("deny").clone() {
+        let kept: Vec<Json> = rules.into_iter().filter(|r| !r.str().is_some_and(|r| our_rule(r) || deny.iter().any(|d| d == r))).collect();
+        if kept.is_empty() {
+            permissions.remove("deny");
+        } else {
+            permissions.set("deny", Json::Arr(kept));
+        }
+        if permissions.entries().is_empty() {
+            out.remove("permissions");
+        } else {
+            out.set("permissions", permissions);
+        }
+    }
     let mut hooks = out.get("hooks").clone();
     if let Json::Obj(events) = &mut hooks {
         for (_, groups) in events.iter_mut() {
@@ -65,9 +104,9 @@ pub fn without_hooks(settings: &Json) -> Json {
     out
 }
 
-/// A new install replaces the previous one (new token, new port), next to the user's own hooks.
-pub fn with_hooks(settings: &Json, hooks: &Json) -> Json {
-    let mut out = without_hooks(settings);
+/// A new install replaces the previous one (new token, new port), next to the user's own hooks and rules.
+pub fn with_hooks(settings: &Json, hooks: &Json, deny: &[String]) -> Json {
+    let mut out = without_hooks(settings, deny);
     let mut all = if out.get("hooks").is_null() { Json::Obj(Vec::new()) } else { out.get("hooks").clone() };
     for (event, groups) in hooks.entries() {
         let mut list = all.get(event).items().to_vec();
@@ -75,7 +114,20 @@ pub fn with_hooks(settings: &Json, hooks: &Json) -> Json {
         all.set(event, Json::Arr(list));
     }
     out.set("hooks", all);
+    if deny.is_empty() {
+        return out;
+    }
+    let mut permissions = if out.get("permissions").is_null() { Json::Obj(Vec::new()) } else { out.get("permissions").clone() };
+    let mut rules = permissions.get("deny").items().to_vec();
+    rules.extend(deny.iter().map(|r| Json::from(r.as_str())));
+    permissions.set("deny", Json::Arr(rules));
+    out.set("permissions", permissions);
     out
+}
+
+/// The settings file clearance writes for a session it connects (`claude --settings`).
+pub fn session_settings(base: &str, token: &str, home: &Path) -> Json {
+    obj([("hooks", hooks(base, token)), ("permissions", obj([("deny", Json::Arr(deny(home).into_iter().map(Json::from).collect()))]))])
 }
 
 /// Whether these settings already connect every session to clearance.
@@ -103,15 +155,20 @@ fn count(settings: &Json) -> String {
 }
 
 /// `clearance install`: prints what changes, then backs the file up and writes it.
-pub fn run(args: &[String], base: &str, token: &str) -> Result<(), String> {
+pub fn run(args: &[String], base: &str, token: &str, home: &Path) -> Result<(), String> {
     let file = args.iter().position(|a| a == "--settings").and_then(|i| args.get(i + 1)).map_or_else(user_settings, PathBuf::from);
     let remove = args.iter().any(|a| a == "--remove");
     let settings = read_settings(&file)?;
-    let next = if remove { without_hooks(&settings) } else { with_hooks(&settings, &hooks(base, token)) };
+    let rules = deny(home);
+    let next = if remove { without_hooks(&settings, &rules) } else { with_hooks(&settings, &hooks(base, token), &rules) };
     let others: usize = settings.get("hooks").entries().iter().map(|(_, g)| g.items().iter().filter(|x| !ours(x)).count()).sum();
+    let guards =
+        |s: &Json| s.get("permissions").get("deny").items().iter().filter_map(Json::str).filter(|r| our_rule(r) || rules.iter().any(|d| d == r)).collect::<Vec<_>>().join(", ");
     println!("settings: {}", file.display());
     println!("clearance hooks before: {}", count(&settings));
     println!("clearance hooks after:  {}", count(&next));
+    println!("deny rules on clearance's folder before: [{}]", guards(&settings));
+    println!("deny rules on clearance's folder after:  [{}]", guards(&next));
     println!("other hooks kept as they are: {others}");
     if args.iter().any(|a| a == "--dry-run") {
         return Ok(());
@@ -161,7 +218,7 @@ mod tests {
 
     #[test]
     fn install_adds_clearance_next_to_the_hooks_already_there() {
-        let out = with_hooks(&settings(), &ours_block(47800));
+        let out = with_hooks(&settings(), &ours_block(47800), &[]);
         assert_eq!(out.get("model").str(), Some("opus"));
         assert_eq!(out.get("hooks").get("PreToolUse"), theirs().get("PreToolUse"));
         let joined = |event: &str| Json::Arr([theirs().get(event).items(), ours_block(47800).get(event).items()].concat());
@@ -176,7 +233,7 @@ mod tests {
     fn installing_again_replaces_the_previous_clearance_entries_only() {
         let mut second = ours_block(47800);
         second.set("Stop", http("Stop", 47900));
-        let twice = with_hooks(&with_hooks(&settings(), &ours_block(47800)), &second);
+        let twice = with_hooks(&with_hooks(&settings(), &ours_block(47800), &[]), &second, &[]);
         assert_eq!(twice.get("hooks").get("Stop").items().len(), 2);
         assert_eq!(twice.get("hooks").get("Stop").items()[1].get("hooks").items()[0].get("url").str(), Some("http://127.0.0.1:47900/hook/Stop"));
         assert_eq!(twice.get("hooks").get("PermissionRequest").items().len(), 1);
@@ -184,10 +241,28 @@ mod tests {
 
     #[test]
     fn remove_takes_out_clearance_and_nothing_else() {
-        assert_eq!(without_hooks(&with_hooks(&settings(), &ours_block(47800))), settings());
+        assert_eq!(without_hooks(&with_hooks(&settings(), &ours_block(47800), &[]), &[]), settings());
         let mut only = Json::Obj(Vec::new());
         only.set("hooks", ours_block(47800));
-        assert_eq!(without_hooks(&only).to_string(), "{}");
+        assert_eq!(without_hooks(&only, &[]).to_string(), "{}");
+    }
+
+    #[test]
+    fn sessions_are_denied_clearance_s_folder_and_remove_takes_only_those_rules_out() {
+        let rules = deny(&sys::home().join(".clearance"));
+        assert_eq!(rules, ["Read(~/.clearance/**)", "Edit(~/.clearance/**)"]);
+        let mut s = settings();
+        s.set("permissions", j(r#"{"defaultMode":"auto","deny":["Bash(rm -rf *)"]}"#));
+        let installed = with_hooks(&s, &ours_block(47800), &rules);
+        assert_eq!(installed.get("permissions").get("deny").to_string(), r#"["Bash(rm -rf *)","Read(~/.clearance/**)","Edit(~/.clearance/**)"]"#);
+        let again = with_hooks(&installed, &ours_block(47800), &rules);
+        assert_eq!(again.get("permissions").get("deny").items().len(), 3, "installing twice adds nothing");
+        assert_eq!(without_hooks(&again, &rules), s);
+        if cfg!(windows) {
+            assert_eq!(deny(Path::new(r"D:\tools\clr")), ["Read(//d/tools/clr/**)", "Edit(//d/tools/clr/**)"]);
+        }
+        let session = session_settings("http://127.0.0.1:1", "t", &sys::home().join(".clearance"));
+        assert_eq!(session.get("permissions").get("deny").items().len(), 2);
     }
 
     #[test]

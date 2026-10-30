@@ -21,8 +21,11 @@ cargo build --release
 target/release/clearance
 ```
 
-It prints the page address with its token, and writes `~/.clearance/hooks.json`. Connect a session by
-passing those hooks to it:
+clearance runs without a window (`clearance --foreground` keeps it in your terminal). The first time, it
+opens the page in your browser, already signed in; the browser stays signed in across
+restarts. `clearance open` opens the page again, or signs another browser in: the sign-in link works
+once, for 5 minutes, and never shows the hook secret. It writes `~/.clearance/hooks.json`. Connect a
+session by passing those hooks to it:
 
 ```sh
 claude --settings ~/.clearance/hooks.json
@@ -38,8 +41,11 @@ from the page:
 claude --settings ~/.clearance/hooks.json --plugin-dir /absolute/path/to/clearance/mod
 ```
 
-The page can also start a session in a new terminal tab, connected to clearance, and bring a session's
-tab to the front: Windows Terminal on Windows, Terminal on macOS.
+Sessions started from the page run inside it: each one is the real Claude Code, in a terminal drawn in its
+Terminal tab (no terminal application needed). Paste or drop an image or a document on the message field
+or on the terminal: the session gets its path. Arrange sessions in your own groups; a stopped session stays
+in its group until you delete it, and resumes in one click. The Settings restart clearance (it waits for
+its sessions to be idle, then reopens them) or stop it.
 
 The Journal page suggests permission rules from what you approved by hand; clearance never writes
 them in your settings.

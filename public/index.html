@@ -5,8 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>clearance</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23141414'/%3E%3Ccircle cx='32' cy='32' r='21' fill='none' stroke='%23FFC21A' stroke-width='6'/%3E%3Cpath d='M22 33 L29 40 L43 24' fill='none' stroke='%23FFF' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400..800&family=Atkinson+Hyperlegible+Mono:wght@400..800&family=Dela+Gothic+One&family=IBM+Plex+Mono:wght@400;700&family=Space+Grotesk:wght@700&family=Archivo:wght@800&family=Fraunces:wght@600..800&family=Archivo+Black&family=Silkscreen&family=VT323&family=Fredoka:wght@600&family=DM+Serif+Display&display=swap">
-<style>
+<style nonce="__NONCE__">
+/* ---- fonts: served by clearance, SIL Open Font License, public/fonts (ADR-0014) ---- */
+@font-face { font-family: 'Atkinson Hyperlegible Next'; font-weight: 400 800; font-display: swap; src: url(/fonts/atkinsonhyperlegiblenext-400-800.woff2) format('woff2') }
+@font-face { font-family: 'Atkinson Hyperlegible Mono'; font-weight: 400 800; font-display: swap; src: url(/fonts/atkinsonhyperlegiblemono-400-800.woff2) format('woff2') }
+@font-face { font-family: 'Dela Gothic One'; font-weight: 400; font-display: swap; src: url(/fonts/delagothicone-400.woff2) format('woff2') }
+@font-face { font-family: 'IBM Plex Mono'; font-weight: 400; font-display: swap; src: url(/fonts/ibmplexmono-400.woff2) format('woff2') }
+@font-face { font-family: 'IBM Plex Mono'; font-weight: 700; font-display: swap; src: url(/fonts/ibmplexmono-700.woff2) format('woff2') }
+@font-face { font-family: 'Space Grotesk'; font-weight: 700; font-display: swap; src: url(/fonts/spacegrotesk-700.woff2) format('woff2') }
+@font-face { font-family: 'Archivo'; font-weight: 800; font-display: swap; src: url(/fonts/archivo-800.woff2) format('woff2') }
+@font-face { font-family: 'Fraunces'; font-weight: 600 800; font-display: swap; src: url(/fonts/fraunces-600-800.woff2) format('woff2') }
+@font-face { font-family: 'Archivo Black'; font-weight: 400; font-display: swap; src: url(/fonts/archivoblack-400.woff2) format('woff2') }
+@font-face { font-family: 'Silkscreen'; font-weight: 400; font-display: swap; src: url(/fonts/silkscreen-400.woff2) format('woff2') }
+@font-face { font-family: 'VT323'; font-weight: 400; font-display: swap; src: url(/fonts/vt323-400.woff2) format('woff2') }
+@font-face { font-family: 'Fredoka'; font-weight: 600; font-display: swap; src: url(/fonts/fredoka-600.woff2) format('woff2') }
+@font-face { font-family: 'DM Serif Display'; font-weight: 400; font-display: swap; src: url(/fonts/dmserifdisplay-400.woff2) format('woff2') }
 /* ---- skins: the only place colours, fonts, lines and shadows are written (ADR-0011) ---- */
 :root, [data-skin=manga] {
   --font: 'Atkinson Hyperlegible Next', system-ui, sans-serif; --mono: 'Atkinson Hyperlegible Mono', ui-monospace, monospace; --fs: 16px; --focus: #2F6FE0;
@@ -188,7 +201,7 @@ section.list { display: flex; flex-direction: column; gap: 8px }
 .item .line { font-size: 14px; color: var(--text2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
 .item .line.mono { font-family: var(--mono) }
 .item .facts { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; font-weight: 700; color: var(--muted) }
-.tag { flex: none; white-space: nowrap; font-size: 12px; font-weight: 800; padding: 0 7px; border-radius: 4px }
+.tag { flex: 0 10 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; font-weight: 800; padding: 0 7px; border-radius: 4px }
 .env { flex: none; white-space: nowrap; font-size: 11px; font-weight: 800; letter-spacing: .06em; padding: 0 6px; border-radius: 4px; border: var(--bw) solid var(--edge) }
 .env.prod { color: var(--onRed); background: var(--red) }
 .env.unknown { color: var(--danger); background: var(--badBg); border-color: var(--danger) }
@@ -204,8 +217,17 @@ section.list { display: flex; flex-direction: column; gap: 8px }
 .small-meter { flex: none; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 800 }
 details.fold { border: var(--bw) solid var(--line); border-radius: var(--r); background: var(--paper); padding: 0 10px }
 details.fold summary { min-height: 40px; display: flex; align-items: center; gap: 8px; font-weight: 800; cursor: pointer }
-.folds { display: flex; gap: 8px }
+.folds { display: flex; flex-wrap: wrap; gap: 8px }
 .folds details { flex: 1 1 0 }
+.group { display: flex; flex-direction: column; gap: 8px; padding: 8px; border: var(--bw) solid var(--edge); border-radius: var(--r); background: var(--panel) }
+.group > header { display: flex; align-items: center; gap: 6px; min-height: 40px }
+.group .toggle { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: 8px; padding: 0 4px; font: inherit; font-weight: 800; color: var(--ink); background: none; border: 0; cursor: pointer; text-align: left }
+.group .toggle .name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.group .sub { margin: 4px 0 0; font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--muted) }
+.stopped .avatar { filter: grayscale(1); opacity: .7 }
+.mem { flex: none; white-space: nowrap }
+.xterm-host { flex: 1 1 auto; min-height: 320px; height: 100%; padding: 6px; background: var(--screen); border-radius: var(--r) }
+.dropping { outline: 3px dashed var(--accent); outline-offset: 2px }
 .keys { margin: auto 0 0; padding-top: 8px; display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 13px; color: var(--muted) }
 kbd { font-size: 12px; font-weight: 700; padding: 1px 6px; color: var(--ink); background: var(--paper); border: 1.5px solid var(--edge); border-radius: 4px }
 .empty { margin: 0; color: var(--muted) }
@@ -229,10 +251,19 @@ kbd { font-size: 12px; font-weight: 700; padding: 1px 6px; color: var(--ink); ba
 .said { margin: 0; max-width: 900px; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.6 }
 .said code { font-size: 14px; padding: 0 4px; background: var(--soft); border-radius: 3px }
 .said .heading { font-size: 17px }
-.tool { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; max-width: 900px; font-size: 14px; color: var(--muted) }
+.tool { display: flex; align-items: baseline; gap: 12px; white-space: nowrap; max-width: 900px; font-size: 14px; color: var(--muted) }
 .tool b { color: var(--green) } .tool.bad b { color: var(--danger) }
-.tool > * { min-width: 0; overflow-wrap: anywhere }
+.tool > * { min-width: 0; overflow: hidden; text-overflow: ellipsis }
+.tool b { flex: none } .tool span { flex: 1 1 0 }
 .tool code { color: var(--ink) }
+details.tools { max-width: 900px; font-size: 14px; color: var(--muted) }
+details.tools > summary { cursor: pointer; padding: 2px 0 }
+details.tools > summary .bad { color: var(--danger) }
+details.tools[open] > summary { margin-bottom: 4px }
+details.tools > .tool { padding-left: 18px }
+.saidrow { display: flex; align-items: flex-start; gap: 6px; max-width: 900px }
+.saidrow .said { flex: 1 1 auto; min-width: 0 }
+.threadbar { display: flex; justify-content: flex-end; position: sticky; top: 0 }
 .trace { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; font-size: 14px; font-weight: 700; background: var(--okBg); color: var(--okInk); border: var(--bw) solid var(--edge); border-radius: var(--pill) }
 .alert { position: sticky; top: 0; z-index: 1; background: var(--paper); display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 14px; border: var(--bw2) solid var(--edge); border-radius: var(--r); box-shadow: var(--shadow-m) }
 .alert.loop { background: var(--badBg) } .alert.stall, .alert.context { background: var(--ctxBg) }
@@ -269,12 +300,13 @@ legend { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font
 .composer .row { display: flex; align-items: flex-end; gap: 10px }
 .send { width: 52px; height: 52px }
 .inspector { flex: 0 0 340px; min-width: 0; overflow: auto; padding: 16px; display: flex; flex-direction: column; gap: 18px; border-left: var(--bw) solid var(--edge); background: var(--panel) }
-.inspector h3 { margin: 0; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase }
-.inspector section { display: flex; flex-direction: column; gap: 6px }
+.insp h3, .setting h3 { margin: 0; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase }
+.insp section { display: flex; flex-direction: column; gap: 6px }
 .step { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; line-height: 1.4; color: var(--muted) }
 .step.now { color: var(--ink); font-weight: 800 }
 .step.done svg { color: var(--green) }
 .file { display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 8px; font-size: 13px; background: var(--paper); border: 1.5px solid var(--line); border-radius: var(--rs) }
+a.file { color: var(--ink); text-decoration: none }
 .file code { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
 .plus { font-weight: 800; color: var(--green) } .minus { font-weight: 800; color: var(--danger) }
 .ok { color: var(--okInk); background: var(--okBg) } .ko { color: var(--danger); background: var(--badBg) } .none { color: var(--muted); background: var(--soft) }
@@ -287,6 +319,7 @@ legend { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font
 .dialog { width: 100%; max-width: 720px; max-height: calc(100vh - 100px); overflow: auto; display: flex; flex-direction: column; gap: 16px; padding: 20px 22px; background: var(--paper); border: var(--bw2) solid var(--edge); border-radius: var(--r); box-shadow: var(--shadow) }
 .dialog.wide { max-width: 1000px }
 .dialog h2 { flex: 1 1 auto; margin: 0; display: inline-flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 800 }
+.dialog h3 { margin: 4px 0 0; font-size: 14px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase }
 .dialog .row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px }
 .seg { display: flex }
 .seg button { min-height: 38px; padding: 0 12px; margin-left: calc(-1 * var(--bw)); font-size: 14px; font-weight: 700; color: var(--ink); background: var(--paper); border: var(--bw) solid var(--edge); cursor: pointer }
@@ -317,8 +350,54 @@ th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--line
 @keyframes cb-speed { 0%, 100% { opacity: .2 } 50% { opacity: .85 } }
 @keyframes cb-spin { to { transform: rotate(360deg) } }
 @keyframes cb-boing { 0%, 100% { transform: rotate(-6deg) } 50% { transform: rotate(6deg) } }
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important } }
-@media (max-width: 900px) { .inspector { display: none } .queue { flex-basis: 300px } }
+.a-drip { transform-box: fill-box; animation: cb-drip 1.8s ease-in infinite }
+.a-float { animation: cb-float 2.4s ease-out infinite } .a-late8 { animation-delay: .8s }
+.a-spin { transform-box: fill-box; transform-origin: center; animation: cb-spin 2.4s linear infinite }
+.a-speed { animation: cb-speed .9s ease-in-out infinite }
+.a-shake { animation: cb-shake .45s ease-in-out infinite }
+.a-bob { animation: cb-bob 1.6s ease-in-out infinite }
+.a-throb { transform-box: fill-box; transform-origin: center; animation: cb-throb .9s ease-in-out infinite }
+.a-twinkle { transform-box: fill-box; transform-origin: center; animation: cb-twinkle 1.4s ease-in-out infinite } .a-late7 { animation-delay: .7s }
+.a-sway { transform-box: fill-box; transform-origin: 50% 100%; animation: cb-bob 2.6s ease-in-out infinite }
+.a-boing { transform-box: fill-box; transform-origin: 50% 100%; animation: cb-boing 1.3s ease-in-out infinite }@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important } }
+.setting { display: flex; flex-direction: column; gap: 8px; max-width: 760px; padding-bottom: 16px; border-bottom: 1px solid var(--line) }
+.setting p { margin: 0 }
+.tab .n { min-width: 10px; height: 10px; padding: 0 }
+.back, .logo .mark { display: none }
+.app { height: 100dvh }
+/* A tablet: the inspector becomes the Details tab. */
+@media (max-width: 1100px) {
+  .queue { flex: 0 0 320px; min-width: 0 }
+  .search { flex: 0 0 44px; padding: 0; justify-content: center }
+  .search span { display: none }
+  .tabs { padding: 0 8px; overflow: auto hidden }
+  .tab { padding: 0 12px }
+  .tab .label { display: none }
+  .tab[aria-selected=true] .label { display: inline }
+}
+@media (min-width: 761px) and (max-width: 1100px) { .item .tag, .item .row .meta { display: none } }
+/* A phone: the queue or one session, the header down to what a thumb needs. */
+@media (max-width: 760px) {
+  body[data-screen=queue] .pane, body[data-screen=pane] .queue { display: none }
+  .queue { flex: 1 1 auto; min-width: 0; padding: 12px; border-right: 0 }
+  .top { gap: 8px; padding: 8px 12px }
+  .counts, .top .opt, .logo .lockup, .keys { display: none }
+  .logo .mark, .back { display: inline-flex }
+  .gauge { flex: 1 1 140px; min-height: 36px }
+  .head { gap: 8px 10px; padding: 10px 12px }
+  .head h1 { font-size: 20px }
+  .metas { display: none }
+  .thread { padding: 14px 12px }
+  .composer { padding: 10px 12px 12px }
+  .card { padding: 12px }
+  .bubble { max-width: 90% }
+  .field.grow { flex-basis: 100% }
+  .toast { min-width: 0; width: calc(100% - 24px) }
+  .overlay { padding: 12px }
+  .dialog { max-height: calc(100dvh - 24px) }
+}
+/* A finger, not a pointer: every target at least 44 px. */
+@media (pointer: coarse) { .chip, .btn.sm, .btn.icon.sm, .folder, .seg button, .tab { min-height: 44px } .btn.icon.sm { width: 44px } .keys { display: none } }
 </style>
 </head>
 <body>
@@ -331,10 +410,12 @@ th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--line
 </div>
 <div id="layer"></div>
 <div id="toast"></div>
-<script>
+<script nonce="__NONCE__">
 // Everything that comes from a session (commands, questions, messages) goes through h() as text, never
 // through innerHTML. The avatar and icon SVG are built from constants only.
 const $ = (sel, root = document) => root.querySelector(sel)
+// Drawn by the server for each load (ADR-0014): given to the scripts and styles the page adds itself.
+const NONCE = document.currentScript?.nonce ?? ''
 
 function h(tag, attrs = {}, ...children) {
   const el = document.createElement(tag)
@@ -343,6 +424,8 @@ function h(tag, attrs = {}, ...children) {
     if (k.startsWith('on')) el.addEventListener(k.slice(2), v)
     else if (k === 'class') el.className = v
     else if (k === 'value') el.value = v
+    // Through the CSSOM: the policy allows no style attribute (ADR-0014).
+    else if (k === 'style') el.style.cssText = v
     else el.setAttribute(k, v === true ? '' : v)
   }
   el.append(...kids(children))
@@ -369,12 +452,20 @@ async function post(path, body) {
 // ---- languages (ADR-0011) ----
 const I18N = {
   en: {
-    waiting: 'Waiting for you', watch: 'To watch', review: 'To read', working: 'Working', asleep: 'Asleep', ignored: 'Ignored',
+    waiting: 'Waiting for you', watch: 'To watch', review: 'To read', working: 'Working', idle: 'Idle', asleep: 'Asleep', ignored: 'Ignored',
     'waiting.n': '{n} waiting for you', 'watch.n': '{n} to watch', 'review.n': '{n} to read', 'working.n': '{n} working',
     all: 'All', groups: 'Groups', 'groups.manage': 'Manage groups', 'group.change': 'Change the group', 'group.mute': 'Mute the group', 'group.unmute': 'Notify again for the group', 'group.interrupt': 'Interrupt the whole group', sessions: '{n} sessions',
     'new.one': '{n} new · queue held', 'nothing.waits': 'Nothing waits for you.', 'nothing.here': 'Nothing here.',
     search: 'Go to a session or a command', journal: 'Journal', settings: 'Settings', 'new.task': 'New task', fold: 'Fold the queue', unfold: 'Unfold the queue',
     skin: 'Look', lang: 'Language', pack: 'Avatars', notify: 'Turn on notifications', 'notify.on': 'Notifications are on',
+    browsers: 'Signed-in browsers', 'browser.this': 'this browser', 'browser.seen': 'last used {date}', 'sign.out': 'Sign out', 'sign.out.others': 'Sign out the others', 'signed.out': 'This browser is not signed in to clearance any more.', 'signed.out.how': 'Run this command in a terminal: the page opens here, signed in.',
+    'group.none': 'No group', 'group.new': 'New group', 'group.name': 'Group name', 'group.create': 'Create', 'group.delete': 'Delete the group', 'group.move': 'Put in a group', 'group.empty': 'Nothing here yet: put a session in it from its header.', 'groups.none': 'No group yet.', stopped: 'Stopped', 'forget.title': 'Delete from clearance (its transcript stays)', forgot: 'Deleted from clearance · {name}', 'mem.total': 'Memory of every session', 'mem.group': 'Memory of the group', 'unit.mb': 'MB', 'unit.gb': 'GB', 'close.asleep': 'Close the asleep sessions ({n})', 'stop.frees': 'Quitting frees about {mem}.', 'n.review': '{n} to read', 'n.working': '{n} working', 'n.stopped': '{n} stopped',
+    'attach.failed': 'The file was not added: {error}', 'term.ended': 'The session ended.', server: 'clearance', 'restart.go': 'Restart clearance', 'restart.note': 'A restart waits until the sessions running in clearance are idle, then reopens them. Stopping clearance ends them; they reopen at its next start.', 'restart.waiting': 'Restart once {n} session(s) are idle', 'restart.force': 'Now', 'restart.cancel': 'Cancel', 'quit.go': 'Stop clearance', 'quit.sure': 'Click again: its sessions end',
+    'thread.mine': 'My messages', 'thread.all': 'Whole thread', actions: '{n} actions', 'actions.failed': '{n} failed', 'copy.md': 'Copy as Markdown',
+    shortcuts: 'Shortcuts', 'shortcuts.note': 'Sent to the session on screen, from the chips above its message field or Ctrl+Shift+1 to 0. 10 at most.', 'shortcut.label': 'Label', 'shortcut.text': 'Text to send',
+    'shortcut.add': 'Add a shortcut', 'shortcut.remove': 'Remove', save: 'Save', 'shortcuts.saved': 'Shortcuts saved', 'shortcut.sent': '{label} sent to {name}', 'shortcut.nosession': 'Open a session first',
+    version: 'Version {version} · commit {commit} · started at {time}',
+    'delivery.term': 'Typed in its terminal, as if you typed it there.', 'folder.up': 'Parent folder', 'folder.pick': 'Use this folder', 'folder.empty': 'No folder inside.', 'see.terminal': 'See its terminal', 'term.starting': 'Starting in clearance: see its terminal',
     'perm.kind': 'Permission to give', 'question.kind': 'Question asked', 'plan.kind': 'Plan to approve', 'denied.kind': 'Blocked by auto mode', 'settled.kind': 'Settled in the terminal',
     'risk.read': 'read', 'risk.write': 'write', 'risk.infra': 'infrastructure write',
     'env.prod': 'PROD', 'env.staging': 'STAGING', 'env.unknown': 'UNKNOWN', 'env.local': 'LOCAL',
@@ -386,36 +477,61 @@ const I18N = {
     next: 'Opens next: {name}', since: 'Waiting since', 'settled.note': 'Answered in the terminal at {time}. Nothing to do here.',
     validate: 'Validate', fix: 'Ask for a fix', 'fix.text': 'Fix: ', diff: 'See the diff', facts: 'The facts, checked by clearance',
     'tests.ok': 'tests pass', 'tests.ko': 'tests fail', 'tests.none': 'no tests run', files: '{n} files', commits: '{n} commits',
-    thread: 'Thread', terminal: 'Terminal', 'terminal.note': 'the session, as its terminal shows it', interrupt: 'Interrupt', 'interrupt.soon': 'Interrupt: coming soon', stop: 'Stop', 'stop.soon': 'Stop the session: coming soon',
+    thread: 'Thread', terminal: 'Terminal', 'terminal.note': 'the session, as its terminal shows it', interrupt: 'Interrupt', stop: 'Stop', 'stop.nomod': 'no companion mod in this session: type /reload-plugins in its terminal',
     'open.tab': 'Open its terminal tab', ignore: 'Ignore', unignore: 'Stop ignoring', context: 'context left', model: 'model', mode: 'mode', branch: 'branch', cost: 'cost',
     task: 'Task', plan: 'Plan', tests: 'Tests', agents: 'Agents', 'cost.rate': '{usd} per hour', 'at.rest': 'at rest', 'model.next': 'Model for the next turn',
     'write.to': 'Write to {name}', 'delivery.busy': 'Busy: your message is read at the end of its turn.', 'delivery.waits': 'It waits for your answer above: your message comes after.',
     'delivery.ready': 'Reaches the session within 5 s.', 'delivery.nomod': 'No companion mod runs in this session: the message waits for one.',
-    'sent.busy': 'sent at {time} · read at the end of its turn', 'sent.ready': 'delivered at {time}',
+    'sent.busy': 'sent at {time} · read at the end of its turn', 'sent.ready': 'delivered at {time}', 'sent.waiting': 'sent at {time} · waits for a companion mod',
     'watch.loop': 'Loop: the same call failed {count} times', 'watch.loop.short': 'same error {count} times', 'watch.stall': 'No progress for {min} min', 'watch.stall.short': 'quiet for {min} min',
     'watch.context': 'Context almost full: {left} %', 'watch.context.short': 'context {left} %',
     'q.dry': 'dry at {time}', 'q.reset': 'reloads {time}', 'q.label.five_hour': '5 h', 'q.label.seven_day': '7 d', 'q.aria': 'Quota {label}: {pct} % used, reloads {reset}',
     'decided.allow': 'Allowed', 'decided.always': 'Allowed for good', 'decided.deny': 'Denied', 'decided.answer': 'Answer sent', 'decided.launch': 'Plan launched', 'decided.revise': 'Change asked',
     'decided.dismiss': 'Left to the terminal', 'decided.retry': 'Retry allowed', 'decided.validate': 'Validated', undo: 'Undo', 'from.clearance': '{what} from clearance at {time}',
-    'palette.title': 'New task', 'palette.prompt': 'What the session must do', 'palette.name': 'Name, also the tab title', browse: 'Browse', 'group.auto': 'auto',
-    'palette.launch': 'Launch', 'palette.started': 'Session started · {name}, tab opened', close: 'Close', home: 'Home', up: 'Up', 'use.folder': 'Use this folder',
+    'palette.title': 'New task', 'palette.prompt': 'What the session must do', 'palette.name': 'Name', browse: 'Browse', 'group.auto': 'auto',
+    'palette.launch': 'Launch', 'palette.started': 'Session started · {name}, in its terminal', close: 'Close',
     'journal.title': 'Journal and suggested rules', 'journal.decisions': 'Decisions', 'journal.rules': 'Rules to add', 'journal.none': 'No decision taken from this page yet.',
     'journal.rule': 'approved {count} times in {sessions} sessions', when: 'When', session: 'Session', what: 'What', risk: 'Risk', action: 'Action',
-    'groups.title': 'Groups', 'groups.hint': 'One group per folder at first. Rename it to move the folder; an empty name puts it back.', save: 'Save',
+    'groups.title': 'Groups', 'groups.hint': 'Your groups, in the order of the queue. A renamed group keeps its sessions; a deleted one sends them back to No group.', save: 'Save',
     'keys.updown': 'next, previous', 'keys.a': 'allow', 'keys.d': 'deny', 'keys.num': 'pick an option', 'keys.e': 'validate', 'keys.i': 'interrupt', 'keys.r': 'write to the session',
     'keys.n': 'new task', 'keys.t': 'terminal', 'keys.fold': 'fold the queue', 'keys.k': 'search',
-    'no.session': 'Pick a session in the queue.', 'no.transcript': 'No transcript for this session yet.', 'not.connected': 'not connected to clearance: answer it in its terminal',
+    'no.session': 'Pick a session in the queue.', 'no.transcript': 'No transcript for this session yet.', 'not.connected': 'Not connected to clearance: answer it in its terminal, then quit it and resume it with the command below to connect it.',
+    'not.connected.short': 'not connected to clearance', 'waits.lost.short': 'request not on the page',
+    'waits.lost': 'Its request did not reach this page, probably asked while clearance was restarting: answer it in its terminal.',
     'waits.terminal': 'waits for you in its terminal', 'tab.found': 'Tab brought to the front.', 'tab.missing': 'Tab not found: look for “{title}”.',
     'err.gone': 'Already answered, or the session moved on.', 'err.go': 'Type GO first.', 'err.answer': 'Pick an answer for each question.', 'err.start': 'The session did not start: {error}',
     connecting: 'connecting...', offline: 'clearance is not answering', live: 'live · {n} sessions',
+    'tab.action': 'Action', 'tab.thread': 'Thread', 'tab.terminal': 'Terminal', 'tab.details': 'Details', 'tab.settings': 'Settings',
+    'nothing.todo': 'Nothing to do for this session.', back: 'Back to the queue', copy: 'Copy', copied: 'Copied',
+    'set.name': 'Name', 'set.rename': 'Rename', 'set.rename.note': 'Sent as /rename. Its terminal tab keeps its title; clearance still finds it.',
+    'set.compact': 'Compact the context', 'set.compact.note': 'Sent as /compact, run once the session is idle.', 'set.group': 'Group',
+    'set.notify': 'Notifications for this session', 'set.notify.on': 'On', 'set.notify.off': 'Muted', 'set.resume': 'Resume it elsewhere',
+    'sent.command': '{command} sent to {name}', 'err.name': 'A name is 1 to 60 characters, on one line.',
+    'stop.all': 'Stop the running agents', 'stop.title': 'Stop sessions', 'stop.reach': 'Stopped by clearance within 5 s',
+    'stop.unreach': 'To stop in their terminal', 'stop.oldmod': 'its companion mod is an old version: type /reload-plugins in its terminal', 'stop.interrupt': 'Interrupt, the sessions stay open',
+    'stop.exit': 'Interrupt and quit, to resume later from here',
+    'resume.title': 'Resume stopped sessions', 'resume.go': 'Resume', 'resume.all': 'Resume all ({n})', 'resume.forget': 'Forget',
+    'resume.none': 'No stopped session to resume.', 'resume.started': 'Resumed · {name}, in its terminal', 'stop.go': 'Stop ({n})', 'stop.sent': 'Stop sent to {n} sessions',
+    links: 'Links', 'links.artifact': 'Artifact', 'links.mr': 'MR', 'links.local': 'local',
+    link: 'Connection', 'link.hooks.ok': 'Hooks: received, its requests reach this page', 'link.hooks.none': 'Hooks: none received yet; they attach by themselves to running sessions',
+    'link.mod.ok': 'Companion mod: up to date', 'link.mod.old': 'Companion mod: an old version, type /reload-plugins in its terminal', 'link.mod.none': 'Companion mod: absent, type /reload-plugins in its terminal, or resume it',
+    'agents.working': '{n} sub-agents at work', 'stop.none': 'No session is running.', 'stop.requests': 'Their requests waiting on this page go with their turn.', interrupted: 'Interrupt sent to {name}',
   },
   fr: {
-    waiting: "T'attendent", watch: 'À surveiller', review: 'À relire', working: 'Au travail', asleep: 'Endormies', ignored: 'Ignorées',
+    waiting: "T'attendent", watch: 'À surveiller', review: 'À relire', working: 'Au travail', idle: 'Au repos', asleep: 'Endormies', ignored: 'Ignorées',
     'waiting.n': "{n} t'attendent", 'watch.n': '{n} à surveiller', 'review.n': '{n} à relire', 'working.n': '{n} au travail',
     all: 'Tous', groups: 'Groupes', 'groups.manage': 'Gérer les groupes', 'group.change': 'Changer de groupe', 'group.mute': 'Mettre le groupe en sourdine', 'group.unmute': 'Réactiver les notifications du groupe', 'group.interrupt': 'Interrompre tout le groupe', sessions: '{n} sessions',
     'new.one': '{n} nouvelle · file figée', 'nothing.waits': "Rien ne t'attend.", 'nothing.here': 'Rien ici.',
     search: 'Aller à une session ou à une commande', journal: 'Journal', settings: 'Réglages', 'new.task': 'Nouvelle tâche', fold: 'Replier la file', unfold: 'Déplier la file',
     skin: 'Apparence', lang: 'Langue', pack: 'Avatars', notify: 'Activer les notifications', 'notify.on': 'Notifications activées',
+    browsers: 'Navigateurs connectés', 'browser.this': 'ce navigateur', 'browser.seen': 'utilisé le {date}', 'sign.out': 'Déconnecter', 'sign.out.others': 'Déconnecter les autres', 'signed.out': "Ce navigateur n'est plus connecté à clearance.", 'signed.out.how': "Lancez cette commande dans un terminal : la page s'ouvre ici, connectée.",
+    'group.none': 'Sans groupe', 'group.new': 'Nouveau groupe', 'group.name': 'Nom du groupe', 'group.create': 'Créer', 'group.delete': 'Supprimer le groupe', 'group.move': 'Ranger dans un groupe', 'group.empty': 'Rien ici pour l\'instant : range une session depuis son en-tête.', 'groups.none': 'Aucun groupe pour l\'instant.', stopped: 'Arrêtées', 'forget.title': 'Supprimer de clearance (son transcript reste)', forgot: 'Supprimée de clearance · {name}', 'mem.total': 'Mémoire de toutes les sessions', 'mem.group': 'Mémoire du groupe', 'unit.mb': 'Mo', 'unit.gb': 'Go', 'close.asleep': 'Fermer les sessions endormies ({n})', 'stop.frees': 'Quitter libère environ {mem}.', 'n.review': '{n} à relire', 'n.working': '{n} au travail', 'n.stopped': '{n} arrêtées',
+    'attach.failed': "Le fichier n'a pas été ajouté : {error}", 'term.ended': 'La session est terminée.', server: 'clearance', 'restart.go': 'Redémarrer clearance', 'restart.note': 'Un redémarrage attend que les sessions qui tournent dans clearance soient au repos, puis les rouvre. Arrêter clearance les termine ; elles se rouvrent à son prochain démarrage.', 'restart.waiting': 'Redémarrage quand {n} session(s) seront au repos', 'restart.force': 'Maintenant', 'restart.cancel': 'Annuler', 'quit.go': 'Arrêter clearance', 'quit.sure': 'Clique encore : ses sessions se terminent',
+    'thread.mine': 'Mes messages', 'thread.all': 'Tout le fil', actions: '{n} actions', 'actions.failed': '{n} en échec', 'copy.md': 'Copier en Markdown',
+    shortcuts: 'Raccourcis', 'shortcuts.note': 'Envoyés à la session affichée, par les puces au-dessus de son champ de message ou Ctrl+Maj+1 à 0. 10 au plus.', 'shortcut.label': 'Nom', 'shortcut.text': 'Texte à envoyer',
+    'shortcut.add': 'Ajouter un raccourci', 'shortcut.remove': 'Retirer', save: 'Enregistrer', 'shortcuts.saved': 'Raccourcis enregistrés', 'shortcut.sent': '{label} envoyé à {name}', 'shortcut.nosession': "Ouvre d'abord une session",
+    version: 'Version {version} · commit {commit} · démarré à {time}',
+    'delivery.term': 'Tapé dans son terminal, comme si tu le tapais toi-même.', 'folder.up': 'Dossier parent', 'folder.pick': 'Prendre ce dossier', 'folder.empty': 'Aucun dossier dedans.', 'see.terminal': 'Voir son terminal', 'term.starting': 'Démarre dans clearance : voir son terminal',
     'perm.kind': 'Permission à donner', 'question.kind': 'Question posée', 'plan.kind': 'Plan à valider', 'denied.kind': 'Bloquée par le mode auto', 'settled.kind': 'Réglée au terminal',
     'risk.read': 'lecture', 'risk.write': 'écriture', 'risk.infra': 'écriture infra',
     'env.prod': 'PROD', 'env.staging': 'STAGING', 'env.unknown': 'INCONNU', 'env.local': 'LOCAL',
@@ -427,28 +543,45 @@ const I18N = {
     next: 'Ensuite : {name}', since: 'Attend depuis', 'settled.note': 'Réglée au terminal à {time}. Rien à faire ici.',
     validate: 'Valider', fix: 'Corriger', 'fix.text': 'Corrige : ', diff: 'Voir le diff', facts: 'Les faits, vérifiés par clearance',
     'tests.ok': 'tests au vert', 'tests.ko': 'tests en échec', 'tests.none': 'pas de tests lancés', files: '{n} fichiers', commits: '{n} commits',
-    thread: 'Fil', terminal: 'Terminal', 'terminal.note': 'la session, telle que son terminal la montre', interrupt: 'Interrompre', 'interrupt.soon': 'Interrompre : bientôt', stop: 'Arrêter', 'stop.soon': 'Arrêter la session : bientôt',
+    thread: 'Fil', terminal: 'Terminal', 'terminal.note': 'la session, telle que son terminal la montre', interrupt: 'Interrompre', stop: 'Arrêter', 'stop.nomod': 'pas de mod compagnon dans cette session : tape /reload-plugins dans son terminal',
     'open.tab': 'Ouvrir son onglet de terminal', ignore: 'Ignorer', unignore: 'Ne plus ignorer', context: 'contexte restant', model: 'modèle', mode: 'mode', branch: 'branche', cost: 'coût',
     task: 'Tâche', plan: 'Plan', tests: 'Tests', agents: 'Agents', 'cost.rate': '{usd} par heure', 'at.rest': "à l'arrêt", 'model.next': 'Modèle au prochain tour',
     'write.to': 'Écrire à {name}', 'delivery.busy': 'Occupée : ton message sera lu à la fin de son tour.', 'delivery.waits': 'Elle attend ta réponse ci-dessus : ton message passe après.',
     'delivery.ready': 'Arrive dans la session en moins de 5 s.', 'delivery.nomod': "Aucun mod compagnon dans cette session : le message attendra qu'il y en ait un.",
-    'sent.busy': 'envoyé à {time} · lu à la fin de son tour', 'sent.ready': 'livré à {time}',
+    'sent.busy': 'envoyé à {time} · lu à la fin de son tour', 'sent.ready': 'livré à {time}', 'sent.waiting': 'envoyé à {time} · attend un mod compagnon',
     'watch.loop': 'Boucle : le même appel a échoué {count} fois', 'watch.loop.short': 'même erreur {count} fois', 'watch.stall': 'Aucun progrès depuis {min} min', 'watch.stall.short': 'silencieuse depuis {min} min',
     'watch.context': 'Contexte presque plein : {left} %', 'watch.context.short': 'contexte {left} %',
     'q.dry': 'à sec {time}', 'q.reset': 'recharge {time}', 'q.label.five_hour': '5 h', 'q.label.seven_day': '7 j', 'q.aria': 'Quota {label} : {pct} % utilisés, recharge {reset}',
     'decided.allow': 'Autorisée', 'decided.always': 'Autorisée pour toujours', 'decided.deny': 'Refusée', 'decided.answer': 'Réponse envoyée', 'decided.launch': 'Plan lancé', 'decided.revise': 'Modification demandée',
     'decided.dismiss': 'Laissée au terminal', 'decided.retry': 'Nouvel essai autorisé', 'decided.validate': 'Validée', undo: 'Annuler', 'from.clearance': '{what} depuis clearance à {time}',
-    'palette.title': 'Nouvelle tâche', 'palette.prompt': 'Ce que la session doit faire', 'palette.name': "Nom, aussi le titre de l'onglet", browse: 'Parcourir', 'group.auto': 'auto',
-    'palette.launch': 'Lancer', 'palette.started': 'Session lancée · {name}, onglet ouvert', close: 'Fermer', home: 'Accueil', up: 'Remonter', 'use.folder': 'Prendre ce dossier',
+    'palette.title': 'Nouvelle tâche', 'palette.prompt': 'Ce que la session doit faire', 'palette.name': 'Nom', browse: 'Parcourir', 'group.auto': 'auto',
+    'palette.launch': 'Lancer', 'palette.started': 'Session lancée · {name}, dans son terminal', close: 'Fermer',
     'journal.title': 'Journal et règles suggérées', 'journal.decisions': 'Décisions', 'journal.rules': 'Règles à ajouter', 'journal.none': 'Aucune décision prise depuis cette page.',
     'journal.rule': 'approuvée {count} fois dans {sessions} sessions', when: 'Quand', session: 'Session', what: 'Quoi', risk: 'Risque', action: 'Action',
-    'groups.title': 'Groupes', 'groups.hint': 'Un groupe par dossier au départ. Renomme-le pour déplacer le dossier ; un nom vide le remet dans le sien.', save: 'Enregistrer',
+    'groups.title': 'Groupes', 'groups.hint': 'Tes groupes, dans l\'ordre de la file. Un groupe renommé garde ses sessions ; un groupe supprimé les renvoie dans Sans groupe.', save: 'Enregistrer',
     'keys.updown': 'session suivante, précédente', 'keys.a': 'autoriser', 'keys.d': 'refuser', 'keys.num': "choisir l'option", 'keys.e': 'valider', 'keys.i': 'interrompre', 'keys.r': 'écrire à la session',
     'keys.n': 'nouvelle tâche', 'keys.t': 'terminal', 'keys.fold': 'replier la file', 'keys.k': 'rechercher',
-    'no.session': 'Choisis une session dans la file.', 'no.transcript': 'Pas encore de transcript pour cette session.', 'not.connected': 'pas reliée à clearance : réponds dans son terminal',
+    'no.session': 'Choisis une session dans la file.', 'no.transcript': 'Pas encore de transcript pour cette session.', 'not.connected': 'Pas reliée à clearance : réponds dans son terminal, puis quitte-la et relance-la avec la commande ci-dessous pour la relier.',
+    'not.connected.short': 'pas reliée à clearance', 'waits.lost.short': 'demande hors de la page',
+    'waits.lost': "Sa demande n'est pas arrivée sur cette page, sans doute posée pendant un redémarrage de clearance : réponds dans son terminal.",
     'waits.terminal': "t'attend dans son terminal", 'tab.found': 'Onglet mis au premier plan.', 'tab.missing': 'Onglet introuvable : cherche « {title} ».',
     'err.gone': 'Déjà répondue, ou la session est passée à autre chose.', 'err.go': "Tape GO d'abord.", 'err.answer': 'Choisis une réponse pour chaque question.', 'err.start': "La session n'a pas démarré : {error}",
     connecting: 'connexion...', offline: 'clearance ne répond pas', live: 'en direct · {n} sessions',
+    'tab.action': 'Action', 'tab.thread': 'Fil', 'tab.terminal': 'Terminal', 'tab.details': 'Détails', 'tab.settings': 'Réglages',
+    'nothing.todo': 'Rien à faire pour cette session.', back: 'Retour à la file', copy: 'Copier', copied: 'Copié',
+    'set.name': 'Nom', 'set.rename': 'Renommer', 'set.rename.note': 'Envoyé en /rename. Son onglet de terminal garde son titre ; clearance le retrouve quand même.',
+    'set.compact': 'Compacter le contexte', 'set.compact.note': 'Envoyé en /compact, lancé dès que la session est au repos.', 'set.group': 'Groupe',
+    'set.notify': 'Notifications pour cette session', 'set.notify.on': 'Activées', 'set.notify.off': 'En sourdine', 'set.resume': 'La reprendre ailleurs',
+    'sent.command': '{command} envoyé à {name}', 'err.name': 'Un nom fait 1 à 60 caractères, sur une ligne.',
+    'stop.all': 'Arrêter les agents en cours', 'stop.title': 'Arrêter des sessions', 'stop.reach': 'Arrêtées par clearance en moins de 5 s',
+    'stop.unreach': 'À arrêter dans leur terminal', 'stop.oldmod': 'son mod compagnon est une ancienne version : tape /reload-plugins dans son terminal', 'stop.interrupt': 'Interrompre, les sessions restent ouvertes',
+    'stop.exit': "Interrompre et quitter, pour reprendre plus tard d'ici",
+    'resume.title': 'Reprendre les sessions arrêtées', 'resume.go': 'Reprendre', 'resume.all': 'Tout reprendre ({n})', 'resume.forget': 'Oublier',
+    'resume.none': 'Aucune session arrêtée à reprendre.', 'resume.started': 'Reprise · {name}, dans son terminal', 'stop.go': 'Arrêter ({n})', 'stop.sent': 'Arrêt envoyé à {n} sessions',
+    links: 'Liens', 'links.artifact': 'Artifact', 'links.mr': 'MR', 'links.local': 'local',
+    link: 'Liaison', 'link.hooks.ok': 'Hooks : reçus, ses demandes arrivent sur cette page', 'link.hooks.none': "Hooks : aucun reçu pour l'instant ; ils se rattachent seuls aux sessions en cours",
+    'link.mod.ok': 'Mod compagnon : à jour', 'link.mod.old': 'Mod compagnon : ancienne version, tape /reload-plugins dans son terminal', 'link.mod.none': 'Mod compagnon : absent, tape /reload-plugins dans son terminal, ou relance-la',
+    'agents.working': '{n} sous-agents au travail', 'stop.none': 'Aucune session en cours.', 'stop.requests': 'Leurs demandes en attente ici partent avec leur tour.', interrupted: 'Interruption envoyée à {name}',
   },
 }
 const SKINS = { manga: 'Manga', 'manga-dark': 'Manga sombre', pro: 'Studio pro', cockpit: 'Cockpit', suisse: 'Suisse', editorial: 'Éditorial', foret: 'Forêt', brutal: 'Néo-brutal', arcade: 'Arcade néon', phosphore: 'Phosphore', pastel: 'Pastel', contraste: 'Haut contraste' }
@@ -485,7 +618,7 @@ const ICON = {
   commit: 'M3 12h6M15 12h6M9 12a3 3 0 1 0 6 0a3 3 0 1 0-6 0', mr: 'M6 3v12M4 19a2 2 0 1 0 4 0a2 2 0 1 0-4 0M16 19a2 2 0 1 0 4 0a2 2 0 1 0-4 0M18 17V9a4 4 0 0 0-4-4H9M12 2L9 5l3 3',
   agents: 'M6 8a3 3 0 1 0 6 0a3 3 0 1 0-6 0M3 20a6 6 0 0 1 12 0M14.5 9a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0-5 0M15.5 14.5A5 5 0 0 1 21 19', flag: 'M5 21V4M5 4h11l-2 4 2 4H5',
   flask: 'M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8-3l-5-9V3', check: 'M5 12l5 5 9-10', checks: 'M2 12l5 5 9-10M12 16l1 1 9-10', x: 'M6 6l12 12M18 6L6 18',
-  send: 'M4 12l16-8-6 16-3-6zM11 14l9-10', play: 'M7 4l13 8-13 8z', pencil: 'M4 20l1-5L16 4l4 4L9 19z', clock: RING + 'M12 7v5l3 2',
+  send: 'M4 12l16-8-6 16-3-6zM11 14l9-10', copy: 'M9 9h11v11H9zM5 15H4V4h11v1', play: 'M7 4l13 8-13 8z', pencil: 'M4 20l1-5L16 4l4 4L9 19z', clock: RING + 'M12 7v5l3 2',
   next: 'M6 6l8 6-8 6zM18 6v12', now: 'M8 5l10 7-10 7z', todo: 'M12 12m-7 0a7 7 0 1 0 14 0a7 7 0 1 0-14 0', updown: 'M8 9l4-4 4 4M8 15l4 4 4-4',
 }
 function icon(name, size = 18) {
@@ -499,6 +632,24 @@ const btn = (cls, label, iconName, onclick, attrs = {}) => h('button', { type: '
 // ---- avatars (design/canvas/Chibi.dc.html, BRIEF section 4); fixed art, the same in every skin ----
 const PALETTE = [['#3D7BE0', '#1F4E9E', '#E4EDFB'], ['#8B5CF6', '#5B2FC0', '#EFE8FE'], ['#13A3A3', '#0B6B6B', '#DDF4F4'], ['#F06292', '#B0305C', '#FDE6EE'], ['#3BAA5C', '#22743A', '#E2F4E7'], ['#F08A24', '#A85A0C', '#FDEEDC'], ['#8A94A6', '#4F5869', '#ECEEF2']]
 const folderName = (cwd = '') => cwd.split(/[\\/]/).filter(Boolean).pop() || '?'
+// ---- pure: no DOM, run by src/page.rs under node ----
+// Search: case and accents ignored, every word of the query, in any order.
+const plain = (text) => String(text ?? '').normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase()
+const matches = (query, text) => { const hay = plain(text); return plain(query).split(/\s+/).filter(Boolean).every((w) => hay.includes(w)) }
+// The thread: two tool calls or more in a row become one entry, { kind: 'tools', items }.
+function foldTools(items) {
+  const out = []
+  for (const x of items) {
+    const last = out.at(-1)
+    if (x.kind === 'tool' && last?.kind === 'tool') out[out.length - 1] = { kind: 'tools', items: [last, x] }
+    else if (x.kind === 'tool' && last?.kind === 'tools') last.items.push(x)
+    else out.push(x)
+  }
+  return out
+}
+// What a folded run says: how many calls, the tools by first use, how many failed.
+const runOf = (items) => ({ n: items.length, tools: [...new Set(items.map((x) => x.tool))], failed: items.filter((x) => x.error).length })
+// ---- end pure ----
 const colours = (name) => PALETTE[[...name].reduce((n, c) => (n * 31 + c.charCodeAt(0)) >>> 0, 7) % PALETTE.length]
 const NONE = 'M0 0'
 const OPEN = 'M23.3 33 a2.2 3 0 1 0 4.4 0 a2.2 3 0 1 0 -4.4 0 M36.3 33 a2.2 3 0 1 0 4.4 0 a2.2 3 0 1 0 -4.4 0'
@@ -517,16 +668,16 @@ const MOUTH = {
   denied: [NONE, 'M28.5 42.5 L30.2 41 L32 42.5 L33.8 41 L35.5 42.5'], done: ['M27.5 40.2 Q32 40.8 36.5 40.2 Q36 45 32 45 Q28 45 27.5 40.2 Z', NONE],
   sleep: [NONE, 'M32 41.2 a1.1 1.1 0 1 0 0.01 0'], dizzy: [NONE, 'M28.5 42 Q30.2 40.8 32 42 Q33.8 43.2 35.5 42'],
 }
-const SWEAT = '<g style="transform-box:fill-box;animation:cb-drip 1.8s ease-in infinite"><path d="M51 14.5 Q48.2 19.6 51 21.9 Q53.8 19.6 51 14.5 Z" fill="#8FD0F7" stroke="#2A6F9E"/></g>'
+const SWEAT = '<g class="a-drip"><path d="M51 14.5 Q48.2 19.6 51 21.9 Q53.8 19.6 51 14.5 Z" fill="#8FD0F7" stroke="#2A6F9E"/></g>'
 const SYMBOL = {
-  sleep: '<text x="47" y="15" font-family="\'Dela Gothic One\', sans-serif" font-size="7" fill="#141414" style="animation:cb-float 2.4s ease-out infinite">z</text><text x="52" y="9" font-family="\'Dela Gothic One\', sans-serif" font-size="10" fill="#141414" style="animation:cb-float 2.4s ease-out .8s infinite">Z</text>',
-  dizzy: SWEAT + '<g style="transform-box:fill-box;transform-origin:center;animation:cb-spin 2.4s linear infinite"><path d="M32 4.5 L33 6.6 L35.3 6.9 L33.6 8.4 L34.1 10.7 L32 9.6 L29.9 10.7 L30.4 8.4 L28.7 6.9 L31 6.6 Z M22 7.5 L22.7 8.9 L24.2 9.1 L23.1 10.1 L23.4 11.6 L22 10.9 L20.6 11.6 L20.9 10.1 L19.8 9.1 L21.3 8.9 Z M42 7.5 L42.7 8.9 L44.2 9.1 L43.1 10.1 L43.4 11.6 L42 10.9 L40.6 11.6 L40.9 10.1 L39.8 9.1 L41.3 8.9 Z" fill="#FFC21A" stroke="#141414" stroke-width=".6"/></g>',
-  work: '<g style="animation:cb-speed .9s ease-in-out infinite"><path d="M2.5 22 L10.5 24 M1.5 32 L9.5 32 M2.5 42 L10.5 40 M61.5 22 L53.5 24 M62.5 32 L54.5 32 M61.5 42 L53.5 40" stroke="#141414" stroke-width="1.4" stroke-linecap="round"/></g>',
+  sleep: '<text x="47" y="15" font-family="\'Dela Gothic One\', sans-serif" font-size="7" fill="#141414" class="a-float">z</text><text x="52" y="9" font-family="\'Dela Gothic One\', sans-serif" font-size="10" fill="#141414" class="a-float a-late8">Z</text>',
+  dizzy: SWEAT + '<g class="a-spin"><path d="M32 4.5 L33 6.6 L35.3 6.9 L33.6 8.4 L34.1 10.7 L32 9.6 L29.9 10.7 L30.4 8.4 L28.7 6.9 L31 6.6 Z M22 7.5 L22.7 8.9 L24.2 9.1 L23.1 10.1 L23.4 11.6 L22 10.9 L20.6 11.6 L20.9 10.1 L19.8 9.1 L21.3 8.9 Z M42 7.5 L42.7 8.9 L44.2 9.1 L43.1 10.1 L43.4 11.6 L42 10.9 L40.6 11.6 L40.9 10.1 L39.8 9.1 L41.3 8.9 Z" fill="#FFC21A" stroke="#141414" stroke-width=".6"/></g>',
+  work: '<g class="a-speed"><path d="M2.5 22 L10.5 24 M1.5 32 L9.5 32 M2.5 42 L10.5 40 M61.5 22 L53.5 24 M62.5 32 L54.5 32 M61.5 42 L53.5 40" stroke="#141414" stroke-width="1.4" stroke-linecap="round"/></g>',
   wait: SWEAT,
-  go: '<g style="animation:cb-shake .45s ease-in-out infinite"><path d="M52 2 L57.6 2 L55.9 14.6 L53.7 14.6 Z" fill="#E8341C" stroke="#141414" stroke-linejoin="round"/><circle cx="54.8" cy="17.4" r="1.9" fill="#E8341C" stroke="#141414"/></g>',
-  question: '<g style="animation:cb-bob 1.6s ease-in-out infinite"><text x="55" y="16.5" text-anchor="middle" font-family="\'Dela Gothic One\', sans-serif" font-size="16" fill="#2F6FE0" stroke="#141414" stroke-width=".8">?</text></g>',
-  denied: '<g style="transform-box:fill-box;transform-origin:center;animation:cb-throb .9s ease-in-out infinite"><path d="M47.5 10 Q50 12.5 47.5 15 M49.5 8 Q52 10.5 54.5 8 M56.5 10 Q54 12.5 56.5 15 M49.5 17 Q52 14.5 54.5 17" stroke="#E8341C" stroke-width="2.3" fill="none" stroke-linecap="round"/></g>',
-  done: '<path style="transform-box:fill-box;transform-origin:center;animation:cb-twinkle 1.4s ease-in-out infinite" d="M53 3 L54.3 7.7 L59 9 L54.3 10.3 L53 15 L51.7 10.3 L47 9 L51.7 7.7 Z" fill="#FFC21A" stroke="#141414" stroke-width=".8" stroke-linejoin="round"/><path style="transform-box:fill-box;transform-origin:center;animation:cb-twinkle 1.4s ease-in-out .7s infinite" d="M10 6 L10.8 8.7 L13.5 9.5 L10.8 10.3 L10 13 L9.2 10.3 L6.5 9.5 L9.2 8.7 Z" fill="#FFC21A" stroke="#141414" stroke-width=".7" stroke-linejoin="round"/>',
+  go: '<g class="a-shake"><path d="M52 2 L57.6 2 L55.9 14.6 L53.7 14.6 Z" fill="#E8341C" stroke="#141414" stroke-linejoin="round"/><circle cx="54.8" cy="17.4" r="1.9" fill="#E8341C" stroke="#141414"/></g>',
+  question: '<g class="a-bob"><text x="55" y="16.5" text-anchor="middle" font-family="\'Dela Gothic One\', sans-serif" font-size="16" fill="#2F6FE0" stroke="#141414" stroke-width=".8">?</text></g>',
+  denied: '<g class="a-throb"><path d="M47.5 10 Q50 12.5 47.5 15 M49.5 8 Q52 10.5 54.5 8 M56.5 10 Q54 12.5 56.5 15 M49.5 17 Q52 14.5 54.5 17" stroke="#E8341C" stroke-width="2.3" fill="none" stroke-linecap="round"/></g>',
+  done: '<path class="a-twinkle" d="M53 3 L54.3 7.7 L59 9 L54.3 10.3 L53 15 L51.7 10.3 L47 9 L51.7 7.7 Z" fill="#FFC21A" stroke="#141414" stroke-width=".8" stroke-linejoin="round"/><path class="a-twinkle a-late7" d="M10 6 L10.8 8.7 L13.5 9.5 L10.8 10.3 L10 13 L9.2 10.3 L6.5 9.5 L9.2 8.7 Z" fill="#FFC21A" stroke="#141414" stroke-width=".7" stroke-linejoin="round"/>',
 }
 const gearOf = (model = '') => /opus/.test(model) ? 'opus' : /sonnet/.test(model) ? 'sonnet' : /haiku/.test(model) ? 'haiku' : ''
 const CHIBI_GEAR = {
@@ -544,7 +695,7 @@ function chibi(state, hue, size, model, costume) {
   const [mouthFill, mouthStroke] = MOUTH[state] || MOUTH.work
   const blush = ['wait', 'done', 'question'].includes(state) ? 0.75 : 0
   return `<svg width="${size}" height="${size}" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="${tint}"/>
-<g style="transform-box:fill-box;transform-origin:50% 100%;animation:cb-bob 2.6s ease-in-out infinite">
+<g class="a-sway">
 <path d="M13 64 Q14 49 32 48 Q50 49 51 64 Z" fill="${witch ? '#4A2370' : '#2B2A33'}"/>
 ${witch ? CAPE : '<path d="M26.5 49 L32 55.5 L37.5 49" stroke="#FFF" stroke-width="1.6" fill="none" stroke-linejoin="round"/>'}
 <rect x="29" y="43" width="6" height="6" fill="#FFF1E4"/><ellipse cx="32" cy="31.5" rx="15" ry="14.5" fill="#FFF1E4" stroke="#141414" stroke-width="1.3"/>
@@ -573,7 +724,7 @@ const R_MOUTH = {
   sleep: [NONE, 'M32 37 a0.9 0.9 0 1 0 0.01 0'], dizzy: [NONE, 'M28.5 37.4 Q30.2 36.2 32 37.4 Q33.8 38.6 35.5 37.4'],
 }
 const ROBOT_GEAR = {
-  haiku: (paint) => `<g style="transform-box:fill-box;transform-origin:50% 100%;animation:cb-boing 1.3s ease-in-out infinite"><path d="M32 13.5 L32 11.6 Q35.2 10.8 32 9.8 Q28.8 8.8 32 7.8 Q35.2 6.8 32 5.8" stroke="#141414" stroke-width="1.3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="32" cy="3.6" r="2.4" fill="${paint}" stroke="#141414" stroke-width="1.1"/></g>`,
+  haiku: (paint) => `<g class="a-boing"><path d="M32 13.5 L32 11.6 Q35.2 10.8 32 9.8 Q28.8 8.8 32 7.8 Q35.2 6.8 32 5.8" stroke="#141414" stroke-width="1.3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="32" cy="3.6" r="2.4" fill="${paint}" stroke="#141414" stroke-width="1.1"/></g>`,
   sonnet: (paint) => `<path d="M10.5 29 Q9.5 6.5 32 6.5 Q54.5 6.5 53.5 29" stroke="#141414" stroke-width="3" fill="none" stroke-linecap="round"/><rect x="7" y="23" width="7" height="13" rx="2.6" fill="#141414"/><rect x="50" y="23" width="7" height="13" rx="2.6" fill="#141414"/><rect x="8.6" y="25.2" width="3.8" height="8.6" rx="1.4" fill="${paint}"/><rect x="51.6" y="25.2" width="3.8" height="8.6" rx="1.4" fill="${paint}"/>`,
   opus: () => '<path d="M26 30 m-5 0 a5 5 0 1 0 10 0 a5 5 0 1 0 -10 0 M38 30 m-5 0 a5 5 0 1 0 10 0 a5 5 0 1 0 -10 0" fill="rgba(255,255,255,.14)" stroke="#CFD5DF" stroke-width="1.5"/><path d="M31 29.5 Q32 28.6 33 29.5" fill="none" stroke="#CFD5DF" stroke-width="1.5"/><path d="M22.4 27.2 L24 26 M34.4 27.2 L36 26" stroke="#FFF" stroke-width="1.1" stroke-linecap="round"/>',
 }
@@ -584,7 +735,7 @@ function robot(state, hue, size, model) {
   const [mouthFill, mouthStroke] = R_MOUTH[state] || R_MOUTH.work
   const blush = ['wait', 'done', 'question'].includes(state)
   return `<svg width="${size}" height="${size}" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="${tint}"/>
-<g style="transform-box:fill-box;transform-origin:50% 100%;animation:cb-bob 2.6s ease-in-out infinite">
+<g class="a-sway">
 <path d="M14 64 Q15 52 32 51 Q49 52 50 64 Z" fill="#2B2A33"/><path d="M24 64 L24 57 Q24 55.5 25.5 55.5 L38.5 55.5 Q40 55.5 40 57 L40 64" fill="#3A3946" stroke="#141414" stroke-width=".9"/>
 <circle cx="32" cy="59.5" r="2.1" fill="${paint}" stroke="#141414" stroke-width=".8"/><rect x="28" y="45" width="8" height="7" fill="#A9B1BF" stroke="#141414"/><path d="M28 47.5 L36 47.5 M28 49.8 L36 49.8" stroke="#141414" stroke-width=".6"/>
 ${gear === 'haiku' ? ROBOT_GEAR.haiku(paint) : ''}
@@ -607,13 +758,13 @@ function avatar(state, s, size, label) {
 }
 
 // ---- state ----
-let snap = { requests: [], sessions: [], done: [], settled: [], groups: {}, quota: null }
+let snap = { requests: [], sessions: [], done: [], settled: [], fleet: { groups: [], members: {}, stopped: [], names: {} }, memory: {}, quota: null }
 let sel = null // session id shown in the pane
 let tab = 'thread'
 let folded = store.get('folded', false)
 let ignored = new Set(store.get('ignored', []))
-let muted = new Set(store.get('muted', []))
-let group = 'all'
+let muted = new Set(store.get('muted', [])) // group ids and session ids
+let collapsed = new Set(store.get('collapsed', [])) // folded group blocks, by group id ('' for no group)
 const pending = new Map() // request id or "read:<session>" -> { timer, label }
 const answered = new Map() // session -> trace line once a decision went out
 const sent = new Map() // session -> [{ text, status }]
@@ -621,9 +772,16 @@ const drafts = new Map() // session -> composer text
 let detail = null, detailOf = null, detailTimer = null
 let held = null // ids shown while the queue is held under the pointer or the focus
 let toastTimer = null
+let opening = null // name of a session started from the page, opened in its terminal once it shows up
 
 const sessionOf = (id) => snap.sessions.find((s) => s.sessionId === id)
-const nameOf = (s) => s?.name || folderName(s?.cwd)
+// Groups, stopped sessions and given names live on the server (ADR-0015).
+const fleet = () => snap.fleet ?? { groups: [], members: {}, stopped: [], names: {} }
+const nameOf = (s) => s?.name || fleet().names?.[s?.sessionId] || folderName(s?.cwd)
+const groupIdOf = (s) => (s && fleet().members?.[s.sessionId]) || ''
+const groupNamed = (id) => fleet().groups.find((g) => g.id === id)?.name
+const memOf = (id) => snap.memory?.[id] ?? 0
+const bytes = (n) => n >= 1e9 ? `${(n / 1e9).toLocaleString(lang, { maximumFractionDigits: 1 })} ${t('unit.gb')}` : `${Math.round(n / 1e6)} ${t('unit.mb')}`
 // A session not listed yet (just started, or invented by a test) is named after the folder of its request.
 const named = (id) => nameOf(sessionOf(id) ?? { cwd: [...snap.requests, ...(snap.settled ?? []), ...(snap.done ?? [])].find((r) => r.session === id)?.cwd })
 // A file under the session's folder is shown from there, any other by its last two parts.
@@ -632,10 +790,10 @@ const rel = (file, cwd) => {
   const short = cwd && f.toLowerCase().startsWith(c.toLowerCase()) ? f.slice(c.length) : f
   return short.length <= 40 ? short : `…/${f.split('/').slice(-2).join('/')}`
 }
-const groupOf = (s) => (s && snap.groups?.[s.cwd]) || folderName(s?.cwd)
+// The group's name, or the folder's for a session in no group: the tag and the hair colour (BRIEF section 4).
+const groupOf = (s) => groupNamed(groupIdOf(s)) || folderName(s?.cwd)
 const left = (s) => (s?.usage?.context?.percent == null ? null : Math.max(0, Math.round(100 - s.usage.context.percent)))
 const level = (l) => (l >= 50 ? 'g' : l >= 25 ? 'y' : l >= 10 ? 'o' : 'r')
-const inGroup = (s) => group === 'all' || groupOf(s) === group
 const isHot = (r) => r.env === 'prod' || r.env === 'unknown'
 const watchOf = (s) => {
   if (s?.watch?.kind === 'loop') return { kind: 'loop', title: t('watch.loop', { count: s.watch.count }), short: t('watch.loop.short', { count: s.watch.count }), detail: `${s.watch.tool} · ${s.watch.target}` }
@@ -648,12 +806,14 @@ const watchOf = (s) => {
 // What the queue shows, in order: waiting (hot environments first), to watch, to read, working; then
 // asleep and ignored.
 function lists() {
-  const visible = (s) => s && !ignored.has(s.sessionId) && inGroup(s)
+  const visible = (s) => s && !ignored.has(s.sessionId)
   const requests = snap.requests.filter((r) => !pending.has(r.id) && visible(sessionOf(r.session) ?? { sessionId: r.session, cwd: r.cwd }))
   requests.sort((a, b) => isHot(b) - isHot(a))
   const firstOf = new Map()
   for (const r of requests) if (!firstOf.has(r.session)) firstOf.set(r.session, r)
-  const settled = (snap.settled ?? []).filter((r) => !firstOf.has(r.session) && visible(sessionOf(r.session) ?? { cwd: r.cwd, sessionId: r.session }))
+  // One line per session, its latest request settled in the terminal (they come oldest first).
+  const lastSettled = new Map((snap.settled ?? []).map((r) => [r.session, r]))
+  const settled = [...lastSettled.values()].filter((r) => !firstOf.has(r.session) && visible(sessionOf(r.session) ?? { cwd: r.cwd, sessionId: r.session }))
   const done = (snap.done ?? []).filter((d) => !pending.has(`read:${d.session}`) && !firstOf.has(d.session) && visible(sessionOf(d.session)))
   const reading = new Set(done.map((d) => d.session))
   const live = snap.sessions.filter((s) => visible(s) && !firstOf.has(s.sessionId) && !reading.has(s.sessionId))
@@ -661,16 +821,19 @@ function lists() {
   const watch = live.filter((s) => s.status !== 'waiting' && watchOf(s))
   const working = live.filter((s) => s.status === 'busy' && !watchOf(s))
   const asleep = live.filter((s) => s.status === 'idle' && s.lastActive && Date.now() - s.lastActive > 3 * 3600_000)
+  // Done with its turn, already read, not asleep yet: it waits for your next prompt, newest first.
+  const idle = live.filter((s) => s.status === 'idle' && !asleep.includes(s)).sort((a, b) => (b.lastActive ?? 0) - (a.lastActive ?? 0))
   const ignoredList = snap.sessions.filter((s) => ignored.has(s.sessionId))
-  return { waiting: [...firstOf.values()], terminalWaits, settled, watch, done, working, asleep, ignored: ignoredList }
+  return { waiting: [...firstOf.values()], terminalWaits, settled, watch, done, working, idle, asleep, ignored: ignoredList }
 }
 // The sessions in queue order, for j / k and for "next".
-const order = (L) => [...L.waiting.map((r) => r.session), ...L.terminalWaits.map((s) => s.sessionId), ...L.watch.map((s) => s.sessionId), ...L.done.map((d) => d.session), ...L.working.map((s) => s.sessionId)]
+const order = (L) => [...L.waiting.map((r) => r.session), ...L.terminalWaits.map((s) => s.sessionId), ...L.watch.map((s) => s.sessionId), ...L.done.map((d) => d.session), ...L.working.map((s) => s.sessionId), ...L.idle.map((s) => s.sessionId)]
 
 // ---- header ----
 function renderTop() {
   const L = lists()
-  const all = snap.sessions
+  const total = Object.values(snap.memory ?? {}).reduce((a, b) => a + b, 0)
+  document.title = L.waiting.length + L.terminalWaits.length ? `(${L.waiting.length + L.terminalWaits.length}) clearance` : 'clearance'
   const count = (cls, iconName, n, label) => h('span', { class: `count ${cls}`, title: label }, icon(iconName), String(n), h('span', { class: 'sr' }, label))
   const quota = (snap.quota ?? []).filter((q) => t(`q.label.${q.kind}`) !== `q.label.${q.kind}`).map((q) => {
     const pct = Math.round(q.percentUsed)
@@ -682,6 +845,8 @@ function renderTop() {
       h('b', {}, t(`q.label.${q.kind}`)), h('span', { class: 'cells' }, cells), h('strong', {}, `${pct} %`), h('span', { class: 'meta' }, `↻ ${reset}`),
       dry ? h('span', { class: 'pill dry' }, icon('trend', 14), t('q.dry', { time: clock(dry) })) : null)
   })
+  const restarting = snap.restart ? h('div', { class: 'pill dry', role: 'status' }, icon('loop', 14), ' ', t('restart.waiting', { n: running().filter((s) => termOf(s.sessionId)).length }), ' ',
+    btn('sm', t('restart.force'), 'play', () => post('/api/restart', { action: 'force' }), { text: t('restart.force') }), btn('sm quiet', t('restart.cancel'), 'x', () => post('/api/restart', { action: 'cancel' }), { text: t('restart.cancel') })) : null
   fill($('#top'),
     h('a', { class: 'logo', href: '#', 'aria-label': 'clearance', onclick: (e) => { e.preventDefault(); select(order(lists())[0] ?? null) } }, logo()),
     h('div', { class: 'counts' },
@@ -691,18 +856,25 @@ function renderTop() {
       count('', 'work', L.working.length, t('working'))),
     h('button', { type: 'button', class: 'btn search', onclick: openSearch, 'aria-label': t('search') }, icon('search'), h('span', {}, 'Ctrl K')),
     h('span', { class: 'spacer' }),
+    restarting,
     quota,
-    btn('icon', t('settings'), 'sliders', openSettings),
-    btn('icon', t('journal'), 'journal', openJournal),
+    total ? h('span', { class: 'meta mem', title: t('mem.total') }, icon('chip', 16), ' ', bytes(total)) : null,
+    L.asleep.length ? btn('icon', t('close.asleep', { n: L.asleep.length }), 'moon', () => openStop(L.asleep, true)) : null,
+    btn('icon opt', t('settings'), 'sliders', openSettings),
+    btn('icon opt', t('journal'), 'journal', openJournal),
+    btn('icon danger', t('stop.all'), 'stop', () => openStop(running(), true)),
     btn('icon primary', t('new.task'), 'plus', () => openPalette()))
 }
 
 // The logo, proposal A (a radar echo and the check of a cleared flight): fixed colours on its own tile, the
 // same in every skin (ADR-0011). The favicon is its small form, without the sweep.
+// On a phone, the mark alone.
 function logo() {
-  const el = h('span', { 'aria-hidden': 'true' })
+  const el = h('span', { class: 'lockup', 'aria-hidden': 'true' })
+  const mark = h('span', { class: 'mark', 'aria-hidden': 'true' })
+  mark.innerHTML = '<svg width="44" height="44" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#141414"/><circle cx="32" cy="32" r="21" fill="none" stroke="#FFC21A" stroke-width="6"/><path d="M22 33 L29 40 L43 24" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>'
   el.innerHTML = '<svg width="176" height="44" viewBox="0 0 176 44"><rect width="176" height="44" rx="12" fill="#141414"/><g transform="translate(4 4) scale(.5625)"><path d="M32 32 L32 11 A21 21 0 0 1 50.2 21.5 Z" fill="#FFC21A" opacity=".4"/><circle cx="32" cy="32" r="21" fill="none" stroke="#FFC21A" stroke-width="5"/><path d="M22 33 L29 40 L43 24" fill="none" stroke="#FFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></g><text x="48" y="29" font-family="\'Dela Gothic One\', sans-serif" font-size="20" fill="#FFFFFF">clearance</text></svg>'
-  return el
+  return [el, mark]
 }
 
 // ---- queue ----
@@ -731,7 +903,7 @@ function row(s, at, ...rest) {
 function renderQueue() {
   const L = lists()
   const side = $('#side')
-  if (folded) {
+  if (folded && !phone.matches) {
     const rail = (sessionId, state, dot, label) => {
       const s = sessionOf(sessionId) ?? { sessionId }
       return h('button', { type: 'button', class: 'btn flat', style: 'position:relative;padding:3px;min-height:0', 'aria-label': `${nameOf(s)}, ${label}`, title: `${nameOf(s)}, ${label}`, onclick: () => select(sessionId) },
@@ -743,31 +915,20 @@ function renderQueue() {
       L.terminalWaits.map((s) => rail(s.sessionId, 'wait', 'w', t('waits.terminal'))), h('hr'),
       L.watch.map((s) => rail(s.sessionId, 'dizzy', 's', t('watch'))), h('hr'),
       L.done.map((d) => rail(d.session, 'done', null, t('review'))), h('hr'),
-      L.working.map((s) => rail(s.sessionId, 'work', null, t('working'))))
+      L.working.map((s) => rail(s.sessionId, 'work', null, t('working'))), h('hr'),
+      L.idle.map((s) => rail(s.sessionId, 'done', null, t('idle'))))
     return
   }
   side.className = 'queue'
-  const groups = [...new Set(snap.sessions.map(groupOf))].sort()
-  const chip = (key, label, color) => {
-    const mine = snap.sessions.filter((s) => key === 'all' || groupOf(s) === key)
-    const w = snap.requests.filter((r) => mine.some((s) => s.sessionId === r.session)).length
-    const sw = mine.filter((s) => watchOf(s)).length
-    return h('button', { type: 'button', class: 'chip', 'aria-pressed': String(group === key), onclick: () => { group = key; render() } },
-      h('span', { class: 'dot', style: `background:${color}` }), label,
-      w ? h('span', { class: 'n w' }, w) : null, sw ? h('span', { class: 'n s' }, sw) : null,
-      !w && !sw ? h('span', { class: 'meta' }, mine.length) : null, muted.has(key) ? icon('bellOff', 14) : null)
-  }
   const shown = new Set(L.waiting.map((r) => r.id))
   const fresh = held ? [...shown].filter((id) => !held.has(id)) : []
   const waiting = held ? L.waiting.filter((r) => held.has(r.id)) : L.waiting
+  // What waits for you and what needs watching stay on top, across groups (ADR-0015).
   fill(side,
     h('div', { class: 'chips', role: 'group', 'aria-label': t('groups') },
-      btn('icon sm', t('fold'), 'fold', () => fold(true)),
-      chip('all', t('all'), 'var(--accent)'), groups.map((g) => chip(g, g, colours(g)[0])),
-      btn('icon sm flat', t('groups.manage'), 'sliders', openGroups)),
-    group !== 'all' ? h('div', { class: 'groupbar' }, h('b', {}, `${group} · ${t('sessions', { n: snap.sessions.filter((s) => groupOf(s) === group).length })}`),
-      btn('icon sm', muted.has(group) ? t('group.unmute') : t('group.mute'), muted.has(group) ? 'bell' : 'bellOff', () => { muted.has(group) ? muted.delete(group) : muted.add(group); store.set('muted', [...muted]); render() }),
-      btn('icon sm', t('interrupt.soon'), 'pause', null, { disabled: true })) : null,
+      phone.matches ? null : btn('icon sm', t('fold'), 'fold', () => fold(true)),
+      btn('sm', t('group.new'), 'plus', () => openGroups(true), { text: t('group.new') }),
+      btn('icon sm flat', t('groups.manage'), 'sliders', () => openGroups())),
     h('section', { class: 'list' },
       h('h2', { class: 'tape' }, icon('bell', 15), `${t('waiting')} · ${L.waiting.length + L.terminalWaits.length}`),
       fresh.length ? h('button', { type: 'button', class: 'newpill', onclick: release }, icon('arrowUp', 16), t('new.one', { n: fresh.length })) : null,
@@ -780,32 +941,83 @@ function renderQueue() {
           h('span', { class: `line${r.kind === 'permission' || r.kind === 'denied' ? ' mono' : ''}` }, cmdOf(r.input)),
         ], h('span', { class: `kind ${r.kind}`, title: t(`${r.kind === 'permission' ? 'perm' : r.kind}.kind`) }, icon(KIND_ICON[r.kind], 16), h('span', { class: 'sr' }, t(`${r.kind === 'permission' ? 'perm' : r.kind}.kind`))), { cwd: r.cwd })
       }),
-      L.terminalWaits.map((s) => item(s.sessionId, 'wait', [row(s, null), h('span', { class: 'line' }, `${t('waits.terminal')}${s.waitingFor ? ` (${s.waitingFor})` : ''}${s.connected ? '' : ` · ${t('not.connected')}`}`)], h('span', { class: 'kind settled' }, icon('terminal', 16)))),
+      (snap.terms ?? []).filter((x) => !x.session).map((x) => item(`term:${x.id}`, 'wait', [row({ sessionId: `term:${x.id}`, name: x.name, cwd: x.cwd }, null), h('span', { class: 'line' }, t('term.starting'))], h('span', { class: 'kind settled' }, icon('terminal', 16)), { cwd: x.cwd })),
+      L.terminalWaits.map((s) => item(s.sessionId, 'wait', [row(s, null), h('span', { class: 'line' }, `${t('waits.terminal')}${s.waitingFor ? ` (${s.waitingFor})` : ''} · ${t(s.connected ? 'waits.lost.short' : 'not.connected.short')}`)], h('span', { class: 'kind settled' }, icon('terminal', 16)))),
       L.settled.map((r) => item(r.session, 'done', [row(sessionOf(r.session) ?? { cwd: r.cwd }, r.settledAt), h('span', { class: 'line' }, t('settled.kind'))], h('span', { class: 'kind settled', title: t('settled.kind') }, icon('handoff', 16)), { cls: 'settled', cwd: r.cwd }))),
-    h('section', { class: 'list' },
+    L.watch.length ? h('section', { class: 'list' },
       h('h2', { class: 'tape watch' }, icon('alert', 15), `${t('watch')} · ${L.watch.length}`),
-      L.watch.map((s) => { const w = watchOf(s); return item(s.sessionId, w.kind === 'context' ? 'dizzy' : 'work', [row(s, null), h('span', { class: `watchline ${w.kind}` }, icon(w.kind === 'loop' ? 'loop' : w.kind === 'context' ? 'battery' : 'clock', 15), w.short)]) })),
-    h('section', { class: 'list' },
-      h('h2', { class: 'tape' }, icon('done', 15), `${t('review')} · ${L.done.length}`),
-      L.done.map((d) => {
+      L.watch.map((s) => { const w = watchOf(s); return item(s.sessionId, w.kind === 'context' ? 'dizzy' : 'work', [row(s, null), h('span', { class: `watchline ${w.kind}` }, icon(w.kind === 'loop' ? 'loop' : w.kind === 'context' ? 'battery' : 'clock', 15), w.short)]) })) : null,
+    [...fleet().groups, { id: '', name: t('group.none') }].map((g) => groupBlock(g, L)),
+    h('p', { class: 'keys', 'aria-label': 'Keyboard' },
+      [['j k', 'updown', 'keys.updown'], ['a', 'check', 'keys.a'], ['d', 'x', 'keys.d'], ['1 2 3', 'question', 'keys.num'], ['e', 'done', 'keys.e'], ['r', 'send', 'keys.r'], ['n', 'plus', 'keys.n'], ['t', 'terminal', 'keys.t'], ['[', 'fold', 'keys.fold'], ['Ctrl K', 'search', 'keys.k']]
+        .map(([k, i, label]) => h('span', { title: t(label), style: 'display:inline-flex;align-items:center;gap:4px' }, h('kbd', {}, k), icon(i, 16), h('span', { class: 'sr' }, t(label))))))
+}
+
+// One group's block: its counts and memory in the header, then to read, working, idle, and the asleep,
+// stopped and ignored drawers. A group made by the user shows even when empty; "No group" only when used.
+function groupBlock(g, L) {
+  const mine = (id) => groupIdOf(sessionOf(id) ?? { sessionId: id }) === g.id
+  const done = L.done.filter((d) => mine(d.session)), working = L.working.filter((s) => mine(s.sessionId))
+  const idle = L.idle.filter((s) => mine(s.sessionId)), asleep = L.asleep.filter((s) => mine(s.sessionId))
+  const ignoredHere = L.ignored.filter((s) => mine(s.sessionId))
+  const stopped = fleet().stopped.filter((x) => (fleet().members?.[x.id] ?? '') === g.id)
+  const live = snap.sessions.filter((s) => mine(s.sessionId))
+  if (!g.id && !live.length && !stopped.length) return null
+  const mem = live.reduce((a, s) => a + memOf(s.sessionId), 0)
+  const open = !collapsed.has(g.id)
+  const toggle = () => { open ? collapsed.add(g.id) : collapsed.delete(g.id); store.set('collapsed', [...collapsed]); renderQueue() }
+  const counts = [done.length ? t('n.review', { n: done.length }) : null, working.length ? t('n.working', { n: working.length }) : null, !live.length && stopped.length ? t('n.stopped', { n: stopped.length }) : null].filter(Boolean).join(' · ')
+  const key = g.id || 'none'
+  return h('section', { class: 'group', 'aria-label': g.name },
+    h('header', {},
+      h('button', { type: 'button', class: 'toggle', 'aria-expanded': String(open), onclick: toggle },
+        icon(open ? 'fold' : 'unfold', 16), h('span', { class: 'dot', style: `background:${colours(g.id ? g.name : folderName(live[0]?.cwd ?? stopped[0]?.cwd))[0]}` }), h('span', { class: 'name' }, g.name),
+        h('span', { class: 'meta' }, counts)),
+      mem ? h('span', { class: 'meta mem', title: t('mem.group') }, bytes(mem)) : null,
+      muted.has(key) ? icon('bellOff', 14) : null,
+      btn('icon sm', muted.has(key) ? t('group.unmute') : t('group.mute'), muted.has(key) ? 'bell' : 'bellOff', () => { muted.has(key) ? muted.delete(key) : muted.add(key); store.set('muted', [...muted]); render() }),
+      btn('icon sm', t('group.interrupt'), 'pause', () => openStop(running().filter((s) => mine(s.sessionId)), false))),
+    open ? [
+      done.length ? [h('h3', { class: 'sub' }, t('review')), done.map((d) => {
         const s = sessionOf(d.session) ?? { sessionId: d.session, cwd: d.cwd }
         const f = s.facts ?? {}
         return item(d.session, d.failed ? 'denied' : 'done', [row(s, d.at), h('span', { class: 'facts' },
           h('span', { class: f.tests ? (f.tests.ok ? 'ok' : 'ko') : '' }, icon('flask', 14), ' ', f.tests ? (f.tests.ok ? t('tests.ok') : t('tests.ko')) : t('tests.none')),
           h('span', {}, icon('diff', 14), ' ', f.files ?? 0), f.mr ? h('span', {}, icon('mr', 14), ' MR') : null),
           h('span', { class: 'line' }, (d.message || '').split('\n')[0])])
-      })),
-    h('section', { class: 'list' },
-      h('h2', { class: 'tape' }, icon('work', 15), `${t('working')} · ${L.working.length}`),
-      L.working.map((s) => { const l = left(s); return item(s.sessionId, 'work', [row(s, null), h('span', { class: 'line' }, s.title || s.waitingFor || '')], l == null ? null : meter(l, true), { size: 36 }) })),
-    h('div', { class: 'folds' },
-      h('details', { class: 'fold' }, h('summary', { title: t('asleep') }, icon('moon'), L.asleep.length, h('span', { class: 'sr' }, t('asleep'))),
-        L.asleep.map((s) => h('div', { class: 'row', style: 'display:flex;align-items:center;gap:8px;padding:4px 0 10px' }, avatar('sleep', s, 32), h('strong', {}, nameOf(s)), h('span', { class: 'meta' }, ago(s.lastActive))))),
-      h('details', { class: 'fold' }, h('summary', { title: t('ignored') }, icon('eyeOff'), L.ignored.length, h('span', { class: 'sr' }, t('ignored'))),
-        L.ignored.map((s) => h('div', { style: 'display:flex;align-items:center;gap:8px;padding:4px 0 10px' }, avatar('sleep', s, 32), h('strong', { style: 'flex:1' }, nameOf(s)), btn('icon sm', t('unignore'), 'eye', () => setIgnored(s.sessionId, false)))))),
-    h('p', { class: 'keys', 'aria-label': 'Keyboard' },
-      [['j k', 'updown', 'keys.updown'], ['a', 'check', 'keys.a'], ['d', 'x', 'keys.d'], ['1 2 3', 'question', 'keys.num'], ['e', 'done', 'keys.e'], ['r', 'send', 'keys.r'], ['n', 'plus', 'keys.n'], ['t', 'terminal', 'keys.t'], ['[', 'fold', 'keys.fold'], ['Ctrl K', 'search', 'keys.k']]
-        .map(([k, i, label]) => h('span', { title: t(label), style: 'display:inline-flex;align-items:center;gap:4px' }, h('kbd', {}, k), icon(i, 16), h('span', { class: 'sr' }, t(label))))))
+      })] : null,
+      working.length ? [h('h3', { class: 'sub' }, t('working')), working.map((s) => { const l = left(s); return item(s.sessionId, 'work', [row(s, null), h('span', { class: 'line' }, s.subagents ? [icon('agents', 14), ' ', t('agents.working', { n: s.subagents }), ' · '] : null, s.title || s.waitingFor || '')], l == null ? null : meter(l, true), { size: 36 }) })] : null,
+      idle.length ? [h('h3', { class: 'sub' }, t('idle')), idle.map((s) => item(s.sessionId, 'done', [row(s, s.lastActive), h('span', { class: 'line' }, s.title || '')], null, { size: 32 }))] : null,
+      !done.length && !working.length && !idle.length && !asleep.length && !stopped.length && !ignoredHere.length ? h('p', { class: 'empty' }, t('group.empty')) : null,
+      asleep.length + stopped.length + ignoredHere.length ? h('div', { class: 'folds' },
+        asleep.length ? drawer(`asleep:${key}`, 'asleep', 'moon', asleep, (s) => h('span', { class: 'meta' }, ago(s.lastActive))) : null,
+        stopped.length ? stoppedDrawer(`stopped:${key}`, stopped) : null,
+        ignoredHere.length ? drawer(`ignored:${key}`, 'ignored', 'eyeOff', ignoredHere, (s) => btn('sm', t('unignore'), 'eye', () => setIgnored(s.sessionId, false), { text: t('unignore') })) : null) : null,
+    ] : null)
+}
+
+// Stopped sessions (ADR-0015): resumed in a new terminal tab, or deleted from clearance (the transcript
+// stays in Claude Code's folder).
+function stoppedDrawer(key, list) {
+  return h('details', { class: 'fold stopped', open: drawers.has(key) || null, ontoggle: (e) => { e.target.open ? drawers.add(key) : drawers.delete(key) } },
+    h('summary', { title: t('stopped') }, icon('stop'), list.length, h('span', { class: 'sr' }, t('stopped'))),
+    list.map((x) => h('div', { style: 'display:flex;align-items:center;gap:8px;padding:4px 0 10px' },
+      avatar('sleep', { sessionId: x.id, cwd: x.cwd, model: x.model }, 32),
+      h('span', { style: 'flex:1;min-width:0;display:flex;flex-direction:column' }, h('b', {}, x.name), h('span', { class: 'meta' }, x.title || folderName(x.cwd), ' · ', ago(x.at))),
+      btn('sm', t('resume.go'), 'play', () => resume(x), { text: t('resume.go') }),
+      btn('icon sm quiet', t('forget.title'), 'x', () => forget(x)))))
+}
+async function resume(x) {
+  const name = x.name.replace(/[^\w.-]/g, '-').slice(0, 40) || 'session'
+  const model = ['fable', 'opus', 'sonnet', 'haiku'].find((m) => x.model?.includes(m)) ?? ''
+  const mode = ['default', 'acceptEdits', 'plan', 'auto'].includes(x.mode) ? x.mode : ''
+  const err = await post('/api/start', { cwd: x.cwd, name, model, mode, resume: x.id })
+  if (!err) opening = name
+  toast(err ? t('err.start', { error: error(err) }) : t('resume.started', { name }), err ? 'alert' : 'play')
+}
+async function forget(x) {
+  const err = await post('/api/forget', { session: x.id })
+  toast(err ? error(err) : t('forgot', { name: x.name }), err ? 'alert' : 'x')
 }
 function meter(l, small) {
   const cells = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => h('i', { class: i < Math.round(l / 10) ? `on ${level(l)}` : '' }))
@@ -813,6 +1025,14 @@ function meter(l, small) {
     small ? null : icon('battery', 20), h('span', { class: `cells${small ? ' small' : ''}` }, cells), h('strong', {}, `${l} %`))
 }
 function fold(on) { folded = on; store.set('folded', on); render() }
+// The asleep and ignored drawers stay open across redraws (the queue is redrawn every update).
+const drawers = new Set()
+function drawer(key, label, iconName, sessions, extra) {
+  return h('details', { class: 'fold', open: drawers.has(key) || null, ontoggle: (e) => { e.target.open ? drawers.add(key) : drawers.delete(key) } },
+    h('summary', { title: t(label) }, icon(iconName), sessions.length, h('span', { class: 'sr' }, t(label))),
+    sessions.map((s) => h('div', { style: 'display:flex;align-items:center;gap:8px;padding:4px 0 10px' },
+      avatar('sleep', s, 32), h('button', { type: 'button', class: 'btn flat sm', style: 'flex:1;justify-content:flex-start;padding:0', onclick: () => select(s.sessionId) }, nameOf(s)), extra(s))))
+}
 function setIgnored(id, on) { on ? ignored.add(id) : ignored.delete(id); store.set('ignored', [...ignored]); render() }
 
 // New requests do not move the queue while the pointer or the focus is in it.
@@ -824,14 +1044,21 @@ $('#side').addEventListener('focusin', hold)
 $('#side').addEventListener('focusout', (e) => { if (!$('#side').contains(e.relatedTarget) && !$('#side').matches(':hover')) release() })
 
 // ---- pane ----
+// A session opens on what it needs from you; one with nothing to do opens on its thread.
+const hasAction = (id) => !!(requestOf(id) || answered.has(id) || (snap.settled ?? []).some((x) => x.session === id) || (snap.done ?? []).some((d) => d.session === id) || watchOf(sessionOf(id)) || sessionOf(id)?.status === 'waiting')
 function select(id) {
-  if (sel !== id) { sel = id; tab = 'thread'; detail = null; detailOf = null }
+  if (sel !== id) { sel = id; tab = hasAction(id) ? 'action' : termOf(id) ? 'terminal' : 'thread'; detail = null; detailOf = null }
+  if (id) show('pane')
   renderQueue(); renderPane(); loadDetail()
   if (id) $(`[data-session="${CSS.escape(id)}"]`)?.scrollIntoView({ block: 'nearest' })
 }
+// On a phone the page shows the queue or one session, never both.
+const phone = matchMedia('(max-width: 760px)'), narrow = matchMedia('(max-width: 1100px)')
+const show = (screen) => { document.body.dataset.screen = screen }
+show('queue')
 async function loadDetail() {
   clearTimeout(detailTimer)
-  if (!sel) return
+  if (!sel || sel.startsWith('term:') || events.readyState === EventSource.CLOSED) return
   const id = sel
   try {
     const res = await fetch(`/api/session/${encodeURIComponent(id)}`)
@@ -839,7 +1066,8 @@ async function loadDetail() {
     if (sel !== id) return
     const changed = JSON.stringify(d) !== JSON.stringify(detail)
     detail = d; detailOf = id
-    if (changed) { renderThread(); renderInspector() }
+    // A field being typed in keeps its focus; the next update redraws the view once it is left.
+    if (changed) { if (!typingIn($('#view'))) renderView(); renderInspector() }
   } catch {}
   detailTimer = setTimeout(loadDetail, 3000)
 }
@@ -848,19 +1076,24 @@ const requestOf = (sessionId) => lists().waiting.find((r) => r.session === sessi
 function renderPane() {
   const pane = $('#pane')
   const s = sessionOf(sel)
-  if (!sel || (!s && !requestOf(sel) && !answered.has(sel))) {
+  const starting = !s && sel?.startsWith('term:') ? termOf(sel) : null
+  if (!sel || (!s && !starting && !requestOf(sel) && !answered.has(sel))) {
     fill(pane, h('p', { class: 'blank' }, t('no.session')))
     return
   }
-  const view = s ?? { sessionId: sel, cwd: requestOf(sel)?.cwd }
+  if (starting) tab = 'terminal'
+  const view = s ?? (starting ? { sessionId: sel, name: starting.name, cwd: starting.cwd } : { sessionId: sel, cwd: requestOf(sel)?.cwd })
   const l = left(view)
   const r = requestOf(sel)
+  if (tab === 'details' && !narrow.matches) tab = 'action'
+  const tabs = [['action', 'bell'], ['thread', 'chat'], ['terminal', 'terminal'], narrow.matches ? ['details', 'flag'] : null, ['settings', 'sliders']].filter(Boolean)
   fill(pane,
     h('div', { class: 'head' },
-      avatar(r ? AVATAR[r.kind] : view.status === 'busy' ? 'work' : view.status === 'waiting' ? 'wait' : 'done', view, 56),
+      btn('icon back', t('back'), 'fold', () => show('queue')),
+      avatar(r ? AVATAR[r.kind] : view.status === 'busy' ? 'work' : view.status === 'waiting' ? 'wait' : 'done', view, phone.matches ? 40 : 56),
       h('div', { class: 'who' },
         h('div', { class: 'title' }, h('h1', {}, nameOf(view)),
-          h('button', { type: 'button', class: 'chip', title: t('group.change'), onclick: () => openGroups(view.cwd) }, h('span', { class: 'dot', style: `background:${colours(groupOf(view))[0]}` }), groupOf(view), ' ▾'),
+          h('button', { type: 'button', class: 'chip', title: t('group.change'), onclick: () => openPlace(view) }, h('span', { class: 'dot', style: `background:${colours(groupOf(view))[0]}` }), groupNamed(groupIdOf(view)) || t('group.none'), ' ▾'),
           view.model ? h('span', { class: 'badge', title: t('model') }, view.model.replace(/^claude-/, '')) : null,
           view.permissionMode || detail?.mode ? h('span', { class: 'badge', title: t('mode') }, icon('mode', 14), view.permissionMode || detail.mode) : null),
         h('div', { class: 'metas' },
@@ -869,24 +1102,19 @@ function renderPane() {
       h('span', { class: 'spacer' }),
       l == null ? null : meter(l, false),
       h('div', { class: 'actions' },
-        btn('icon', t('interrupt.soon'), 'pause', null, { disabled: true }),
-        btn('icon', t('open.tab'), 'external', focusTab),
+        btn('icon', modReady(view) ? t('interrupt') : whyNot(view), 'pause', () => interrupt(sel), { disabled: !modReady(view) || !['busy', 'waiting'].includes(view.status) }),
         btn('icon', t('ignore'), 'eyeOff', () => { setIgnored(sel, true); select(order(lists())[0] ?? null) }),
-        btn('icon danger', t('stop.soon'), 'stop', null, { disabled: true }))),
+        btn('icon danger', modReady(view) ? t('stop') : whyNot(view), 'stop', () => openStop([view], true), { disabled: !modReady(view) }))),
     h('div', { class: 'split' },
       h('div', { class: 'center' },
         h('div', { class: 'tabs', role: 'tablist' },
-          [['thread', 'chat'], ['terminal', 'terminal']].map(([k, i]) => h('button', { type: 'button', class: 'tab', role: 'tab', 'aria-selected': String(tab === k), onclick: () => { tab = k; renderPane() } }, icon(i), t(k)))),
-        h('div', { id: 'view', class: tab === 'thread' ? 'thread' : 'term' }),
-        composer(view)),
-      h('aside', { class: 'inspector', id: 'inspector', 'aria-label': t('task') })))
-  renderThread(); renderInspector()
-}
-
-async function focusTab() {
-  const res = await fetch('/api/focus', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ session: sel }) }).catch(() => null)
-  const out = res ? await res.json().catch(() => ({})) : {}
-  toast(out.found ? t('tab.found') : t('tab.missing', { title: (out.titles ?? []).join(' / ') }), 'external')
+          tabs.map(([k, i]) => h('button', { type: 'button', class: 'tab', role: 'tab', 'aria-selected': String(tab === k), title: t(`tab.${k}`), onclick: () => { tab = k; renderPane() } },
+            icon(i), h('span', { class: 'label' }, t(`tab.${k}`)), k === 'action' && hasAction(sel) ? h('span', { class: 'n w', 'aria-hidden': 'true' }) : null))),
+        h('div', { id: 'view', class: tab === 'terminal' ? 'term' : tab === 'details' ? 'thread insp' : 'thread' }),
+        // On a phone the card needs the room: the message field lives in the thread.
+        tab === 'settings' || tab === 'details' || (phone.matches && tab === 'action') ? null : composer(view)),
+      narrow.matches ? null : h('aside', { class: 'inspector insp', id: 'inspector', 'aria-label': t('task') })))
+  renderView(); renderInspector()
 }
 
 // What ran: prompts, the assistant's text with its light Markdown, tool calls and how they ended.
@@ -898,10 +1126,24 @@ function prose(text) {
     return [i ? '\n' : null, head ? h('b', { class: 'heading' }, parts) : parts]
   })
 }
-function renderThread() {
+// Paths made readable: the session's folder becomes ".", any other long path its last two parts.
+function short(text = '', cwd) {
+  const c = (cwd ?? '').replace(/[\\/]+$/, '')
+  const local = c ? text.split(c).join('.').split(c.replace(/\\/g, '/')).join('.') : text
+  return local.replace(/(?<![\w:/\\])(?:[A-Za-z]:)?(?:[\\/][^\\/\s"'`]+){3,}/g, (p) => `…/${p.split(/[\\/]/).slice(-2).join('/')}`)
+}
+// The thread's folded runs the reader opened or closed, and whether it shows only what the user wrote.
+const openRuns = new Map()
+let mineOnly = false
+function renderView() {
   const view = $('#view')
   if (!view) return
   const items = detailOf === sel ? (detail?.thread ?? []) : []
+  if (tab !== 'terminal' || !termOf(sel)) dropTerm()
+  if (tab === 'details') return renderInspector(view)
+  if (tab === 'settings') return settingsView(view, sessionOf(sel) ?? { sessionId: sel, cwd: requestOf(sel)?.cwd })
+  if (tab === 'action') return actionView(view)
+  if (tab === 'terminal' && termOf(sel)) return showTerm(view, termOf(sel))
   if (tab === 'terminal') {
     const lines = [`claude · ${named(sel)}`, '']
     for (const x of items) {
@@ -909,25 +1151,113 @@ function renderThread() {
       else if (x.kind === 'text') lines.push(`● ${x.text}`, '')
       else lines.push(`● ${x.tool}(${x.target})`, `  ⎿  ${x.out ?? ''}`, '')
     }
-    fill(view, h('header', {}, `claude · ${named(sel)} · ${t('terminal.note')}`), h('pre', {}, lines.join('\n')))
+    // Like a terminal: it follows the end, unless the reader scrolled up; unchanged, it is left alone.
+    const text = lines.join('\n'), old = view.querySelector('pre')
+    if (old && old.textContent === text) return
+    const follow = !old || old.scrollHeight - old.scrollTop - old.clientHeight < 60
+    const top = old?.scrollTop ?? 0
+    fill(view, h('header', {}, `claude · ${named(sel)} · ${t('terminal.note')}`), h('pre', {}, text))
+    const pre = view.querySelector('pre')
+    pre.scrollTop = follow ? pre.scrollHeight : top
     return
   }
   const stick = view.scrollHeight - view.scrollTop - view.clientHeight < 60
   const s = sessionOf(sel)
+  const cwd = s?.cwd ?? requestOf(sel)?.cwd
+  const tool = (x) => {
+    const target = short(x.target, cwd), out = x.out ? short(x.out.split('\n')[0], cwd) : ''
+    return h('div', { class: `tool${x.error ? ' bad' : ''}`, title: `${x.target}${x.out ? `\n→ ${x.out.split('\n')[0]}` : ''}` },
+      h('b', {}, `${x.error ? '✗' : '✓'} ${x.tool}`), h('code', {}, target), out ? h('span', {}, `→ ${out}`) : null)
+  }
+  // A folded run keeps the state the reader gave it across the 3 s refresh; one with a failure opens.
+  const run = (x) => {
+    const key = `${sel}:${x.items[0].at}:${x.items[0].tool}`, r = runOf(x.items)
+    return h('details', { class: 'tools', open: openRuns.get(key) ?? r.failed > 0, ontoggle: (e) => openRuns.set(key, e.target.open) },
+      h('summary', {}, t('actions', { n: r.n }), ' · ', r.tools.map((n) => n.replace(/^mcp__.*__/, '')).join(', '), r.failed ? h('span', { class: 'bad' }, ` · ✗ ${t('actions.failed', { n: r.failed })}`) : null),
+      x.items.map(tool))
+  }
+  const copyMd = (text) => navigator.clipboard?.writeText(text).then(() => toast(t('copied'), 'check'), () => {})
+  fill(view,
+    items.length ? h('div', { class: 'threadbar' }, btn('sm quiet', t(mineOnly ? 'thread.all' : 'thread.mine'), mineOnly ? 'chat' : 'speech', () => { mineOnly = !mineOnly; renderView() }, { text: t(mineOnly ? 'thread.all' : 'thread.mine'), 'aria-pressed': String(mineOnly) })) : null,
+    detailOf === sel && !detail ? h('p', { class: 'empty' }, t('no.transcript')) : null,
+    (mineOnly ? items.filter((x) => x.kind === 'user') : foldTools(items)).map((x) => {
+      if (x.kind === 'user') return h('div', { class: 'bubble' }, h('div', {}, x.text))
+      if (x.kind === 'text') return h('div', { class: 'saidrow' }, h('p', { class: 'said' }, prose(x.text)), btn('icon sm quiet', t('copy.md'), 'copy', () => copyMd(x.text), { size: 16 }))
+      if (x.kind === 'tools') return run(x)
+      return tool(x)
+    }),
+    (sent.get(sel) ?? []).map((m) => h('div', { class: 'bubble' }, h('div', {}, m.text), h('span', { class: 'meta' }, sentStatus(s, m)))),
+    s?.status === 'busy' ? h('p', { class: 'working' }, h('i'), s.title || t('working')) : null)
+  if (stick) view.scrollTop = view.scrollHeight
+}
+
+// Only what the session needs from you: the card to answer, the alert to look at, or nothing.
+function actionView(view) {
+  const s = sessionOf(sel)
   const w = s && watchOf(s)
+  const card = decisionCard()
+  const waits = !card && s?.status === 'waiting'
   fill(view,
     w ? h('div', { class: `alert ${w.kind}`, role: 'alert' }, icon(w.kind === 'loop' ? 'loop' : w.kind === 'context' ? 'battery' : 'clock', 24),
-      h('div', {}, h('strong', { style: 'display:block' }, w.title), w.detail ? h('code', {}, w.detail) : null),
-      btn('primary', t('interrupt.soon'), 'pause', null, { disabled: true, text: t('interrupt') })) : null,
-    detailOf === sel && !detail ? h('p', { class: 'empty' }, t('no.transcript')) : null,
-    items.map((x) => x.kind === 'user' ? h('div', { class: 'bubble' }, h('div', {}, x.text))
-      : x.kind === 'text' ? h('p', { class: 'said' }, prose(x.text))
-      : h('div', { class: `tool${x.error ? ' bad' : ''}` }, h('b', {}, `${x.error ? '✗' : '✓'} ${x.tool}`), h('code', {}, x.target), x.out ? h('span', {}, `→ ${x.out.split('\n')[0]}`) : null)),
-    (sent.get(sel) ?? []).map((m) => h('div', { class: 'bubble' }, h('div', {}, m.text), h('span', { class: 'meta' }, m.status))),
+      h('div', {}, h('strong', { style: 'display:block' }, w.title), w.detail ? h('code', {}, short(w.detail, s.cwd)) : null),
+      w.kind === 'context' ? btn('primary', modReady(s) ? t('set.compact') : whyNot(s), 'loop', () => command('/compact'), { text: t('set.compact'), disabled: !modReady(s) })
+        : btn('primary', modReady(s) ? t('interrupt') : whyNot(s), 'pause', () => interrupt(sel), { disabled: !modReady(s), text: t('interrupt') })) : null,
     answered.has(sel) ? h('p', { class: 'trace' }, icon('check', 16), answered.get(sel)) : null,
-    decisionCard(),
-    s?.status === 'busy' && !w ? h('p', { class: 'working' }, h('i'), s.title || t('working')) : null)
-  if (stick) view.scrollTop = view.scrollHeight
+    card,
+    waits ? h('article', { class: 'card' }, h('strong', {}, icon('terminal', 18), ' ', t('waits.terminal'), s.waitingFor ? ` (${s.waitingFor})` : ''),
+      h('p', { class: 'meta', style: 'margin:0' }, t(s.connected ? 'waits.lost' : 'not.connected')),
+      s.connected ? null : resumeRow(s.sessionId),
+      termOf(s.sessionId) ? h('div', { class: 'actions' }, btn('primary', t('see.terminal'), 'terminal', () => { tab = 'terminal'; renderPane() }, { text: t('see.terminal') })) : null) : null,
+    !w && !card && !waits && !answered.has(sel) ? h('p', { class: 'empty' }, s?.status === 'busy' ? [h('span', { class: 'working' }, h('i'), s.title || t('working'))] : t('nothing.todo')) : null)
+}
+
+// ---- settings of one session: sent as slash commands through its companion mod ----
+async function command(text) {
+  const err = await post('/api/instruct', { session: sel, text })
+  toast(err ? error(err) : t('sent.command', { command: text.split(' ')[0], name: named(sel) }), err ? 'alert' : 'send')
+}
+function settingsView(view, s) {
+  const id = s.sessionId
+  // Rename, model and compact are slash commands: without an up-to-date mod nothing would run them.
+  const ready = modReady(s)
+  const why = ready ? null : `${whyNot(s).charAt(0).toUpperCase()}${whyNot(s).slice(1)}.`
+  const name = h('input', { class: 'field grow', value: nameOf(s), maxlength: 60, 'aria-label': t('set.name'), disabled: !ready })
+  const rename = () => {
+    const v = name.value.trim()
+    if (!v || /[\r\n]/.test(v)) return toast(t('err.name'), 'alert')
+    command(`/rename ${v}`)
+  }
+  name.addEventListener('keydown', (e) => { if (e.key === 'Enter') rename() })
+  const model = h('select', { class: 'field', 'aria-label': t('model.next'), disabled: !ready, onchange: () => model.value && command(`/model ${model.value}`) },
+    ['', 'fable', 'opus', 'sonnet', 'haiku'].map((m) => h('option', { value: m, selected: m && (s.model ?? '').includes(m) ? true : null }, m || '·')))
+  const l = left(s)
+  const row = (label, note, ...controls) => h('section', { class: 'setting' }, h('h3', {}, label), h('div', { class: 'actions' }, controls), note ? h('p', { class: 'meta' }, note) : null)
+  fill(view,
+    linkRow(s),
+    row(t('set.name'), why ?? t('set.rename.note'), name, btn('primary', t('set.rename'), 'pencil', rename, { text: t('set.rename'), disabled: !ready })),
+    row(t('model.next'), why, h('label', { style: 'display:inline-flex;align-items:center;gap:8px' }, icon('chip', 18), model)),
+    row(t('context'), why ?? t('set.compact.note'), l == null ? null : meter(l, false), btn('', t('set.compact'), 'loop', () => command('/compact'), { text: t('set.compact'), disabled: !ready })),
+    row(t('set.group'), null, btn('', t('group.move'), 'sliders', () => openPlace(s), { text: groupNamed(groupIdOf(s)) || t('group.none') })),
+    row(t('set.notify'), null, h('div', { class: 'seg', role: 'group', 'aria-label': t('set.notify') },
+      [[false, t('set.notify.on')], [true, t('set.notify.off')]].map(([off, label]) => h('button', { type: 'button', 'aria-pressed': String(muted.has(id) === off), onclick: () => { off ? muted.add(id) : muted.delete(id); store.set('muted', [...muted]); renderView() } }, label)))),
+    row(t('ignore'), null, btn('', ignored.has(id) ? t('unignore') : t('ignore'), ignored.has(id) ? 'eye' : 'eyeOff', () => setIgnored(id, !ignored.has(id)), { text: ignored.has(id) ? t('unignore') : t('ignore') })),
+    row(t('set.resume'), null, resumeRow(id)))
+}
+// How the session is tied to clearance: hooks attach to running sessions on their own; the mod only
+// when the session starts or reloads its plugins, which only its terminal can ask for.
+function linkRow(s) {
+  const mod = modReady(s) ? 'ok' : reachable(s) ? 'old' : 'none'
+  const line = (ok, text) => h('p', { style: 'margin:0;display:flex;align-items:center;gap:8px', class: ok ? '' : 'meta' }, icon(ok ? 'check' : 'alert', 16), text)
+  return h('section', { class: 'setting' }, h('h3', {}, t('link')),
+    line(s.connected, t(s.connected ? 'link.hooks.ok' : 'link.hooks.none')),
+    line(mod === 'ok', t(`link.mod.${mod}`)))
+}
+// The command that resumes a session elsewhere, ready to copy.
+const resumeRow = (id) => copyField(`claude --resume ${id}`, t('set.resume'))
+// A command to copy: read-only field and a copy button.
+function copyField(command, label = command) {
+  const field = h('input', { class: 'field grow', readonly: true, value: command, 'aria-label': label })
+  return h('div', { class: 'actions' }, field, btn('', t('copy'), 'checks', () => { field.select(); navigator.clipboard?.writeText(field.value).then(() => toast(t('copied'), 'check'), () => {}) }, { text: t('copy') }))
 }
 
 // ---- decision cards ----
@@ -935,7 +1265,7 @@ const MODES = ['', 'default', 'acceptEdits', 'plan', 'auto']
 const isGo = (label = '') => /^go$/i.test(label.trim())
 function decisionCard() {
   const r = requestOf(sel)
-  const settled = !r && (snap.settled ?? []).find((x) => x.session === sel)
+  const settled = !r && (snap.settled ?? []).findLast((x) => x.session === sel)
   if (settled) return h('article', { class: 'card settledcard' }, h('strong', {}, icon('handoff', 18), ' ', t('settled.note', { time: clock(settled.settledAt) })), h('code', {}, cmdOf(settled.input)))
   const done = !r && (snap.done ?? []).find((d) => d.session === sel && !pending.has(`read:${sel}`))
   if (done) return reviewCard(done)
@@ -1015,6 +1345,7 @@ function reviewCard(d) {
   const files = detailOf === sel ? (detail?.files ?? []) : []
   const plus = files.reduce((n, x) => n + x.plus, 0), minus = files.reduce((n, x) => n + x.minus, 0)
   return h('article', { class: 'card review', 'aria-label': t('review') },
+    d.message ? h('div', { class: 'said' }, prose(d.message)) : null,
     h('strong', { style: 'display:inline-flex;align-items:center;gap:8px;font-size:12px;letter-spacing:.05em;text-transform:uppercase' }, icon('verified', 16), t('facts')),
     h('div', { class: 'actions' },
       h('span', { class: `pill ${f.tests ? (f.tests.ok ? 'ok' : 'ko') : 'none'}`, title: f.tests?.summary ?? '' }, icon('flask', 16), f.tests ? (f.tests.ok ? t('tests.ok') : t('tests.ko')) : t('tests.none')),
@@ -1023,8 +1354,8 @@ function reviewCard(d) {
       f.mr ? h('a', { class: 'pill none', href: f.mr, target: '_blank', rel: 'noopener' }, icon('mr', 16), 'MR') : null),
     h('div', { class: 'actions' },
       h('button', { type: 'button', class: 'btn primary', 'data-key': 'e', title: `${t('validate')}  e`, onclick: () => queueRead(d) }, icon('check'), t('validate')),
-      h('button', { type: 'button', class: 'btn', onclick: () => { drafts.set(sel, t('fix.text')); renderPane(); $('#composer')?.focus() } }, icon('pencil'), t('fix')),
-      btn('icon', t('diff'), 'eye', () => { tab = 'thread'; $('#inspector')?.scrollIntoView() })))
+      h('button', { type: 'button', class: 'btn', onclick: () => { drafts.set(sel, t('fix.text')); if (phone.matches) tab = 'thread'; renderPane(); $('#composer')?.focus() } }, icon('pencil'), t('fix')),
+      btn('icon', t('diff'), 'eye', () => { if (narrow.matches) { tab = 'details'; renderPane() } else $('#inspector')?.scrollIntoView() })))
 }
 
 // Every answer waits 5 s before it leaves, so that it can be taken back; the next request opens at once.
@@ -1051,33 +1382,154 @@ function queueRead(d) {
 }
 
 // ---- composer: written as if typed in the session, delivered by its companion mod ----
+// Delivered only once the server saw the mod take it; the server keeps the last message per session.
+function sentStatus(s, m) {
+  // The queued instruction with this text sent closest to this message (a shortcut can be sent twice).
+  const i = (s?.instructions ?? []).filter((x) => x.text === m.text).sort((a, b) => Math.abs(a.at - m.at) - Math.abs(b.at - m.at))[0]
+  if (!i) return clock(m.at)
+  if (!i.delivered) return t('sent.waiting', { time: clock(m.at) })
+  return m.busy ? t('sent.busy', { time: clock(m.at) }) : t('sent.ready', { time: clock(i.delivered) })
+}
 function composer(s) {
   const id = s.sessionId
   const fresh = s.usage && Date.now() - s.usage.at < 30_000
   const r = requestOf(id)
-  const delivery = !fresh ? t('delivery.nomod') : s.status === 'busy' ? t('delivery.busy') : r ? t('delivery.waits') : t('delivery.ready')
+  const delivery = termOf(id) ? t('delivery.term') : !fresh ? t('delivery.nomod') : s.status === 'busy' ? t('delivery.busy') : r ? t('delivery.waits') : t('delivery.ready')
   const area = h('textarea', { id: 'composer', class: 'field', rows: 2, 'aria-label': t('write.to', { name: nameOf(s) }), placeholder: t('write.to', { name: nameOf(s) }), value: drafts.get(id) ?? '',
     oninput: () => drafts.set(id, area.value), onkeydown: (e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); submit() } } })
+  acceptFiles(area, (paths) => {
+    const at = area.selectionStart ?? area.value.length
+    const add = `${at && !/\s$/.test(area.value.slice(0, at)) ? ' ' : ''}${paths.join(' ')} `
+    area.value = area.value.slice(0, at) + add + area.value.slice(at)
+    drafts.set(id, area.value)
+    area.focus()
+  })
   async function submit() {
     const text = area.value.trim()
-    if (!text) return
-    const err = await post('/api/instruct', { session: id, text })
-    if (err) return toast(error(err), 'alert')
+    if (!text || !(await sendText(id, text))) return
     drafts.delete(id)
-    const list = sent.get(id) ?? []
-    list.push({ text, status: s.status === 'busy' ? t('sent.busy', { time: clock(Date.now()) }) : t('sent.ready', { time: clock(Date.now()) }) })
-    sent.set(id, list)
     area.value = ''
-    renderThread()
   }
+  const chips = (snap.prompts ?? []).map((p, i) => btn('sm', `${p.text}\n\nCtrl+Shift+${(i + 1) % 10}`, 'send', () => sendShortcut(i), { text: p.label, size: 14 }))
   return h('div', { class: 'composer' },
+    chips.length ? h('div', { class: 'chips', role: 'group', 'aria-label': t('shortcuts') }, chips) : null,
     h('div', { class: 'row' }, area, h('button', { type: 'button', class: 'btn icon primary send', 'aria-label': t('send'), title: `${t('send')}  Ctrl Enter`, onclick: submit }, icon('send', 22))),
     h('span', { class: 'meta', style: 'display:inline-flex;align-items:center;gap:6px' }, icon('clock', 14), delivery))
 }
 
+// In clearance's own terminal the text is typed there, as a paste then Enter (ADR-0016); elsewhere the
+// companion mod submits it, in turn with the others queued for the session.
+async function sendText(id, text) {
+  const term = termOf(id)
+  const err = term ? await post(`/api/term/${term.id}/input`, { data: `\x1b[200~${text}\x1b[201~\r` }) : await post('/api/instruct', { session: id, text })
+  if (err) { toast(error(err), 'alert'); return false }
+  const list = sent.get(id) ?? []
+  list.push({ text, at: Date.now(), busy: sessionOf(id)?.status === 'busy' })
+  sent.set(id, list)
+  renderView()
+  return true
+}
+async function sendShortcut(i) {
+  const p = (snap.prompts ?? [])[i]
+  if (!p) return
+  if (!sel || sel.startsWith('term:') || !(sessionOf(sel) || termOf(sel))) return toast(t('shortcut.nosession'), 'alert')
+  if (await sendText(sel, p.text)) toast(t('shortcut.sent', { label: p.label, name: named(sel) }), 'send')
+}
+
+// ---- files pasted or dropped: kept by clearance where a session can read them, their path in the text ----
+async function attachFiles(files) {
+  const paths = []
+  for (const f of files) {
+    const res = await fetch('/api/attach', { method: 'POST', headers: { 'x-name': encodeURIComponent(f.name || 'pasted.png') }, body: f }).catch(() => null)
+    const out = res ? await res.json().catch(() => ({})) : {}
+    if (out.path) paths.push(/\s/.test(out.path) ? `"${out.path}"` : out.path)
+    else toast(t('attach.failed', { error: error(out.error ?? res?.statusText ?? '?') }), 'alert')
+  }
+  return paths
+}
+function acceptFiles(el, put) {
+  const files = (list) => [...(list ?? [])]
+  // Caught on the way down: xterm's own paste handler stops the event on its text area.
+  el.addEventListener('paste', async (e) => {
+    const got = files(e.clipboardData?.files)
+    if (!got.length) return
+    e.preventDefault(); e.stopPropagation()
+    const paths = await attachFiles(got)
+    if (paths.length) put(paths)
+  }, true)
+  el.addEventListener('dragover', (e) => { if (files(e.dataTransfer?.types).includes('Files')) { e.preventDefault(); el.classList.add('dropping') } })
+  el.addEventListener('dragleave', () => el.classList.remove('dropping'))
+  el.addEventListener('drop', async (e) => {
+    el.classList.remove('dropping')
+    const got = files(e.dataTransfer?.files)
+    if (!got.length) return
+    e.preventDefault()
+    const paths = await attachFiles(got)
+    if (paths.length) put(paths)
+  })
+}
+
+// ---- clearance's own terminals (ADR-0016): the session's real screen, drawn by xterm.js ----
+// A terminal not yet tied to its session (Claude Code asking whether to trust the folder) is shown as term:<id>.
+const termOf = (id) => (snap.terms ?? []).find((x) => x.session === id || `term:${x.id}` === id)
+let liveTerm = null // { id, term, fit, source, host, watch }
+let xtermReady = null
+// xterm.js is loaded when a terminal is first shown, with the page's nonce, which it also gives the style
+// elements it creates (ADR-0014).
+function loadXterm() {
+  if (xtermReady) return xtermReady
+  const make = document.createElement.bind(document)
+  document.createElement = (tag, ...rest) => { const el = make(tag, ...rest); if (String(tag).toLowerCase() === 'style') el.nonce = NONCE; return el }
+  const css = make('link'); css.rel = 'stylesheet'; css.href = '/vendor/xterm/xterm.css'; document.head.append(css)
+  const script = (src) => new Promise((ok, ko) => { const s = make('script'); s.nonce = NONCE; s.src = src; s.onload = ok; s.onerror = ko; document.head.append(s) })
+  xtermReady = script('/vendor/xterm/xterm.js').then(() => script('/vendor/xterm/addon-fit.js'))
+  return xtermReady
+}
+function dropTerm() {
+  if (!liveTerm) return
+  liveTerm.source.close(); liveTerm.watch.disconnect(); liveTerm.term.dispose()
+  liveTerm = null
+}
+async function showTerm(view, t0) {
+  if (liveTerm?.id === t0.id && view.contains(liveTerm.host)) return liveTerm.fit.fit()
+  dropTerm()
+  const host = h('div', { class: 'xterm-host' })
+  fill(view, host)
+  await loadXterm()
+  if (!view.contains(host)) return
+  const css = getComputedStyle(document.body)
+  const term = new Terminal({ cursorBlink: true, fontSize: 14, fontFamily: css.getPropertyValue('--mono'), scrollback: 5000,
+    theme: { background: css.getPropertyValue('--screen').trim(), foreground: css.getPropertyValue('--screenInk').trim() } })
+  const fit = new FitAddon.FitAddon()
+  term.loadAddon(fit)
+  term.open(host)
+  const input = (data) => post(`/api/term/${t0.id}/input`, { data })
+  term.onData(input)
+  term.onResize(({ cols, rows }) => post(`/api/term/${t0.id}/resize`, { cols, rows }))
+  const source = new EventSource(`/api/term/${t0.id}`)
+  source.onmessage = (e) => term.write(Uint8Array.from(atob(e.data), (c) => c.charCodeAt(0)))
+  source.addEventListener('end', () => { source.close(); term.write(`\r\n\x1b[2m${t('term.ended')}\x1b[0m\r\n`) })
+  const watch = new ResizeObserver(() => { try { fit.fit() } catch {} })
+  watch.observe(host)
+  acceptFiles(host, (paths) => input(` ${paths.join(' ')} `))
+  liveTerm = { id: t0.id, term, fit, source, host, watch }
+  fit.fit()
+  term.focus()
+}
+
 // ---- inspector: the task, the plan, files, tests, agents, cost ----
-function renderInspector() {
-  const box = $('#inspector')
+// What the session pointed to, newest first: an artifact, a merge request, a local server, a page.
+const LINKS = [[/^https:\/\/claude\.ai\/.*artifact/, 'journal', 'links.artifact'], [/\/merge_requests\/\d+|\/pull\/\d+/, 'mr', 'links.mr'], [/^http:\/\/(localhost|127\.0\.0\.1)[:/]/, 'terminal', 'links.local']]
+function linkItem(l) {
+  const [, iconName, kind] = LINKS.find(([re]) => re.test(l.url)) ?? [null, 'external', null]
+  const number = /(?:merge_requests|pull)\/(\d+)/.exec(l.url)?.[1]
+  const where = l.url.replace(/^https?:\/\//, '').replace(/\/$/, '')
+  const repo = where.replace(/^[^/]+\//, '').replace(/\/(-\/)?(merge_requests|pull)\/\d+.*$/, '')
+  const label = kind === 'links.mr' ? `${t(kind)} !${number} · ${repo}` : kind ? `${t(kind)} · ${where}` : where
+  return h('a', { class: 'file', href: l.url, target: '_blank', rel: 'noopener noreferrer', title: l.url }, icon(iconName, 16), h('code', {}, label), l.at ? h('span', { class: 'meta' }, ago(Date.parse(l.at))) : null)
+}
+// In its column on a wide screen, in the Details tab on a narrow one.
+function renderInspector(box = $('#inspector')) {
   if (!box) return
   const s = sessionOf(sel) ?? {}
   const d = detailOf === sel ? detail : null
@@ -1087,22 +1539,19 @@ function renderInspector() {
   const steps = todos.length ? todos.map((x) => ({ text: x.content, state: x.status === 'completed' ? 'done' : x.status === 'in_progress' ? 'now' : 'todo' }))
     : run?.phases?.length ? run.phases.map((p) => ({ text: p, state: p === run.current ? 'now' : run.phases.indexOf(p) < run.phases.indexOf(run.current) ? 'done' : 'todo' })) : []
   const files = d?.files ?? []
+  const links = (d?.links ?? []).filter((l) => /^https?:\/\//.test(l.url ?? ''))
   const agents = [...(d?.agents ?? []), ...(run?.agents ?? [])].filter((a) => a.running || a.errors)
   const f = s.facts ?? {}
   const usd = s.usage?.cost?.usd
   const section = (iconName, title, ...body) => h('section', {}, h('h3', {}, icon(iconName, 16), title), body)
-  const model = h('select', { class: 'field', 'aria-label': t('model.next'), title: t('model.next'), onchange: async () => {
-    const err = await post('/api/instruct', { session: sel, text: `/model ${model.value}` })
-    toast(err ? error(err) : `${t('model.next')} · ${model.value}`, err ? 'alert' : 'chip')
-  } }, ['', 'fable', 'opus', 'sonnet', 'haiku'].map((m) => h('option', { value: m, selected: m && (s.model ?? '').includes(m) ? true : null }, m || '·')))
   fill(box,
     section('flag', t('task'), h('p', { style: 'margin:0;font-size:15px;line-height:1.45' }, prompts.at(-1)?.text ?? s.title ?? '')),
+    links.length ? section('external', `${t('links')} · ${links.length}`, links.slice(0, 12).map(linkItem)) : null,
     steps.length ? section('plan', t('plan'), steps.map((x) => h('div', { class: `step ${x.state}` }, icon(x.state === 'done' ? 'check' : x.state === 'now' ? 'now' : 'todo', 16), h('span', {}, x.text)))) : null,
     section('diff', `${t('files', { n: files.length })}`, files.length ? files.slice(-20).map((x) => h('div', { class: 'file', title: x.file }, h('code', {}, rel(x.file, s.cwd)), h('span', { class: 'plus' }, `+${x.plus}`), h('span', { class: 'minus' }, `-${x.minus}`))) : h('span', { class: 'meta' }, '·')),
     section('flask', t('tests'), h('span', { class: `pill ${f.tests ? (f.tests.ok ? 'ok' : 'ko') : 'none'}`, style: 'align-self:flex-start' }, f.tests ? `${f.tests.ok ? t('tests.ok') : t('tests.ko')}${f.tests.summary ? ` · ${f.tests.summary}` : ''}` : t('tests.none'))),
     agents.length ? section('agents', `${t('agents')} · ${agents.length}`, agents.map((a) => h('div', { class: 'agent' }, avatar(a.errors >= 3 ? 'dizzy' : 'work', { ...s, model: a.model }, 28), h('b', {}, a.label), h('span', { class: a.errors >= 3 ? 'loop' : 'meta' }, a.running ? '…' : a.errors ? `✗ ${a.errors}` : '')))) : null,
-    section('coin', t('cost'), h('span', {}, h('strong', {}, usd != null ? `${usd.toFixed(2)} $` : '·'), ' ', h('span', { class: 'meta' }, s.usage?.rate ? t('cost.rate', { usd: `${s.usage.rate.toFixed(2)} $` }) : t('at.rest'))),
-      h('label', { style: 'display:flex;align-items:center;gap:8px' }, icon('chip', 16), model)))
+    section('coin', t('cost'), h('span', {}, h('strong', {}, usd != null ? `${usd.toFixed(2)} $` : '·'), ' ', h('span', { class: 'meta' }, s.usage?.rate ? t('cost.rate', { usd: `${s.usage.rate.toFixed(2)} $` }) : t('at.rest')))))
 }
 
 // ---- overlays: new task, search, groups, journal, settings ----
@@ -1115,41 +1564,46 @@ const close = () => $('#layer').replaceChildren()
 const dialogHead = (iconName, title) => h('div', { class: 'row' }, h('h2', {}, icon(iconName, 22), title), btn('icon sm', t('close'), 'x', close))
 
 function openPalette() {
-  const recent = [...new Set(snap.sessions.map((s) => s.cwd).filter(Boolean))]
-  const st = { folder: store.get('cwd', recent[0] ?? ''), model: 'sonnet', mode: 'auto' }
+  const recent = [...new Set([...snap.sessions.map((s) => s.cwd), ...fleet().stopped.map((x) => x.cwd)].filter(Boolean))]
+  const st = { folder: store.get('cwd', recent[0] ?? ''), model: 'sonnet', mode: 'auto', group: fleet().groups.some((g) => g.id === store.get('group', '')) ? store.get('group', '') : '' }
   const text = h('textarea', { class: 'field', rows: 3, placeholder: t('palette.prompt'), 'aria-label': t('palette.prompt') })
   const name = h('input', { class: 'field grow', 'aria-label': t('palette.name'), placeholder: t('palette.name') })
   const folders = h('div', { class: 'row', role: 'group', 'aria-label': t('folder') })
-  const picker = h('div', { class: 'row', hidden: true })
-  const groupLine = h('span', { class: 'meta' })
+  // The group it goes in once it shows up (ADR-0015).
+  const groupPick = h('select', { class: 'field', 'aria-label': t('set.group'), onchange: (e) => { st.group = e.target.value } },
+    [{ id: '', name: t('group.none') }, ...fleet().groups].map((g) => h('option', { value: g.id, selected: g.id === st.group ? true : null }, g.name)))
   const seg = (list, key, label) => h('div', { class: 'seg', role: 'group', 'aria-label': label }, list.map(([v, l]) => h('button', { type: 'button', 'aria-pressed': String(st[key] === v), onclick: (e) => { st[key] = v; e.target.parentNode.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === e.target))) } }, l)))
   const autoName = () => `${folderName(st.folder).toLowerCase().replace(/[^\w.-]/g, '-').slice(0, 30)}-${Math.random().toString(16).slice(2, 4)}`
   const drawFolders = () => {
-    fill(folders, icon('folder'), [...new Set([st.folder, ...recent].filter(Boolean))].slice(0, 8).map((p) => h('button', { type: 'button', class: 'folder', 'aria-pressed': String(p === st.folder), title: p, onclick: () => { st.folder = p; name.value = autoName(); drawFolders() } }, h('span', { class: 'dot', style: `background:${colours(snap.groups?.[p] || folderName(p))[0]}` }), folderName(p))),
-      btn('icon sm quiet', t('browse'), 'search', () => browse(st.folder)))
-    groupLine.textContent = st.folder ? `${snap.groups?.[st.folder] || folderName(st.folder)} · ${t('group.auto')}` : ''
+    fill(folders, icon('folder'), [...new Set([st.folder, ...recent].filter(Boolean))].slice(0, 8).map((p) => h('button', { type: 'button', class: 'folder', 'aria-pressed': String(p === st.folder), title: p, onclick: () => { st.folder = p; name.value = autoName(); drawFolders() } }, h('span', { class: 'dot', style: `background:${colours(folderName(p))[0]}` }), folderName(p))),
+      btn('icon sm quiet', t('browse'), 'search', () => browse()))
   }
-  async function browse(path) {
-    picker.hidden = false
-    const res = await fetch(`/api/folders?path=${encodeURIComponent(path ?? '')}`)
-    const at = await res.json().catch(() => ({}))
-    if (!res.ok) return fill(picker, h('span', {}, error(at.error ?? '')), btn('sm', t('home'), null, () => browse(''), { text: t('home') }))
-    fill(picker, at.drives.map((d) => btn('sm', d, null, () => browse(d), { text: d })), at.parent ? btn('sm', t('up'), 'arrowUp', () => browse(at.parent), { text: t('up') }) : null, h('code', {}, at.path),
-      h('div', { class: 'row', style: 'width:100%' }, at.folders.map((f) => btn('sm', f, null, () => browse(`${at.path.replace(/[\\/]$/, '')}${at.path.includes('\\') ? '\\' : '/'}${f}`), { text: f }))),
-      btn('primary sm', t('use.folder'), 'check', () => { st.folder = at.path; name.value = autoName(); picker.hidden = true; drawFolders() }, { text: t('use.folder') }))
+  // The folders of the machine running clearance, browsed in the page (no system dialog, ADR-0016).
+  const browser = h('div', { class: 'menu', role: 'group', 'aria-label': t('browse') })
+  async function browse(path = st.folder) {
+    const res = await fetch(`/api/folders?path=${encodeURIComponent(path ?? '')}`).catch(() => null)
+    const at = res?.ok ? await res.json() : null
+    if (!at) return
+    const pick = () => { st.folder = at.path; name.value = autoName(); fill(browser); drawFolders() }
+    fill(browser,
+      h('div', { class: 'row' }, at.parent ? btn('icon sm', t('folder.up'), 'arrowUp', () => browse(at.parent)) : null, h('code', { class: 'grow' }, at.path),
+        btn('sm primary', t('folder.pick'), 'check', pick, { text: t('folder.pick') }), btn('icon sm quiet', t('close'), 'x', () => fill(browser))),
+      h('div', { class: 'row', style: 'max-height:220px;overflow:auto' }, at.folders.length ? at.folders.map((n) => h('button', { type: 'button', class: 'folder', onclick: () => browse(`/${n}`) }, icon('folder', 16), n)) : h('span', { class: 'meta' }, t('folder.empty'))))
   }
   const error_ = h('p', { class: 'meta', role: 'status' })
   name.value = autoName()
   drawFolders()
   const go = async () => {
-    const err = await post('/api/start', { cwd: st.folder, name: name.value.trim(), model: st.model, mode: st.mode, prompt: text.value.trim() || undefined })
+    const err = await post('/api/start', { cwd: st.folder, name: name.value.trim(), model: st.model, mode: st.mode, group: st.group || undefined, prompt: text.value.trim() || undefined })
     if (err) { error_.textContent = t('err.start', { error: error(err) }); return }
     store.set('cwd', st.folder)
+    store.set('group', st.group)
+    opening = name.value.trim()
     close()
     toast(t('palette.started', { name: name.value.trim() }), 'play')
   }
-  overlay(dialogHead('plus', t('palette.title')), text, folders, picker,
-    h('div', { class: 'row' }, groupLine, name),
+  overlay(dialogHead('plus', t('palette.title')), text, folders, browser,
+    h('div', { class: 'row' }, groupPick, name),
     h('div', { class: 'row' }, seg([['fable', 'fable'], ['opus', 'opus'], ['sonnet', 'sonnet'], ['haiku', 'haiku']], 'model', t('model')), seg([['default', t('mode.default')], ['auto', t('mode.auto')], ['plan', t('mode.plan')], ['acceptEdits', t('mode.acceptEdits')]], 'mode', t('mode'))),
     h('div', { class: 'row' }, h('button', { type: 'button', class: 'btn primary', onclick: go }, icon('play'), t('palette.launch')), h('kbd', {}, 'Ctrl ⏎'), error_))
   text.addEventListener('keydown', (e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) go() })
@@ -1162,9 +1616,9 @@ function openSearch() {
   const commands = [[t('new.task'), 'plus', () => openPalette()], [t('journal'), 'journal', openJournal], [t('groups.manage'), 'sliders', () => openGroups()], [t('settings'), 'sliders', openSettings], [folded ? t('unfold') : t('fold'), 'fold', () => { close(); fold(!folded) }]]
   let found = [], at = 0
   const draw = () => {
-    const q = input.value.toLowerCase()
-    const sessions = snap.sessions.filter((s) => `${nameOf(s)} ${s.cwd} ${s.title ?? ''} ${groupOf(s)}`.toLowerCase().includes(q)).map((s) => [nameOf(s), null, () => { close(); select(s.sessionId) }, s])
-    found = [...sessions, ...commands.filter(([l]) => l.toLowerCase().includes(q))]
+    const q = input.value
+    const sessions = snap.sessions.filter((s) => matches(q, `${nameOf(s)} ${s.cwd} ${s.title ?? ''} ${groupOf(s)}`)).map((s) => [nameOf(s), null, () => { close(); select(s.sessionId) }, s])
+    found = [...sessions, ...commands.filter(([l]) => matches(q, l))]
     at = Math.min(at, Math.max(0, found.length - 1))
     hits.replaceChildren(...found.map(([label, i, run, s], k) => h('button', { type: 'button', class: 'hit', role: 'option', 'aria-selected': String(k === at), onclick: run }, s ? avatar('done', s, 28) : icon(i), h('b', {}, label), s ? h('span', { class: 'meta' }, s.cwd) : null)))
   }
@@ -1179,18 +1633,41 @@ function openSearch() {
   input.focus()
 }
 
-function openGroups(focusCwd) {
-  const folders = [...new Set(snap.sessions.map((s) => s.cwd).filter(Boolean))]
-  const rows = folders.map((cwd) => {
-    const input = h('input', { class: 'field grow', value: snap.groups?.[cwd] ?? '', placeholder: folderName(cwd), 'aria-label': cwd })
-    return [cwd, input, h('div', { class: 'row' }, h('span', { class: 'dot', style: `background:${colours(snap.groups?.[cwd] || folderName(cwd))[0]}` }), h('code', { style: 'flex:1 1 300px' }, cwd), input)]
-  })
-  overlay(dialogHead('sliders', t('groups.title')), h('p', { class: 'meta', style: 'margin:0' }, t('groups.hint')), rows.map((x) => x[2]),
-    h('div', { class: 'row' }, h('button', { type: 'button', class: 'btn primary', onclick: async () => {
-      for (const [cwd, input] of rows) if ((snap.groups?.[cwd] ?? '') !== input.value.trim()) await post('/api/group', { cwd, group: input.value.trim() })
-      close()
-    } }, icon('check'), t('save'))))
-  ;(rows.find((x) => x[0] === focusCwd)?.[1] ?? rows[0]?.[1])?.focus()
+// The user's groups (ADR-0015): create, rename (on leaving the field), delete; a deleted group's sessions go
+// back to "No group".
+function openGroups(createFirst) {
+  const body = h('div', { class: 'menu' })
+  const fresh = h('input', { class: 'field grow', maxlength: 40, placeholder: t('group.name'), 'aria-label': t('group.new') })
+  const create = async () => {
+    const name = fresh.value.trim()
+    if (!name) return
+    const err = await post('/api/groups', { action: 'create', name })
+    if (err) return toast(error(err), 'alert')
+    fresh.value = ''
+    setTimeout(draw, 300)
+  }
+  fresh.addEventListener('keydown', (e) => { if (e.key === 'Enter') create() })
+  const draw = () => fill(body,
+    fleet().groups.length ? fleet().groups.map((g) => {
+      const input = h('input', { class: 'field grow', maxlength: 40, value: g.name, 'aria-label': t('group.name') })
+      input.addEventListener('change', async () => { const err = await post('/api/groups', { action: 'rename', id: g.id, name: input.value }); if (err) toast(error(err), 'alert') })
+      const n = Object.values(fleet().members ?? {}).filter((x) => x === g.id).length
+      return h('div', { class: 'row' }, h('span', { class: 'dot', style: `background:${colours(g.name)[0]}` }), input, h('span', { class: 'meta' }, t('sessions', { n })),
+        btn('icon sm quiet', t('group.delete'), 'x', async () => { await post('/api/groups', { action: 'delete', id: g.id }); setTimeout(draw, 300) }))
+    }) : h('p', { class: 'empty' }, t('groups.none')),
+    h('div', { class: 'row' }, fresh, btn('primary', t('group.create'), 'plus', create, { text: t('group.create') })))
+  overlay(dialogHead('sliders', t('groups.title')), h('p', { class: 'meta', style: 'margin:0' }, t('groups.hint')), body)
+  draw()
+  if (createFirst) fresh.focus()
+}
+
+// Moves one session into a group, or out of every group.
+function openPlace(s) {
+  const place = async (group) => { const err = await post('/api/place', { session: s.sessionId, group: group || undefined }); close(); if (err) toast(error(err), 'alert') }
+  overlay(dialogHead('sliders', t('group.move')),
+    h('div', { class: 'menu' }, [...fleet().groups, { id: '', name: t('group.none') }].map((g) =>
+      h('button', { type: 'button', class: 'btn', 'aria-pressed': String(groupIdOf(s) === g.id), onclick: () => place(g.id) }, h('span', { class: 'dot', style: `background:${colours(g.id ? g.name : folderName(s.cwd))[0]}` }), g.name))),
+    btn('sm', t('group.new'), 'plus', () => openGroups(true), { text: t('group.new') }))
 }
 
 async function openJournal() {
@@ -1208,13 +1685,104 @@ async function openJournal() {
       h('tbody', {}, j.decisions.map((d) => h('tr', {}, h('td', {}, new Date(d.at).toLocaleString(lang)), h('td', {}, d.name || named(d.session)), h('td', {}, what(d)), h('td', {}, d.risk ? t(`risk.${d.risk}`) : ''), h('td', {}, d.action ?? '')))))) : h('p', { class: 'empty' }, t('journal.none')))
 }
 
+// ---- stopping sessions: through their companion mod, which ends the running turn and, asked to, quits ----
+const running = () => snap.sessions.filter((s) => s.status === 'busy' || s.status === 'waiting')
+const reachable = (s) => !!(s?.usage && Date.now() - s.usage.at < 30_000)
+// Its mod reports, and is recent enough to run a slash command or stop it: a mod is loaded when its
+// session starts, so an older one sends commands as plain text and ignores a stop.
+const modReady = (s) => reachable(s) && (snap.mods?.[s.sessionId] ?? 1) >= 2
+const whyNot = (s) => (reachable(s) ? t('stop.oldmod') : t('stop.nomod'))
+async function interrupt(id) {
+  const err = await post('/api/stop', { sessions: [id], exit: false })
+  toast(err ? error(err) : t('interrupted', { name: named(id) }), err ? 'alert' : 'pause')
+}
+function openStop(sessions, exit) {
+  const st = { exit }
+  const reach = sessions.filter(modReady), away = sessions.filter((s) => !modReady(s))
+  const asked = reach.some((s) => snap.requests.some((r) => r.session === s.sessionId))
+  // Quitting gives back the memory of the sessions it reaches (ADR-0015).
+  const freed = exit ? reach.reduce((a, s) => a + memOf(s.sessionId), 0) : 0
+  const who = (s) => h('div', { class: 'row' }, avatar(s.status === 'busy' ? 'work' : 'wait', s, 28), h('b', {}, nameOf(s)), h('span', { class: 'meta' }, s.title || s.waitingFor || ''))
+  const go = h('button', { type: 'button', class: 'btn stop', disabled: !reach.length, onclick: async () => {
+    const err = await post('/api/stop', { sessions: reach.map((s) => s.sessionId), exit: st.exit })
+    if (err) return toast(error(err), 'alert')
+    close()
+    toast(t('stop.sent', { n: reach.length }), 'stop')
+  } }, icon('stop'), t('stop.go', { n: reach.length }))
+  overlay(dialogHead('stop', t('stop.title')),
+    sessions.length ? null : h('p', { class: 'empty' }, t('stop.none')),
+    reach.length ? [h('h3', {}, t('stop.reach')), reach.map(who)] : null,
+    away.length ? [h('h3', {}, t('stop.unreach')), away.map((s) => h('div', { class: 'row' }, who(s), h('span', { class: 'meta' }, whyNot(s))))] : null,
+    reach.length ? h('div', { class: 'seg', role: 'group', 'aria-label': t('stop.title') },
+      [[false, t('stop.interrupt')], [true, t('stop.exit')]].map(([v, label]) => h('button', { type: 'button', 'aria-pressed': String(st.exit === v),
+        onclick: (e) => { st.exit = v; e.target.parentNode.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === e.target))) } }, label))) : null,
+    asked ? h('p', { class: 'meta' }, t('stop.requests')) : null,
+    freed ? h('p', { class: 'meta' }, icon('chip', 16), ' ', t('stop.frees', { mem: bytes(freed) })) : null,
+    h('div', { class: 'row' }, go))
+}
+
+
 function openSettings() {
   const pick = (label, value, options, onchange) => h('label', {}, label, h('select', { class: 'field', onchange: (e) => onchange(e.target.value) }, Object.entries(options).map(([v, l]) => h('option', { value: v, selected: v === value ? true : null }, l))))
   overlay(dialogHead('sliders', t('settings')), h('div', { class: 'menu' },
     pick(t('skin'), skin, SKINS, (v) => { skin = v; store.set('skin', v); document.documentElement.dataset.skin = v; render() }),
     pick(t('lang'), lang, { en: 'English', fr: 'Français' }, (v) => { lang = v; store.set('lang', v); document.documentElement.lang = v; post('/api/prefs', { lang: v }); close(); render() }),
     pick(t('pack'), packOf(), { manga: 'Manga', robots: 'Robots', halloween: 'Halloween' }, (v) => { store.set('pack', v); render() }),
-    'Notification' in window ? h('button', { type: 'button', class: 'btn', disabled: Notification.permission !== 'default', onclick: () => Notification.requestPermission().then(close) }, icon('bell'), Notification.permission === 'granted' ? t('notify.on') : t('notify')) : null))
+    'Notification' in window ? h('button', { type: 'button', class: 'btn', disabled: Notification.permission !== 'default', onclick: () => Notification.requestPermission().then(close) }, icon('bell'), Notification.permission === 'granted' ? t('notify.on') : t('notify')) : null),
+    browsers,
+    shortcutsEditor(),
+    h('section', { class: 'menu', 'aria-label': t('server') }, h('h3', {}, t('server')),
+      snap.version ? h('p', { class: 'meta', style: 'margin:0' }, t('version', { version: snap.version.version, commit: snap.version.commit, time: new Date(snap.version.started).toLocaleString(lang) })) : null,
+      h('div', { class: 'row' }, btn('', t('restart.go'), 'loop', () => { post('/api/restart', { action: 'start' }); close() }, { text: t('restart.go') }),
+        btn('danger', t('quit.go'), 'stop', (e) => {
+          // Twice: the first click says what stopping does (no browser dialog).
+          if (e.currentTarget.dataset.sure) return post('/api/quit', {})
+          e.currentTarget.dataset.sure = '1'
+          e.currentTarget.lastChild.textContent = t('quit.sure')
+        }, { text: t('quit.go') })),
+      h('p', { class: 'meta', style: 'margin:0' }, t('restart.note'))))
+  drawBrowsers()
+}
+
+// The global shortcuts: edited as a list, saved at once (~/.clearance/prompts.json).
+function shortcutsEditor() {
+  const box = h('section', { class: 'menu', 'aria-label': t('shortcuts') })
+  let list = (snap.prompts ?? []).map((p) => ({ ...p }))
+  const draw = () => fill(box, h('h3', {}, t('shortcuts')), h('p', { class: 'meta', style: 'margin:0' }, t('shortcuts.note')),
+    list.map((p, i) => h('div', { class: 'row' },
+      h('kbd', {}, (i + 1) % 10),
+      h('input', { class: 'field', style: 'width:9em', maxlength: 30, 'aria-label': t('shortcut.label'), placeholder: t('shortcut.label'), value: p.label, oninput: (e) => { p.label = e.target.value } }),
+      h('textarea', { class: 'field grow', rows: 1, 'aria-label': t('shortcut.text'), placeholder: t('shortcut.text'), value: p.text, oninput: (e) => { p.text = e.target.value } }),
+      btn('icon sm quiet', t('shortcut.remove'), 'x', () => { list.splice(i, 1); draw() }))),
+    h('div', { class: 'row' },
+      list.length < 10 ? btn('sm', t('shortcut.add'), 'plus', () => { list.push({ label: '', text: '' }); draw() }, { text: t('shortcut.add') }) : null,
+      btn('sm primary', t('save'), 'check', async () => {
+        const err = await post('/api/prompts', { prompts: list })
+        toast(err ? error(err) : t('shortcuts.saved'), err ? 'alert' : 'check')
+      }, { text: t('save') })))
+  draw()
+  return box
+}
+
+// Signed-in browsers (ADR-0013): each one has a session of its own, signed out alone or with the others.
+const browsers = h('section', { class: 'menu', 'aria-label': 'browsers' })
+const browserName = (agent = '') => [/Edg\//.test(agent) ? 'Edge' : /Firefox\//.test(agent) ? 'Firefox' : /Chrome\//.test(agent) ? 'Chrome' : /Safari\//.test(agent) ? 'Safari' : '?',
+  /Windows/.test(agent) ? 'Windows' : /Mac OS/.test(agent) ? 'macOS' : /Linux/.test(agent) ? 'Linux' : ''].filter(Boolean).join(' · ')
+async function drawBrowsers() {
+  const res = await fetch('/api/browsers').catch(() => null)
+  const list = res?.ok ? await res.json() : []
+  const signOut = async (body) => { await post('/api/browsers/sign-out', body); drawBrowsers() }
+  fill(browsers, h('h3', {}, t('browsers')),
+    list.map((b) => h('div', { class: 'row' },
+      h('span', { class: 'grow' }, h('b', {}, browserName(b.agent)), ' ', h('span', { class: 'meta' }, b.current ? t('browser.this') : t('browser.seen', { date: new Date(b.seen).toLocaleDateString(lang) }))),
+      btn('sm', t('sign.out'), 'x', () => signOut({ id: b.id }), { text: t('sign.out') }))),
+    list.length > 1 ? btn('sm', t('sign.out.others'), 'x', () => signOut({}), { text: t('sign.out.others') }) : null)
+}
+
+// The page's session ended (signed out here or from another browser): say how to come back, stop retrying.
+function signedOut() {
+  events.close()
+  overlay(h('h2', {}, icon('alert', 22), t('signed.out')), h('p', {}, t('signed.out.how')), copyField('clearance open'))
 }
 
 // ---- toast: what was just done, with a way back while it shows ----
@@ -1227,18 +1795,34 @@ function toast(text, iconName, undo) {
 }
 
 // ---- keyboard ----
+// Shortcuts by the key's place (Shift changes the character): before the terminal or a field takes it.
 document.addEventListener('keydown', (e) => {
+  const digit = /^Digit(\d)$/.exec(e.code)
+  if (!digit || !e.shiftKey || !(e.ctrlKey || e.metaKey) || e.altKey) return
+  const i = (Number(digit[1]) + 9) % 10
+  if (!(snap.prompts ?? [])[i]) return
+  e.preventDefault(); e.stopPropagation()
+  sendShortcut(i)
+}, true)
+document.addEventListener('keydown', (e) => {
+  // Keys typed in a terminal are the session's own, Escape included.
+  if (document.activeElement?.closest?.('.xterm')) return
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openSearch(); return }
   if (e.key === 'Escape') { close(); return }
   const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName ?? '')
   if (typing || e.ctrlKey || e.metaKey || e.altKey || $('#layer').childElementCount) return
   const queue = order(lists())
-  const click = (key) => $(`#pane [data-key="${key}"]`)
+  // An answer key reaches the card even from another tab.
+  const click = (key) => {
+    if (tab !== 'action' && hasAction(sel)) { tab = 'action'; renderPane() }
+    return $(`#pane [data-key="${key}"]`)
+  }
   if (e.key === 'j' || e.key === 'k') { const i = queue.indexOf(sel); select(queue[Math.max(0, Math.min(queue.length - 1, i + (e.key === 'j' ? 1 : -1)))] ?? queue[0] ?? null) }
   else if (e.key === 'a') { const go = $('#pane input[name=go]'); go && go.value.trim().toUpperCase() !== 'GO' ? go.focus() : click('a')?.click() }
   else if (e.key === 'd') click('d')?.click()
   else if (e.key === 'e') click('e')?.click()
   else if (/^[1-9]$/.test(e.key)) $(`#pane [data-option="${e.key}"]`)?.click()
+  else if (e.key === 'i') { if (modReady(sessionOf(sel))) interrupt(sel) }
   else if (e.key === 'r') $('#composer')?.focus()
   else if (e.key === 'n') openPalette()
   else if (e.key === 't') { tab = tab === 'thread' ? 'terminal' : 'thread'; renderPane() }
@@ -1253,30 +1837,45 @@ function notify(fresh) {
   if (!('Notification' in window) || Notification.permission !== 'granted' || !seen.size) return
   for (const r of fresh) {
     const s = sessionOf(r.session)
-    if (muted.has(groupOf(s ?? { cwd: r.cwd }))) continue
+    if (muted.has(groupIdOf(s) || 'none') || muted.has(r.session)) continue
     new Notification(`${nameOf(s ?? { cwd: r.cwd })}: ${t(`${r.kind === 'permission' ? 'perm' : r.kind}.kind`)}`, { body: String(cmdOf(r.input)).slice(0, 200), tag: `clearance-${r.id}` })
   }
 }
-function render() { renderTop(); renderQueue(); if (!$('#pane').contains(document.activeElement) || !document.activeElement.matches('input, textarea, select')) renderPane() }
+const typingIn = (el) => !!el?.contains(document.activeElement) && document.activeElement.matches('input, textarea, select')
+function render() { renderTop(); renderQueue(); if (!typingIn($('#pane'))) renderPane() }
 
 const events = new EventSource('/events')
 events.onmessage = (e) => {
-  const before = JSON.stringify(requestOf(sel) ?? null)
+  // What the pane's head shows: a new request or a new name redraws it.
+  const head = () => JSON.stringify([requestOf(sel) ?? null, sel ? named(sel) : null])
+  const before = head()
   snap = JSON.parse(e.data)
   if (snap.lang && !store.get('lang', null) && snap.lang !== lang && I18N[snap.lang]) { lang = snap.lang; document.documentElement.lang = lang }
   const fresh = snap.requests.filter((r) => !seen.has(r.id))
   notify(fresh)
   seen = new Set(snap.requests.map((r) => r.id).concat(seen.size ? [...seen] : ['start']))
-  if (!sel) sel = order(lists())[0] ?? null
+  if (!sel) { sel = order(lists())[0] ?? null; tab = sel && hasAction(sel) ? 'action' : 'thread' }
   renderTop(); renderQueue()
   // The pane is redrawn when what it shows changed, not under the user's typing.
-  const typing = $('#pane').contains(document.activeElement) && document.activeElement.matches('input, textarea, select')
-  if (!typing && (JSON.stringify(requestOf(sel) ?? null) !== before || !$('#view'))) renderPane()
-  else if (!typing) { renderThread(); renderInspector() }
+  const typing = typingIn($('#pane'))
+  if (!typing && (head() !== before || !$('#view'))) renderPane()
+  else if (!typing) { renderView(); renderInspector() }
+  // A session started from the page opens on its terminal at once; once tied to its session, it moves there.
+  const started = opening && (snap.terms ?? []).find((x) => x.name === opening)
+  if (started) { opening = null; select(started.session ?? `term:${started.id}`); tab = 'terminal'; renderPane() }
+  const tied = sel?.startsWith('term:') && termOf(sel)?.session
+  if (tied) { sel = tied; tab = 'terminal'; renderQueue(); renderPane() }
   if (detailOf !== sel) loadDetail()
 }
-events.onerror = () => toast(t('offline'), 'alert')
+// Unreachable, or this browser signed out: only the second stops the stream for good.
+events.onerror = async () => {
+  const res = await fetch('/api/browsers').catch(() => null)
+  if (res?.status === 401) signedOut()
+  else toast(t('offline'), 'alert')
+}
 render()
+phone.addEventListener('change', render)
+narrow.addEventListener('change', render)
 </script>
 </body>
 </html>

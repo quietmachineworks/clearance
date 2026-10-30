@@ -49,7 +49,10 @@ Four areas, in this order:
    A card opens in place and carries the decision.
 2. **Done**: turn finished, not read yet. Read when you type a prompt in that session, or on click.
 3. **Working**: in progress, with their clones (subagents) and energy (context left).
-4. **Asleep**: idle for 3 hours with nothing left to read, candidates to close.
+4. **Asleep**: idle for 3 hours with nothing left to read, candidates to close: "close the asleep
+   sessions" quits them after showing the memory it frees (ADR-0015).
+5. **Stopped**: no longer running, kept with what it takes to resume them until the user deletes them
+   (ADR-0015).
 
 Possible decisions:
 
@@ -82,7 +85,7 @@ Generic, valid for any workflow and for a session without one:
   (`StopFailure`);
 - what ran: the session's thread, the user's prompts as speech bubbles;
 - workflow history of the project: closed, interrupted, ended without closure;
-- actions: go to the terminal (M4), send an instruction (M3). Stopping one workflow is left out: no
+- actions: its terminal in the page (ADR-0016), send an instruction (M3). Stopping one workflow is left out: no
   documented way to stop a run without stopping its session (ADR-0006).
 
 ### Usage data
@@ -92,7 +95,7 @@ Context left, 5-hour and 7-day quota, session cost: read by clearance's companio
 
 ### Later, already decided
 
-- go to a session's terminal, start a session in a **real terminal tab** (not `--bg`): done in M4
+- start a session in its own terminal: done in M4 in a terminal tab, replaced by a terminal inside the page (ADR-0016); clearance drives no terminal application
   (ADR-0008);
 - decision journal and suggested rules;
 - avatar packs: robots (M1) and Halloween (M4) ship; more later;
@@ -111,10 +114,13 @@ at once, mostly from the keyboard.
   first, then permissions, questions, plans), to watch (loops, repeated errors, context almost full),
   to read, working; asleep and ignored folded away. New requests do not move the queue while the pointer
   or focus is in it: a "new" marker shows them. A request answered in the terminal shows as settled.
-- **Groups**: one per project folder at first, renamed, merged or moved by the user; the chips count
-  what needs you, not sessions. Group actions: mute, interrupt.
+- **Groups** (ADR-0015): made by the user, sessions moved into them, "No group" for the others. What
+  waits for you and what needs watching stay on top across groups; below, one foldable block per group
+  (to read, working, idle, asleep, stopped, ignored) with its counts and memory. Group actions: mute,
+  interrupt.
+- **Memory**: each session's processes, per group and in total (ADR-0015).
 - **Session pane**: the thread (prompts, the assistant's text, tool calls with their outcome), the
-  decision card in place, a field to write to the session with its delivery state; a terminal view.
+  decision card in place, a field to write to the session with its delivery state (files pasted or dropped there or on the terminal go in as paths); the session's real terminal for the sessions clearance runs, a terminal view for the others (ADR-0016).
   Inspector beside it: the task, the plan and its current step, files changed, tests, subagents, cost and
   its rate, the model for the next turn.
 - **Decisions**: after an answer the next request opens; every answer can be taken back for 5 seconds.
@@ -123,7 +129,15 @@ at once, mostly from the keyboard.
 - **To read**: facts first (tests, files, commits, merge request), then validate, ask for a fix, open
   the diff.
 - **New task**: instruction, recent folder, group from the folder, model, mode; the session opens in a
-  terminal tab and gets the instruction through the companion mod.
+  terminal inside the page (ADR-0016); folders are browsed in the page, never through a system dialog.
+- **Thread**: two tool calls or more in a row fold into one line ("5 actions · Bash, Read", failures
+  counted; unfolded when one failed); "My messages" shows only what you wrote; a reply copies as
+  Markdown.
+- **Shortcuts**: one global list of prompts (`~/.clearance/prompts.json`), as chips above the message
+  field and on Ctrl+Shift+1 to 0, sent to the session on screen. Messages for a session queue up and
+  are delivered one by one, none overwrites another.
+- **Search** (Ctrl K): case and accents ignored, every word, in any order.
+- **Version**: the build's version and commit, and when clearance started, in the Settings.
 - **Quota**: 5-hour and 7-day gauges with the time they run dry at the current rate.
 - Skins, languages and the logo: ADR-0011.
 
@@ -133,7 +147,7 @@ Manga style, chibi avatars drawn for the project. Every trait carries informatio
 
 | Trait | Meaning |
 |---|---|
-| Hair colour | the project, the same everywhere |
+| Hair colour | the group (the folder for a session in no group), the same everywhere |
 | Glasses / headphones / cowlick | Opus / Sonnet / Haiku |
 | Speed lines | working |
 | Sweat drop | waiting for a permission |
@@ -172,13 +186,16 @@ Mockups: `design/`.
 | Stop on error | `StopFailure` hook (`rate_limit`, `authentication_failed`...) | documented |
 | Context, quota, cost | companion mod: `$.session.usage()` (`context`, `rateLimits`, `cost`) | documented, tested |
 | Approvals given by hand | transcript `permissionDecision` on tool results, `source: "user_temporary"` (ADR-0007) | observed |
-| Instruction to a session | companion mod: `$.prompt.submit({ text, asUser })` | documented, tested |
-| Session title, terminal tab | transcript `ai-title` records; Windows Terminal tabs through UI Automation | observed, tested |
+| Instruction to a session | companion mod: `$.prompt.submit({ text, asUser })`; the first one of a session clearance starts: `claude -- <text>` (ADR-0016) | documented, tested |
+| Session title | transcript `ai-title` records | observed |
+| A session's terminal | clearance's own pseudo-terminal: ConPTY on Windows, `openpty` on macOS (ADR-0016) | tested |
 | Relay in parallel with the terminal | channels declaring `claude/channel/permission` | research preview, dev flag, organisation policy |
 | A session's plan and current step | the last `TodoWrite` call of the transcript (`todos`: `content`, `status`) | to check in R1 |
 | Tests, commits, merge request of a turn | the turn's `Bash` calls and their results (test commands, `git commit`, a merge request URL) | heuristic, R2 |
 | Model for the next turn | `/model <name>` sent as an instruction through the companion mod | to check in R2 |
-| Interrupt, stop a session | open | R3 |
+| Interrupt, stop a session | companion mod: `$.turn.abort`, `$.command.run('exit')` | tested |
+| Memory of a session | `pid` from `claude agents --json`, the system's process table (Toolhelp32, `ps`) | ADR-0015 |
+| A session going on under a new id | the same `pid` with another `sessionId` | to check on real `/clear` |
 
 Internal files (`~/.claude/sessions/`, transcripts) may change between versions: prefer a documented
 source whenever one exists, and keep every read of internal files in a single module.
@@ -191,6 +208,9 @@ source whenever one exists, and keep every read of internal files in a single mo
 - Claude Code hooks of type `http` to `/hook/<event>`; server stopped = connection refused = Claude
   Code behaves as usual;
 - a companion mod in every session for usage figures, instructions and the line under the prompt;
+- sessions started from clearance run in its own pseudo-terminals (ConPTY, `openpty`), reopened with
+  `claude --resume` at its next start; the page draws them with xterm.js, the only code not written for
+  clearance, frozen in the repository with its hashes (ADR-0016);
 - local append-only journal of events and decisions (JSONL);
 - page in plain HTML, CSS and JS, avatars as inline SVG;
 - risk classification (read, write, infrastructure write) in one rules module.
@@ -198,8 +218,12 @@ source whenever one exists, and keep every read of internal files in a single mo
 Security: an "Allow" button is a right to run code on the machine.
 
 - listen on 127.0.0.1, never on another interface;
-- a random token required on hooks and actions;
+- two secrets (ADR-0013): the hook secret, which every connected session can read and which only lets
+  it report events; and the browser's own session, obtained through a single-use login link, which
+  nothing an agent can read gives away. The settings clearance writes deny the file tools on its folder;
 - `Origin` checked on every request that writes;
+- a strict content security policy: the page's own script and styles only, fonts served by clearance
+  (ADR-0014);
 - no infrastructure write can be approved without seeing the full command.
 
 `http` hooks also spawn no process per event: faster, and friendlier to endpoint security tools than
@@ -216,7 +240,7 @@ Security: an "Allow" button is a right to run code on the machine.
 | M4 | Terminal (go to, start in a tab), avatar pack | start a session from the tower |
 | R1 | The server in Rust (ADR-0010), Windows and macOS | every Node test passes in Rust, a real permission answered |
 | R2 | The V2-A page: queue, session pane, inspector, skins, languages, logo | a day of real work from it |
-| R3 | Spikes: interrupt and stop a session, a real terminal in the page | each settled by an ADR |
+| R3 | Interrupt and stop a session, a real terminal in the page (ADR-0016), groups and memory (ADR-0015), two secrets (ADR-0013) | a day of work without a terminal application |
 
 ## 8. Open questions for M0
 

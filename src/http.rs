@@ -64,6 +64,10 @@ impl Request {
         self.header("cookie")?.split(';').filter_map(|c| c.trim().split_once('=')).find(|(k, _)| *k == name).map(|(_, v)| v)
     }
 
+    pub fn body(&self) -> &[u8] {
+        &self.body
+    }
+
     /// The body as JSON; an empty object when it is not.
     pub fn json(&self) -> Json {
         std::str::from_utf8(&self.body).ok().and_then(|t| Json::parse(t).ok()).unwrap_or(Json::Obj(Vec::new()))
@@ -71,7 +75,7 @@ impl Request {
 }
 
 /// Percent-decoding; `+` is a space in a query string.
-fn decode(s: &str, plus: bool) -> String {
+pub fn decode(s: &str, plus: bool) -> String {
     let b = s.as_bytes();
     let mut out = Vec::with_capacity(b.len());
     let mut i = 0;
