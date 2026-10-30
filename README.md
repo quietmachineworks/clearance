@@ -68,6 +68,12 @@ same. Sessions started afterwards are connected. `clearance install --remove` an
 
 Checks: `cargo test`, `cargo clippy --all-targets -- -D warnings`, `cargo fmt --check`.
 
+## Releasing
+
+Rename the `Unreleased` section of `CHANGELOG.md` to the version (`## 0.5.0`), set it in `Cargo.toml`,
+commit, then tag `v0.5.0` and push the tag: CI builds the Windows and macOS binaries and publishes them
+with that section as notes.
+
 ## License
 
 MIT

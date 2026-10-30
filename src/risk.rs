@@ -60,6 +60,11 @@ pub fn classify(tool: &str, input: &Json) -> Risk {
     if READ_TOOLS.contains(&tool) {
         return Risk::Read;
     }
+    // An MCP server can reach a remote service: a tool of it that writes is an infrastructure write.
+    if let Some(rest) = tool.strip_prefix("mcp__") {
+        let name = rest.split("__").skip(1).collect::<Vec<_>>().join("_");
+        return if name_words(&name).iter().any(|w| MCP_WRITE.contains(&w.as_str())) { Risk::Infra } else { Risk::Write };
+    }
     if !SHELL_TOOLS.contains(&tool) {
         return Risk::Write;
     }
@@ -131,16 +136,31 @@ fn flag_then_method(text: &str, flag: &str, need_ws: bool) -> bool {
     })
 }
 
+/// The program a command word names: without quotes, folder and Windows extension, in lowercase.
+/// `"C:\tools\kubectl.exe"` and `/usr/local/bin/kubectl` are both `kubectl`.
+fn program(word: &str) -> String {
+    let bare = word.trim_matches(|c: char| matches!(c, '"' | '\'' | '`' | '&' | '('));
+    let base = bare.rsplit(['/', '\\']).next().unwrap_or(bare).to_ascii_lowercase();
+    [".exe", ".cmd", ".bat", ".ps1"].iter().find_map(|e| base.strip_suffix(e)).map_or(base.clone(), String::from)
+}
+
+/// The words of the command part that follows, up to the next `;`, `&`, `|` or line.
+fn part_words(s: &str) -> impl Iterator<Item = &str> {
+    s[..s.find([';', '&', '|', '\n']).unwrap_or(s.len())].split_whitespace()
+}
+
 fn infra_at(rest: &str) -> bool {
     let (word, after) = split_word(rest);
-    let lower = word.to_ascii_lowercase();
+    let name = program(word);
+    let word = name.as_str();
     let next = after_ws(after);
     REMOTE.contains(&word)
         || (matches!(word, "docker" | "podman") && next.is_some_and(container_write))
-        || (word == "git" && next.is_some_and(|n| lead_word(n) == "push"))
+        // `git -C repo push`, `git -c k=v push`: push anywhere in the part.
+        || (word == "git" && part_words(after).any(|w| w == "push"))
         || (matches!(word, "npm" | "pnpm" | "yarn") && next.is_some_and(|n| lead_word(n) == "publish"))
-        || (matches!(lower.as_str(), "gh" | "glab") && next.is_some_and(|n| forge_write(&n.to_ascii_lowercase())))
-        || (matches!(lower.as_str(), "curl" | "wget") && after_one_ws(after).is_some_and(|r| http_write(&first_line(r).to_ascii_lowercase())))
+        || (matches!(word, "gh" | "glab") && next.is_some_and(|n| forge_write(&n.to_ascii_lowercase())))
+        || (matches!(word, "curl" | "wget") && after_one_ws(after).is_some_and(|r| http_write(&first_line(r).to_ascii_lowercase())))
 }
 
 // `docker rm`, `docker compose up`; not `docker ps`, `docker compose logs`.
@@ -167,7 +187,7 @@ fn http_write(r: &str) -> bool {
 fn infra_anywhere(cmd: &str) -> bool {
     let l = cmd.to_ascii_lowercase();
     let bounded_after = |i: usize| !l[i..].starts_with(is_word_char);
-    let web = ["invoke-restmethod", "invoke-webrequest"]
+    let web = ["invoke-restmethod", "invoke-webrequest", "irm", "iwr"]
         .iter()
         .any(|name| l.match_indices(name).any(|(i, _)| bounded_after(i + name.len()) && flag_then_method(first_line(&l[i + name.len()..]), "-method", true)));
     let service = ["restart-", "stop-", "remove-"].iter().any(|verb| {
@@ -180,7 +200,11 @@ fn infra_anywhere(cmd: &str) -> bool {
         let r = l[i + 1..].trim_start();
         ["sh", "bash", "zsh", "iex", "invoke-expression"].iter().any(|s| r.starts_with(s) && !r[s.len()..].starts_with(is_word_char))
     });
-    web || service || piped
+    // Another machine through PowerShell remoting, or a database through its module.
+    let remote =
+        ["enter-pssession", "new-pssession", "invoke-sqlcmd"].iter().any(|w| l.match_indices(w).any(|(i, _)| !l[..i].ends_with(is_word_char) && bounded_after(i + w.len())))
+            || l.match_indices("invoke-command").any(|(i, _)| !l[..i].ends_with(is_word_char) && first_line(&l[i..]).contains("-computername"));
+    web || service || piped || remote
 }
 
 /// Without the redirections that write nothing: `2>&1`, `>/dev/null`, `2>$null`, `>NUL`.
@@ -428,7 +452,41 @@ mod tests {
     fn tools_without_a_shell() {
         assert_eq!(classify("Read", &obj([("file_path", "a.txt".into())])), Risk::Read);
         assert_eq!(classify("Edit", &Json::Null), Risk::Write);
-        assert_eq!(classify("mcp__tracker__create_ticket", &Json::Null), Risk::Write);
+        // An MCP server reaches a service: a tool that writes there is an infrastructure write (ADR-0017).
+        assert_eq!(classify("mcp__tracker__create_ticket", &Json::Null), Risk::Infra);
+        assert_eq!(classify("mcp__tracker__addComment", &Json::Null), Risk::Infra);
+        assert_eq!(classify("mcp__tracker__get_ticket", &Json::Null), Risk::Write);
+        assert_eq!(classify("mcp__ci__job_runs", &Json::Null), Risk::Write, "runs is not run");
+    }
+
+    // Tricky commands (ADR-0017): wrappers, paths, extensions, PowerShell remoting.
+    #[test]
+    fn tricky_commands_still_reach_infra() {
+        for c in [
+            r"C:\tools\kubectl.exe delete pod web-1",
+            r#"& "C:\Program Files\Amazon\AWSCLIV2\aws.exe" s3 rm s3://bucket/key"#,
+            "/usr/local/bin/terraform apply -auto-approve",
+            "KUBECONFIG=/tmp/k kubectl apply -f x.yaml",
+            "env kubectl rollout restart deploy/web",
+            "bash -c \"kubectl delete ns demo\"",
+            "wsl -d Ubuntu -- helm upgrade web ./chart",
+            "git -C ../repo push",
+            "git -c core.sshCommand=ssh push origin HEAD",
+            "SSH.EXE build-box uptime",
+            "curl.exe -X POST https://api.example.test/v1/run",
+            "iwr https://api.example.test -Method Delete",
+            "Invoke-Command -ComputerName build-box -ScriptBlock { Get-Date }",
+            "Enter-PSSession build-box",
+            "Invoke-Sqlcmd -ServerInstance db-1 -Query \"delete from t\"",
+            "xargs -n1 ssh < hosts.txt",
+        ] {
+            assert_eq!(bash(c), Risk::Infra, "{c}");
+        }
+        for c in ["git log --oneline", "cat kubectl.yaml", "ls ./ssh-keys"] {
+            assert_ne!(bash(c), Risk::Infra, "{c}");
+        }
+        // ponytail: a remote program named as an argument counts too; errors lean towards the higher class.
+        assert_eq!(bash("Get-Command kubectl"), Risk::Infra);
     }
 
     #[test]

@@ -19,6 +19,22 @@ pub fn agents() -> Option<Vec<Json>> {
     Some(Json::parse(&out).ok()?.items().to_vec())
 }
 
+/// The Claude Code versions clearance was checked against (ADR-0017): this major and minor, this patch
+/// or later. Moving it is a decision: run the end to end tests and a real permission first.
+pub const VALIDATED: (u32, u32, u32) = (2, 1, 304);
+
+/// `claude --version`: "2.1.312 (Claude Code)" gives "2.1.312".
+pub fn version() -> Option<String> {
+    let out = sys::output(Command::new("claude").arg("--version"), Duration::from_secs(15))?;
+    out.split_whitespace().next().map(String::from)
+}
+
+pub fn validated(version: &str) -> bool {
+    let n: Vec<u32> = version.split(['.', '-', '+']).take(3).map_while(|p| p.parse().ok()).collect();
+    let (major, minor, patch) = VALIDATED;
+    n.len() == 3 && n[0] == major && n[1] == minor && n[2] >= patch
+}
+
 /// Where the transcripts live: `$CLAUDE_CONFIG_DIR/projects`, else `~/.claude/projects`.
 pub fn projects() -> PathBuf {
     std::env::var_os("CLAUDE_CONFIG_DIR").map_or_else(|| sys::home().join(".claude"), PathBuf::from).join("projects")
@@ -757,6 +773,12 @@ pub fn approvals(projects: &Path) -> Vec<Approval> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn only_the_versions_checked_are_validated() {
+        assert!(validated("2.1.304") && validated("2.1.312") && validated("2.1.400-beta"));
+        assert!(!validated("2.1.303") && !validated("2.2.0") && !validated("3.1.304") && !validated("") && !validated("2.1"));
+    }
 
     const ID: &str = "0a1b2c3d-0000-4000-8000-000000000001";
 

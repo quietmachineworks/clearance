@@ -465,6 +465,8 @@ const I18N = {
     shortcuts: 'Shortcuts', 'shortcuts.note': 'Sent to the session on screen, from the chips above its message field or Ctrl+Shift+1 to 0. 10 at most.', 'shortcut.label': 'Label', 'shortcut.text': 'Text to send',
     'shortcut.add': 'Add a shortcut', 'shortcut.remove': 'Remove', save: 'Save', 'shortcuts.saved': 'Shortcuts saved', 'shortcut.sent': '{label} sent to {name}', 'shortcut.nosession': 'Open a session first',
     version: 'Version {version} · commit {commit} · started at {time}',
+    stale: 'Data stale since {time}: claude agents is not answering', unvalidated: 'Claude Code {version} is not validated with clearance: decide in its terminal. Deny still works here.',
+    'journal.kept': 'The journal keeps about 10 MB on this machine (two files), the last few weeks; the 200 newest lines show here.',
     'delivery.term': 'Typed in its terminal, as if you typed it there.', 'folder.up': 'Parent folder', 'folder.pick': 'Use this folder', 'folder.empty': 'No folder inside.', 'see.terminal': 'See its terminal', 'term.starting': 'Starting in clearance: see its terminal',
     'perm.kind': 'Permission to give', 'question.kind': 'Question asked', 'plan.kind': 'Plan to approve', 'denied.kind': 'Blocked by auto mode', 'settled.kind': 'Settled in the terminal',
     'risk.read': 'read', 'risk.write': 'write', 'risk.infra': 'infrastructure write',
@@ -531,6 +533,8 @@ const I18N = {
     shortcuts: 'Raccourcis', 'shortcuts.note': 'Envoyés à la session affichée, par les puces au-dessus de son champ de message ou Ctrl+Maj+1 à 0. 10 au plus.', 'shortcut.label': 'Nom', 'shortcut.text': 'Texte à envoyer',
     'shortcut.add': 'Ajouter un raccourci', 'shortcut.remove': 'Retirer', save: 'Enregistrer', 'shortcuts.saved': 'Raccourcis enregistrés', 'shortcut.sent': '{label} envoyé à {name}', 'shortcut.nosession': "Ouvre d'abord une session",
     version: 'Version {version} · commit {commit} · démarré à {time}',
+    stale: 'Données périmées depuis {time} : claude agents ne répond plus', unvalidated: "Claude Code {version} n'est pas validée avec clearance : décide dans son terminal. Refuser marche encore ici.",
+    'journal.kept': 'Le journal garde environ 10 Mo sur cette machine (deux fichiers), les dernières semaines ; les 200 lignes les plus récentes sont ici.',
     'delivery.term': 'Tapé dans son terminal, comme si tu le tapais toi-même.', 'folder.up': 'Dossier parent', 'folder.pick': 'Prendre ce dossier', 'folder.empty': 'Aucun dossier dedans.', 'see.terminal': 'Voir son terminal', 'term.starting': 'Démarre dans clearance : voir son terminal',
     'perm.kind': 'Permission à donner', 'question.kind': 'Question posée', 'plan.kind': 'Plan à valider', 'denied.kind': 'Bloquée par le mode auto', 'settled.kind': 'Réglée au terminal',
     'risk.read': 'lecture', 'risk.write': 'écriture', 'risk.infra': 'écriture infra',
@@ -847,6 +851,9 @@ function renderTop() {
   })
   const restarting = snap.restart ? h('div', { class: 'pill dry', role: 'status' }, icon('loop', 14), ' ', t('restart.waiting', { n: running().filter((s) => termOf(s.sessionId)).length }), ' ',
     btn('sm', t('restart.force'), 'play', () => post('/api/restart', { action: 'force' }), { text: t('restart.force') }), btn('sm quiet', t('restart.cancel'), 'x', () => post('/api/restart', { action: 'cancel' }), { text: t('restart.cancel') })) : null
+  // What the page shows is the last good reading of `claude agents` (ADR-0017).
+  const p = snap.poll
+  const stale = p?.failedAt > p?.at && Date.now() - p.at > 15_000 ? h('div', { class: 'pill dry', role: 'alert' }, icon('alert', 14), ' ', t('stale', { time: clock(p.at) })) : null
   fill($('#top'),
     h('a', { class: 'logo', href: '#', 'aria-label': 'clearance', onclick: (e) => { e.preventDefault(); select(order(lists())[0] ?? null) } }, logo()),
     h('div', { class: 'counts' },
@@ -857,6 +864,7 @@ function renderTop() {
     h('button', { type: 'button', class: 'btn search', onclick: openSearch, 'aria-label': t('search') }, icon('search'), h('span', {}, 'Ctrl K')),
     h('span', { class: 'spacer' }),
     restarting,
+    stale,
     quota,
     total ? h('span', { class: 'meta mem', title: t('mem.total') }, icon('chip', 16), ' ', bytes(total)) : null,
     L.asleep.length ? btn('icon', t('close.asleep', { n: L.asleep.length }), 'moon', () => openStop(L.asleep, true)) : null,
@@ -1276,6 +1284,13 @@ function decisionCard() {
   const head = (kind, extra) => h('div', { class: 'top-row' }, extra, h('span', { class: 'meta', title: t('since') }, icon('clock', 15), ' ', ago(r.at)), h('span', { class: 'spacer' }),
     next ? h('span', { class: 'meta', title: t('next', { name: named(next) }) }, icon('next', 15), ' ', named(next)) : null)
   const decide = (body, label) => queueDecision(r, body, label, next)
+  // Outside the validated Claude Code versions the page allows nothing; the server refuses it too (ADR-0017).
+  if (snap.claude && !snap.claude.validated) {
+    return h('article', { class: 'card hot', 'aria-label': t('perm.kind') }, head(r.kind),
+      h('strong', { role: 'alert' }, icon('alert', 18), ' ', t('unvalidated', { version: snap.claude.version })),
+      h('pre', { class: 'cmd' }, cmdOf(r.input)),
+      h('div', { class: 'actions' }, h('button', { type: 'button', class: 'btn', 'data-key': 'd', title: `${t('deny')}  d`, onclick: () => decide({ action: 'deny' }, 'deny') }, icon('x'), t('deny'))))
+  }
   if (r.kind === 'permission' || r.kind === 'denied') {
     const env = envLabel(r)
     const infra = r.risk === 'infra'
@@ -1678,6 +1693,7 @@ async function openJournal() {
   const j = await res.json().catch(() => ({ decisions: [], rules: [] }))
   const what = (d) => d.kind === 'decision' ? [d.request, d.tool, d.target].filter(Boolean).join(' · ') : d.kind === 'instruction' ? d.text : d.kind
   fill(body,
+    h('p', { class: 'meta' }, t('journal.kept')),
     h('h3', {}, t('journal.rules')),
     j.rules.length ? j.rules.map((r) => h('p', {}, h('code', {}, r.rule), ' ', h('span', { class: 'meta' }, t('journal.rule', r)))) : h('p', { class: 'empty' }, '·'),
     h('h3', {}, t('journal.decisions')),

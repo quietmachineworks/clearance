@@ -138,6 +138,8 @@ at once, mostly from the keyboard.
   are delivered one by one, none overwrites another.
 - **Search** (Ctrl K): case and accents ignored, every word, in any order.
 - **Version**: the build's version and commit, and when clearance started, in the Settings.
+- **Freshness**: when `claude agents` stops answering, the page says its data is stale and since when;
+  a Claude Code version outside the validated range allows nothing from the page (ADR-0017).
 - **Quota**: 5-hour and 7-day gauges with the time they run dry at the current rate.
 - Skins, languages and the logo: ADR-0011.
 
@@ -188,6 +190,7 @@ Mockups: `design/`.
 | Approvals given by hand | transcript `permissionDecision` on tool results, `source: "user_temporary"` (ADR-0007) | observed |
 | Instruction to a session | companion mod: `$.prompt.submit({ text, asUser })`; the first one of a session clearance starts: `claude -- <text>` (ADR-0016) | documented, tested |
 | Session title | transcript `ai-title` records | observed |
+| Claude Code version | `claude --version`, checked against the validated range (ADR-0017) | tested |
 | A session's terminal | clearance's own pseudo-terminal: ConPTY on Windows, `openpty` on macOS (ADR-0016) | tested |
 | Relay in parallel with the terminal | channels declaring `claude/channel/permission` | research preview, dev flag, organisation policy |
 | A session's plan and current step | the last `TodoWrite` call of the transcript (`todos`: `content`, `status`) | to check in R1 |
@@ -224,7 +227,10 @@ Security: an "Allow" button is a right to run code on the machine.
 - `Origin` checked on every request that writes;
 - a strict content security policy: the page's own script and styles only, fonts served by clearance
   (ADR-0014);
-- no infrastructure write can be approved without seeing the full command.
+- no infrastructure write can be approved without seeing the full command;
+- the risk class is a signal, not a guarantee: program names are normalised, MCP tools with a writing
+  verb count as infrastructure writes, tricky commands are kept as tests (ADR-0017);
+- the journal keeps about 10 MB, two files (ADR-0017).
 
 `http` hooks also spawn no process per event: faster, and friendlier to endpoint security tools than
 `command` hooks.
@@ -264,3 +270,4 @@ Results: ADR-0003.
   settings while the behaviour is unknown.
 - Nothing that needs administrator rights.
 - No script written to a temp directory and run with a bypassed execution policy.
+- CI on Windows and macOS for every push; a `v*` tag publishes the binaries (ADR-0017).

@@ -101,6 +101,9 @@ struct State {
     restart: Option<(u64, bool)>,          // a restart asked from the page: since when, forced
     prompts: Json,                         // the user's shortcuts, ~/.clearance/prompts.json: [{label, text}]
     started: u64,                          // when this clearance started, for the Settings
+    claude: Option<String>,                // `claude --version`, read every 10 minutes (ADR-0017)
+    poll: (u64, u64, u64),                 // last good `claude agents`: when, how long it took (ms); last failure
+    pinged: u64,                           // last heartbeat written to the page streams
 }
 
 impl State {
@@ -114,6 +117,8 @@ impl State {
         snap.set("terms", Json::Arr(self.terms.clone()));
         snap.set("restart", self.restart.map(|(since, _)| since).into());
         snap.set("prompts", self.prompts.clone());
+        snap.set("claude", self.claude.as_deref().map_or(Json::Null, |v| obj([("version", v.into()), ("validated", claude::validated(v).into())])));
+        snap.set("poll", obj([("at", self.poll.0.into()), ("ms", self.poll.1.into()), ("failedAt", self.poll.2.into())]));
         snap.set("version", obj([("version", env!("CARGO_PKG_VERSION").into()), ("commit", env!("CLEARANCE_COMMIT").into()), ("started", self.started.into())]));
         snap
     }
@@ -129,6 +134,24 @@ impl State {
             w.write_all(msg.as_bytes()).is_ok()
         });
         self.last = data;
+    }
+
+    /// A comment line on every page stream every 15 s: a dead one is dropped even when nothing changes,
+    /// and the poll slows down once no page is left (ADR-0017).
+    fn ping(&mut self, now: u64) {
+        if now.saturating_sub(self.pinged) < 15_000 {
+            return;
+        }
+        self.pinged = now;
+        self.clients.retain(|(_, c)| {
+            let mut w: &TcpStream = c;
+            w.write_all(b": ping\n\n").is_ok()
+        });
+    }
+
+    /// Whether Claude Code's version, when known, is outside the validated range: nothing is allowed then.
+    fn unvalidated(&self) -> Option<&str> {
+        self.claude.as_deref().filter(|v| !claude::validated(v))
     }
 
     /// Answers a held hook call and takes the request off the board. `{}` means no decision: Claude
@@ -214,13 +237,25 @@ impl App {
         for (k, v) in entry.entries() {
             line.set(k, v.clone());
         }
-        append(&self.home.join("journal.jsonl"), &line);
+        let file = self.home.join("journal.jsonl");
+        rotate(&file, JOURNAL_MAX);
+        append(&file, &line);
     }
 }
 
 /// A JSON file of ours; an empty object when missing or broken.
 fn read_json(file: &Path) -> Json {
     fs::read_to_string(file).ok().and_then(|t| Json::parse(&t).ok()).filter(|j| matches!(j, Json::Obj(_))).unwrap_or(Json::Obj(Vec::new()))
+}
+
+// About 10 MB of journal in all: the current file and the one before (ADR-0017).
+const JOURNAL_MAX: u64 = 5 * 1024 * 1024;
+
+/// Past `max` bytes, `x.jsonl` becomes `x.1.jsonl`, replacing the one before.
+fn rotate(file: &Path, max: u64) {
+    if fs::metadata(file).is_ok_and(|m| m.len() > max) {
+        let _ = fs::rename(file, file.with_extension("1.jsonl"));
+    }
 }
 
 fn append(file: &Path, line: &Json) {
@@ -359,6 +394,18 @@ fn serve(app: Arc<App>) {
     thread::spawn(move || weigh(&weigher));
     let restarter = app.clone();
     thread::spawn(move || restart_when_idle(&restarter));
+    // Claude Code's version, against the range clearance was checked with (ADR-0017).
+    let versions = app.clone();
+    thread::spawn(move || {
+        loop {
+            if let Some(v) = claude::version() {
+                let mut st = versions.lock();
+                st.claude = Some(v);
+                st.publish();
+            }
+            thread::sleep(Duration::from_secs(600));
+        }
+    });
     // ponytail: the first scan of every transcript takes a moment; done at start rather than on the first
     // journal view. Upgrade path: a cache on disk if it grows.
     let warm = app.clone();
@@ -507,9 +554,17 @@ fn session_extra(app: &App) -> Vec<String> {
 /// `claude agents` every 2 s while a page is open, every 10 s otherwise (ADR-0010).
 fn poll(app: &App) {
     loop {
+        let asked = sys::now_ms();
         let list = claude::agents().map(|l| l.into_iter().map(|s| with_transcript(&app.projects, s)).collect::<Vec<_>>());
         let open = {
             let mut st = app.lock();
+            let now = sys::now_ms();
+            if list.is_some() {
+                st.poll = (now, now.saturating_sub(asked), st.poll.2);
+            } else {
+                st.poll.2 = now;
+            }
+            st.ping(now);
             if let Some(list) = list {
                 let known = st.board.connected.len();
                 let before = st.board.sessions.clone();
@@ -1045,6 +1100,11 @@ fn decide(app: &App, s: &TcpStream, decision: &Json) -> io::Result<()> {
     let Some(request) = st.board.request(id).cloned() else {
         return error(s, 410, "Already answered, or the session moved on.");
     };
+    let action = decision.get("action").str().unwrap_or("");
+    // Outside the validated versions only what lets nothing run passes (ADR-0017).
+    if let Some(v) = st.unvalidated().filter(|_| !matches!(action, "deny" | "dismiss")) {
+        return error(s, 409, &format!("Claude Code {v} is not validated with clearance: decide in its terminal."));
+    }
     let out = match board::respond(&request, decision) {
         Ok(out) => out,
         Err(e) => return error(s, 400, &e),
@@ -1108,14 +1168,30 @@ fn start(app: &Arc<App>, s: &TcpStream, body: &Json) -> io::Result<()> {
 }
 
 /// The last `n` journal lines, newest first.
+/// The last `n` lines, the file before the current one included.
 fn journal_tail(file: &Path, n: usize) -> Vec<Json> {
-    let text = fs::read_to_string(file).unwrap_or_default();
+    let text = [file.with_extension("1.jsonl"), file.to_path_buf()].iter().filter_map(|f| fs::read_to_string(f).ok()).collect::<String>();
     text.lines().rev().take(n).filter_map(|l| Json::parse(l).ok()).collect()
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn the_journal_keeps_two_files() {
+        let app = test_app();
+        let file = app.home.join("journal.jsonl");
+        for n in 0..3u64 {
+            append(&file, &obj([("n", n.into())]));
+            rotate(&file, 5); // one line is more than 5 bytes
+        }
+        append(&file, &obj([("n", 3u64.into())]));
+        assert_eq!(fs::read_to_string(file.with_extension("1.jsonl")).unwrap(), "{\"n\":2}\n", "the one before is replaced");
+        let tail: Vec<String> = journal_tail(&file, 5).iter().map(Json::to_string).collect();
+        assert_eq!(tail, [r#"{"n":3}"#, r#"{"n":2}"#], "newest first, across both files");
+        let _ = fs::remove_dir_all(&app.home);
+    }
 
     #[test]
     fn shortcuts_are_checked_and_trimmed() {
@@ -1213,6 +1289,148 @@ mod tests {
         let font = call(&app, "GET", "/fonts/vt323-400.woff2", &[]);
         assert!(font.starts_with("HTTP/1.1 200") && font.contains("content-type: font/woff2"));
         assert!(call(&app, "GET", "/fonts/..%2Fmain.rs", &[]).starts_with("HTTP/1.1 404"));
+        let _ = fs::remove_dir_all(&app.home);
+    }
+
+    // ---- end to end (ADR-0017): a fake Claude Code and a fake page over real sockets ----
+
+    /// clearance on a port of its own, as `serve` runs it: each connection in its own thread.
+    fn serve_test(app: &Arc<App>) -> std::net::SocketAddr {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let addr = listener.local_addr().unwrap();
+        let a = app.clone();
+        thread::spawn(move || {
+            for s in listener.incoming().flatten() {
+                let a = a.clone();
+                thread::spawn(move || {
+                    if let Ok(req) = http::Request::read(&s) {
+                        let _ = route(&a, &s, &req);
+                    }
+                });
+            }
+        });
+        addr
+    }
+
+    /// A request sent, its answer not read yet.
+    fn send(addr: std::net::SocketAddr, method: &str, path: &str, headers: &[&str], body: &str) -> TcpStream {
+        let mut c = TcpStream::connect(addr).unwrap();
+        let extra: String = headers.iter().map(|h| format!("{h}\r\n")).collect();
+        write!(c, "{method} {path} HTTP/1.1\r\nHost: 127.0.0.1:1\r\n{extra}Content-Length: {}\r\n\r\n{body}", body.len()).unwrap();
+        c
+    }
+
+    fn answer(mut c: TcpStream) -> String {
+        let mut out = Vec::new();
+        let _ = io::Read::read_to_end(&mut c, &mut out);
+        String::from_utf8_lossy(&out).into_owned()
+    }
+
+    /// Claude Code asking for a permission: the hook call, held until someone decides.
+    fn permission(addr: std::net::SocketAddr, command: &str) -> TcpStream {
+        let body = format!(r#"{{"session_id":"sess-e2e","cwd":"/work/orchard","tool_name":"Bash","tool_input":{{"command":"{command}"}}}}"#);
+        send(addr, "POST", "/hook/PermissionRequest", &["Authorization: Bearer hook-secret"], &body)
+    }
+
+    fn signed_in(app: &Arc<App>) -> String {
+        let link = app.lock().auth.link(sys::now_ms()).unwrap();
+        format!("Cookie: clearance={}", cookie_of(&call(app, "GET", &format!("/?login={link}"), &[])))
+    }
+
+    /// The id of the request on the board once the hook call is there.
+    fn held_id(app: &Arc<App>) -> String {
+        for _ in 0..200 {
+            if let Some(r) = app.lock().board.requests.first() {
+                return r.id.clone();
+            }
+            thread::sleep(Duration::from_millis(10));
+        }
+        panic!("no request reached the board");
+    }
+
+    #[test]
+    fn e2e_a_permission_held_then_allowed_from_the_page() {
+        let app = test_app();
+        let (addr, cookie) = (serve_test(&app), signed_in(&app));
+        let hook = permission(addr, "cargo test");
+        let id = held_id(&app);
+        let decided = send(addr, "POST", "/api/decide", &[&cookie, "Origin: http://127.0.0.1:1"], &format!(r#"{{"id":"{id}","action":"allow"}}"#));
+        assert!(answer(decided).starts_with("HTTP/1.1 200"));
+        let out = answer(hook);
+        assert!(out.contains(r#""behavior":"allow""#), "{out}");
+        assert!(app.lock().board.requests.is_empty() && app.lock().held.is_empty());
+        let _ = fs::remove_dir_all(&app.home);
+    }
+
+    #[test]
+    fn e2e_answered_in_the_terminal_first() {
+        let app = test_app();
+        let (addr, cookie) = (serve_test(&app), signed_in(&app));
+        let hook = permission(addr, "rm -rf build");
+        let id = held_id(&app);
+        // The user answers in the terminal: Claude Code drops its hook call.
+        hook.shutdown(std::net::Shutdown::Both).unwrap();
+        for _ in 0..300 {
+            if app.lock().held.is_empty() {
+                break;
+            }
+            thread::sleep(Duration::from_millis(10));
+        }
+        assert!(app.lock().board.requests.is_empty(), "the request leaves the board");
+        assert!(app.lock().board.snapshot().get("settled").items().len() == 1, "and shows as settled in the terminal");
+        let late = send(addr, "POST", "/api/decide", &[&cookie, "Origin: http://127.0.0.1:1"], &format!(r#"{{"id":"{id}","action":"allow"}}"#));
+        assert!(answer(late).starts_with("HTTP/1.1 410"), "a late answer from the page is refused");
+        let _ = fs::remove_dir_all(&app.home);
+    }
+
+    #[test]
+    fn e2e_dropped_by_clearance_leaves_the_terminal_dialog() {
+        let app = test_app();
+        let addr = serve_test(&app);
+        let hook = permission(addr, "npm test");
+        held_id(&app);
+        // A restart: clearance lets go of what it holds; the hook call ends with no decision.
+        app.lock().held.clear();
+        let out = answer(hook);
+        assert!(!out.contains("behavior"), "no decision, Claude Code keeps its own dialog: {out}");
+        let _ = fs::remove_dir_all(&app.home);
+    }
+
+    #[test]
+    fn e2e_two_pages_see_the_same_request() {
+        let app = test_app();
+        let (addr, cookie) = (serve_test(&app), signed_in(&app));
+        let pages: Vec<TcpStream> = (0..2).map(|_| send(addr, "GET", "/events", &[&cookie], "")).collect();
+        thread::sleep(Duration::from_millis(200));
+        let _hook = permission(addr, "git push origin main");
+        held_id(&app);
+        for mut p in pages {
+            p.set_read_timeout(Some(Duration::from_secs(5))).unwrap();
+            let mut seen = String::new();
+            let mut buf = [0u8; 65536];
+            while !seen.contains("git push origin main") {
+                let n = io::Read::read(&mut p, &mut buf).unwrap();
+                assert!(n > 0, "the stream ended");
+                seen.push_str(&String::from_utf8_lossy(&buf[..n]));
+            }
+            assert!(seen.contains(r#""risk":"infra""#));
+        }
+        let _ = fs::remove_dir_all(&app.home);
+    }
+
+    #[test]
+    fn e2e_an_unvalidated_claude_code_allows_nothing() {
+        let app = test_app();
+        let (addr, cookie) = (serve_test(&app), signed_in(&app));
+        app.lock().claude = Some("9.0.0".into());
+        let hook = permission(addr, "cargo build");
+        let id = held_id(&app);
+        let origin = "Origin: http://127.0.0.1:1";
+        let allow = answer(send(addr, "POST", "/api/decide", &[&cookie, origin], &format!(r#"{{"id":"{id}","action":"allow"}}"#)));
+        assert!(allow.starts_with("HTTP/1.1 409") && allow.contains("decide in its terminal"), "{allow}");
+        let deny = answer(send(addr, "POST", "/api/decide", &[&cookie, origin], &format!(r#"{{"id":"{id}","action":"deny"}}"#)));
+        assert!(deny.starts_with("HTTP/1.1 200"));
+        assert!(answer(hook).contains(r#""behavior":"deny""#));
         let _ = fs::remove_dir_all(&app.home);
     }
 

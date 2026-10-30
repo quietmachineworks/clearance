@@ -118,3 +118,16 @@
   too. Messages for a session queue up and reach it one by one: none overwrites another.
 - Ctrl K finds with case and accents ignored, every word in any order.
 - The Settings show clearance's version, the commit it was built from (`build.rs`) and when it started.
+- What clearance knows, and says when it does not (ADR-0017): the page says its data is stale, and since
+  when, once `claude agents` stops answering; a heartbeat drops dead page streams, so the poll slows
+  down once no page is open.
+- Claude Code's version is read every 10 minutes; outside the validated range (2.1.304 and later 2.1
+  releases) the page and the server allow nothing, only deny, and say to decide in the terminal.
+- Risk: program names are normalised (quotes, folder, `.exe`, case), `git -C x push`, PowerShell
+  remoting and `Invoke-Sqlcmd` are infrastructure writes, and so is an MCP tool whose name holds a writing
+  verb; tricky commands are kept as tests.
+- End to end tests with a fake Claude Code: a permission held then allowed, answered in the terminal
+  first, dropped by a restart, seen by two pages, refused for an unvalidated version.
+- The journal keeps about 10 MB, in two files; the Journal page says so.
+- CI on Windows and macOS (fmt, clippy, tests, release build); a `v*` tag publishes the binaries with the
+  tag's CHANGELOG section as notes.
