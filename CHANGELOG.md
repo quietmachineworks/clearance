@@ -154,6 +154,8 @@
   A session a handoff plugin started also lists, dashed, the artifacts of the session it continues
   (mockup `design/canvas/ThreadArtifactsResumed.dc.html`); one it publishes again keeps its name.
 - Durations over an hour read "5 h 01", not "5 h 1".
+- The thread names an MCP tool as people say it ("playwright · browser click"), and the session's own
+  sentences show their `code` as code.
 - Files a session wrote in its scratchpad are no longer listed as changes.
 - Ctrl+Enter in a GO field allows the infrastructure write or launches the plan, once GO is typed.
 - An open drawer of the queue stays within it: Resume and Delete no longer slip out of view.

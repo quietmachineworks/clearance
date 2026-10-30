@@ -199,6 +199,7 @@ assert(b.n === 6 && b.files === 1 && b.tests === true && b.commits === 1 && b.fa
 const acts = actsOf(turns[1].steps);
 assert(acts[0].verb === 'read' && acts[0].more === 1 && acts[1].verb === 'say' && acts[2].verb === 'run' && acts[2].error, 'reads in a row become one: ' + JSON.stringify(acts.map((a) => a.verb)));
 assert(minutes(5 * 3600_000 + 60_000) === '5 h 01' && minutes(12 * 60_000) === '12 min' && minutes(20_000) === '<1 min', 'durations: ' + minutes(5 * 3600_000 + 60_000));
+assert(mcpName('mcp__plugin_browser_browser__page_click') === 'browser · page click' && mcpName('mcp__claude_ai_Team_Docs__batch') === 'Team Docs · batch' && mcpName('mcp__tracker__create_issue') === 'tracker · create issue', 'MCP names: ' + mcpName('mcp__plugin_browser_browser__page_click'));
 assert(verbOf({ tool: 'mcp__tracker__create_issue' }) === 'tool' && verbOf({ tool: 'Artifact', artifact: 'u' }) === 'artifact', 'verbs');
 console.log('pure helpers ok');
 "#;

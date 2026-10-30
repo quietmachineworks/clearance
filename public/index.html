@@ -722,6 +722,12 @@ function minutes(ms) {
   const m = Math.max(0, Math.round(ms / 60000))
   return m < 1 ? '<1 min' : m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')}`
 }
+// An MCP tool as people say it: "mcp__plugin_playwright_playwright__browser_click" is "playwright · browser click".
+// ponytail: a plugin's server is "plugin_<plugin>_<server>", a claude.ai connector "claude_ai_<name>"; a plugin name with "_" keeps a part of it.
+function mcpName(tool) {
+  const [, server = '', ...rest] = tool.split('__')
+  return `${server.replace(/^plugin_[^_]+_|^claude_ai_/, '').replace(/_/g, ' ')} · ${rest.join(' ').replace(/_/g, ' ')}`
+}
 // Search: case and accents ignored, every word of the query, in any order.
 const plain = (text) => String(text ?? '').normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase()
 const matches = (query, text) => { const hay = plain(text); return plain(query).split(/\s+/).filter(Boolean).every((w) => hay.includes(w)) }
@@ -1349,9 +1355,9 @@ function renderView() {
   // One action as a phrase, with how a permission it needed was settled.
   const act = (a) => {
     const x = a.x
-    if (a.verb === 'say') return h('div', { class: 'act say' }, icon('chat', 16), h('span', {}, x.text.split('\n')[0]))
+    if (a.verb === 'say') return h('div', { class: 'act say' }, icon('chat', 16), h('span', {}, prose(x.text.split('\n')[0])))
     const art = a.verb === 'artifact' ? arts.get(x.artifact) : null
-    const what = art ? art.title : x.tool.startsWith('mcp__') ? `${x.tool.split('__')[1]} : ${x.tool.split('__').slice(2).join('_')} ${x.target}` : cut1(short(x.target, cwd), 90)
+    const what = art ? art.title : x.tool.startsWith('mcp__') ? cut1(`${mcpName(x.tool)} ${short(x.target, cwd)}`, 90) : cut1(short(x.target, cwd), 90)
     const out = x.error && x.out ? ` → ✕ ${short(x.out.split('\n')[0], cwd).slice(0, 120)}` : ''
     const asked = x.asked ? h('span', { class: `asked${['refused', 'blocked', 'cancelled'].includes(x.asked.how) ? ' no' : ''}` }, ` · ${t(`asked.${x.asked.how}`, { time: clock(Date.parse(x.asked.at)) })}`) : null
     return h('div', { class: `act${a.error ? ' bad' : ''}`, title: `${x.tool} ${x.target}` }, icon(x.asked ? 'shield' : ICONS[a.verb], 16),
