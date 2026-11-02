@@ -32,7 +32,8 @@ in the same commit. A detail too long for them goes in another page under `docs/
 - Avatars: original drawings or CC0 only, OFL fonts. A pack or a skin changes the costume, never the
   meaning.
 - ASCII hyphen `-` everywhere, never an em dash or en dash.
-- Commits in English, imperative, short. No AI attribution in commits or pull requests.
+- Commits in English, imperative, short; a `Co-Authored-By` line for Claude is allowed.
+- `main` is protected on GitLab: changes go there through a branch and a merge request.
 - `CHANGELOG.md`, `Unreleased` section, on every visible change.
 
 ## Repository map
