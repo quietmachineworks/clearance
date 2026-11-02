@@ -1,4 +1,4 @@
-//! The HTTP/1.1 subset clearance needs on 127.0.0.1 (ADR-0010): one request per connection, bodies with
+//! The HTTP/1.1 subset clearance needs on 127.0.0.1: one request per connection, bodies with
 //! `Content-Length`, responses that close the connection, server-sent events.
 
 use crate::json::Json;

@@ -2,10 +2,10 @@ node_modules/
 *.log
 .env
 .env.*
+# old M0 spike logs left on disk: real session payloads, never committed
+spike/
 # local runtime state: event journal, token
 data/
-# spike logs: real session payloads, never committed
-spike/out/
 # types the Claude Code engine writes into a loaded mod folder
 **/.claude-plugin/types/
 # Rust build output

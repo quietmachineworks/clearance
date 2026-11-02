@@ -19,7 +19,7 @@ pub fn agents() -> Option<Vec<Json>> {
     Some(Json::parse(&out).ok()?.items().to_vec())
 }
 
-/// The Claude Code versions clearance was checked against (ADR-0017): this major and minor, this patch
+/// The Claude Code versions clearance was checked against: this major and minor, this patch
 /// or later. Moving it is a decision: run the end to end tests and a real permission first.
 pub const VALIDATED: (u32, u32, u32) = (2, 1, 304);
 

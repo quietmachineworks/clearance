@@ -1,4 +1,4 @@
-//! What the user arranges and what clearance keeps (ADR-0015): groups made by hand, sessions kept once
+//! What the user arranges and what clearance keeps: groups made by hand, sessions kept once
 //! they stop until the user deletes them, a name for each session that has none. Pure: the server
 //! saves `to_json` in `~/.clearance/fleet.json` and sends it to the page.
 

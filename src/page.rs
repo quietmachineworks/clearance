@@ -1,4 +1,4 @@
-//! Checks on the page (ADR-0011): colours live in the skin blocks only, every skin keeps text readable,
+//! Checks on the page: colours live in the skin blocks only, every skin keeps text readable,
 //! both languages say everything.
 
 use std::collections::HashMap;
@@ -14,7 +14,7 @@ fn style() -> &'static str {
 
 #[test]
 fn the_page_runs_only_its_own_script_and_styles() {
-    // One script and one style block, both carrying the nonce the server replaces (ADR-0014).
+    // One script and one style block, both carrying the nonce the server replaces.
     assert_eq!(PAGE.matches("<script").count(), 1);
     assert_eq!(PAGE.matches("<style").count(), 1);
     assert!(PAGE.contains("<script nonce=\"__NONCE__\">") && PAGE.contains("<style nonce=\"__NONCE__\">"));
@@ -154,7 +154,7 @@ fn both_languages_say_everything() {
 
 #[test]
 fn xterm_is_the_frozen_copy_its_readme_lists() {
-    // ADR-0016: copied from the npm registry, never edited.
+    // Copied from the npm registry, never edited.
     let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("public/vendor/xterm");
     let readme = std::fs::read_to_string(dir.join("README.md")).unwrap();
     let rows: Vec<(&str, &str)> = readme

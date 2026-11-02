@@ -1,4 +1,4 @@
-//! The sessions clearance runs in its own pseudo-terminals (ADR-0016): what each one draws is kept (the
+//! The sessions clearance runs in its own pseudo-terminals: what each one draws is kept (the
 //! last 512 KB) and streamed to the pages that show it; keys and size come back from them.
 
 use crate::json::{Json, obj};

@@ -6,7 +6,7 @@
 <title>clearance</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23141414'/%3E%3Ccircle cx='32' cy='32' r='21' fill='none' stroke='%23FFC21A' stroke-width='6'/%3E%3Cpath d='M22 33 L29 40 L43 24' fill='none' stroke='%23FFF' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <style nonce="__NONCE__">
-/* ---- fonts: served by clearance, SIL Open Font License, public/fonts (ADR-0014) ---- */
+/* ---- fonts: served by clearance, SIL Open Font License, public/fonts ---- */
 @font-face { font-family: 'Atkinson Hyperlegible Next'; font-weight: 400 800; font-display: swap; src: url(/fonts/atkinsonhyperlegiblenext-400-800.woff2) format('woff2') }
 @font-face { font-family: 'Atkinson Hyperlegible Mono'; font-weight: 400 800; font-display: swap; src: url(/fonts/atkinsonhyperlegiblemono-400-800.woff2) format('woff2') }
 @font-face { font-family: 'Dela Gothic One'; font-weight: 400; font-display: swap; src: url(/fonts/delagothicone-400.woff2) format('woff2') }
@@ -20,7 +20,7 @@
 @font-face { font-family: 'VT323'; font-weight: 400; font-display: swap; src: url(/fonts/vt323-400.woff2) format('woff2') }
 @font-face { font-family: 'Fredoka'; font-weight: 600; font-display: swap; src: url(/fonts/fredoka-600.woff2) format('woff2') }
 @font-face { font-family: 'DM Serif Display'; font-weight: 400; font-display: swap; src: url(/fonts/dmserifdisplay-400.woff2) format('woff2') }
-/* ---- skins: the only place colours, fonts, lines and shadows are written (ADR-0011) ---- */
+/* ---- skins: the only place colours, fonts, lines and shadows are written ---- */
 :root, [data-skin=manga] {
   --font: 'Atkinson Hyperlegible Next', system-ui, sans-serif; --mono: 'Atkinson Hyperlegible Mono', ui-monospace, monospace; --fs: 16px; --focus: #2F6FE0;
   --display: 'Dela Gothic One', sans-serif; --tape-font: var(--font); --pattern: radial-gradient(#E3E3E3 1px, transparent 1px); --pattern-size: 7px 7px;
@@ -230,7 +230,7 @@ details.fold[open] summary { color: var(--onPrimary); background: var(--primary)
 .group > header:hover .gact, .group > header:focus-within .gact { opacity: 1 }
 @media (hover: none) { .group .gact { opacity: 1 } }
 .group .gact .btn.icon.sm { width: 28px; height: 28px; min-height: 28px }
-/* The compact queue (BRIEF 3b): one line per session, its state on the right. */
+/* The compact queue: one line per session, its state on the right. */
 .srow { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 32px; margin: 0; padding: 0 8px; text-align: left; font: inherit; color: var(--ink); background: none; border: var(--bw) solid transparent; border-radius: var(--rs); cursor: pointer }
 .srow:hover { background: var(--soft) }
 .srow[aria-current=true] { background: var(--sel); border-color: var(--sel-edge) }
@@ -276,7 +276,7 @@ kbd { font-size: 12px; font-weight: 700; padding: 1px 6px; color: var(--ink); ba
 .metas span { display: inline-flex; align-items: center; gap: 5px }
 .split { flex: 1 1 auto; min-height: 0; display: flex }
 .center { position: relative; flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column }
-/* Files dragged over a session: the whole of it takes them (BRIEF 3b). */
+/* Files dragged over a session: the whole of it takes them. */
 .center.dropping::after { content: attr(data-drop); position: absolute; inset: 8px; z-index: 3; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 800; color: var(--ink); background: var(--sel); border: 3px dashed var(--accent); border-radius: var(--r); pointer-events: none }
 /* The right panel: hidden down to a column of icons, or dragged between 240 and 520 px. */
 .inspector.shut { flex: 0 0 48px; padding: 10px 4px; align-items: center; gap: 6px }
@@ -289,7 +289,7 @@ kbd { font-size: 12px; font-weight: 700; padding: 1px 6px; color: var(--ink); ba
 .art { display: flex; align-items: center; gap: 10px; padding: 8px 10px; color: var(--ink); text-decoration: none; background: var(--paper); border: var(--bw) solid var(--edge); border-radius: var(--r) }
 .art.before { color: var(--text2); background: var(--panel); border-style: dashed; border-color: var(--line2) }
 .art > span { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; line-height: 1.25 }
-/* The thread, one turn per message (BRIEF 3b): what you asked, what it did, what it answered. */
+/* The thread, one turn per message: what you asked, what it did, what it answered. */
 .turn { display: flex; flex-direction: column; gap: 8px }
 .turn .bilan { display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; border: var(--bw) solid var(--line); border-radius: var(--r); background: var(--panel) }
 .turn .bilan.live { border-color: var(--blue) }
@@ -486,7 +486,7 @@ th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--line
 // Everything that comes from a session (commands, questions, messages) goes through h() as text, never
 // through innerHTML. The avatar and icon SVG are built from constants only.
 const $ = (sel, root = document) => root.querySelector(sel)
-// Drawn by the server for each load (ADR-0014): given to the scripts and styles the page adds itself.
+// Drawn by the server for each load: given to the scripts and styles the page adds itself.
 const NONCE = document.currentScript?.nonce ?? ''
 
 function h(tag, attrs = {}, ...children) {
@@ -496,7 +496,7 @@ function h(tag, attrs = {}, ...children) {
     if (k.startsWith('on')) el.addEventListener(k.slice(2), v)
     else if (k === 'class') el.className = v
     else if (k === 'value') el.value = v
-    // Through the CSSOM: the policy allows no style attribute (ADR-0014).
+    // Through the CSSOM: the policy allows no style attribute.
     else if (k === 'style') el.style.cssText = v
     else el.setAttribute(k, v === true ? '' : v)
   }
@@ -521,7 +521,7 @@ async function post(path, body) {
   } catch (e) { return String(e.message || e) }
 }
 
-// ---- languages (ADR-0011) ----
+// ---- languages ----
 const I18N = {
   en: {
     waiting: 'Waiting for you', watch: 'To watch', review: 'To read', working: 'Working', idle: 'Idle', asleep: 'Asleep', ignored: 'Ignored',
@@ -713,7 +713,7 @@ function icon(name, size = 18) {
 }
 const btn = (cls, label, iconName, onclick, attrs = {}) => h('button', { type: 'button', class: `btn ${cls}`, title: attrs.title ?? label, 'aria-label': attrs.text ? null : label, onclick, ...attrs, text: null }, iconName ? icon(iconName, attrs.size ?? 20) : null, attrs.text ?? null)
 
-// ---- avatars (design/canvas/Chibi.dc.html, BRIEF section 4); fixed art, the same in every skin ----
+// ---- avatars; fixed art, the same in every skin ----
 const PALETTE = [['#3D7BE0', '#1F4E9E', '#E4EDFB'], ['#8B5CF6', '#5B2FC0', '#EFE8FE'], ['#13A3A3', '#0B6B6B', '#DDF4F4'], ['#F06292', '#B0305C', '#FDE6EE'], ['#3BAA5C', '#22743A', '#E2F4E7'], ['#F08A24', '#A85A0C', '#FDEEDC'], ['#8A94A6', '#4F5869', '#ECEEF2']]
 const folderName = (cwd = '') => cwd.split(/[\\/]/).filter(Boolean).pop() || '?'
 // ---- pure: no DOM, run by src/page.rs under node ----
@@ -731,7 +731,7 @@ function mcpName(tool) {
 // Search: case and accents ignored, every word of the query, in any order.
 const plain = (text) => String(text ?? '').normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase()
 const matches = (query, text) => { const hay = plain(text); return plain(query).split(/\s+/).filter(Boolean).every((w) => hay.includes(w)) }
-// The thread in turns (BRIEF 3b): one per message the user sent, or per resume; in each, what the session
+// The thread in turns: one per message the user sent, or per resume; in each, what the session
 // did and said in order, and its reply: its last text, once nothing came after it.
 function turnsOf(items) {
   const turns = []
@@ -909,7 +909,7 @@ let toastTimer = null
 let opening = null // name of a session started from the page, opened in its terminal once it shows up
 
 const sessionOf = (id) => snap.sessions.find((s) => s.sessionId === id)
-// Groups, stopped sessions and given names live on the server (ADR-0015).
+// Groups, stopped sessions and given names live on the server.
 const fleet = () => snap.fleet ?? { groups: [], members: {}, stopped: [], names: {} }
 const nameOf = (s) => s?.name || fleet().names?.[s?.sessionId] || folderName(s?.cwd)
 const groupIdOf = (s) => (s && fleet().members?.[s.sessionId]) || ''
@@ -924,7 +924,7 @@ const rel = (file, cwd) => {
   const short = cwd && f.toLowerCase().startsWith(c.toLowerCase()) ? f.slice(c.length) : f
   return short.length <= 40 ? short : `…/${f.split('/').slice(-2).join('/')}`
 }
-// The group's name, or the folder's for a session in no group: the tag and the hair colour (BRIEF section 4).
+// The group's name, or the folder's for a session in no group: the tag and the hair colour.
 const groupOf = (s) => groupNamed(groupIdOf(s)) || folderName(s?.cwd)
 const left = (s) => (s?.usage?.context?.percent == null ? null : Math.max(0, Math.round(100 - s.usage.context.percent)))
 const level = (l) => (l >= 50 ? 'g' : l >= 25 ? 'y' : l >= 10 ? 'o' : 'r')
@@ -981,7 +981,7 @@ function renderTop() {
   })
   const restarting = snap.restart ? h('div', { class: 'pill dry', role: 'status' }, icon('loop', 14), ' ', t('restart.waiting', { n: running().filter((s) => termOf(s.sessionId)).length }), ' ',
     btn('sm', t('restart.force'), 'play', () => post('/api/restart', { action: 'force' }), { text: t('restart.force') }), btn('sm quiet', t('restart.cancel'), 'x', () => post('/api/restart', { action: 'cancel' }), { text: t('restart.cancel') })) : null
-  // What the page shows is the last good reading of `claude agents` (ADR-0017).
+  // What the page shows is the last good reading of `claude agents`.
   const p = snap.poll
   const stale = p?.failedAt > p?.at && Date.now() - p.at > 15_000 ? h('div', { class: 'pill dry', role: 'alert' }, icon('alert', 14), ' ', t('stale', { time: clock(p.at) })) : null
   fill($('#top'),
@@ -1005,7 +1005,7 @@ function renderTop() {
 }
 
 // The logo, proposal A (a radar echo and the check of a cleared flight): fixed colours on its own tile, the
-// same in every skin (ADR-0011). The favicon is its small form, without the sweep.
+// same in every skin. The favicon is its small form, without the sweep.
 // On a phone, the mark alone.
 function logo() {
   const el = h('span', { class: 'lockup', 'aria-hidden': 'true' })
@@ -1034,7 +1034,7 @@ function item(sessionId, main, kindBox, extra = {}) {
   return h('button', { type: 'button', class: `item ${extra.cls ?? ''}`, 'aria-current': sel === sessionId ? 'true' : null, 'data-session': sessionId, onclick: () => select(sessionId) },
     kindBox, h('span', { class: 'main' }, main))
 }
-// A compact line (BRIEF 3b): the name, the session's title, its state on the right; `lead` before the name.
+// A compact line: the name, the session's title, its state on the right; `lead` before the name.
 function line(id, s, right, opts = {}) {
   return h('button', { type: 'button', class: `srow${opts.strong ? ' strong' : ''}`, 'aria-current': sel === id ? 'true' : null, 'data-session': id, onclick: () => select(id) },
     opts.lead ?? null, h('b', {}, nameOf(s)), h('span', { class: `what${opts.warn ? ' warn' : ''}` }, opts.title ?? ''), right)
@@ -1073,7 +1073,7 @@ function renderQueue() {
   const shown = new Set(L.waiting.map((r) => r.id))
   const fresh = held ? [...shown].filter((id) => !held.has(id)) : []
   const waiting = held ? L.waiting.filter((r) => held.has(r.id)) : L.waiting
-  // What waits for you and what needs watching stay on top, across groups (ADR-0015).
+  // What waits for you and what needs watching stay on top, across groups.
   fill(side,
     h('div', { class: 'chips', role: 'group', 'aria-label': t('groups') },
       phone.matches ? null : btn('icon sm', t('fold'), 'fold', () => fold(true)),
@@ -1129,7 +1129,7 @@ function groupBlock(g, L) {
         btn('icon sm', muted.has(key) ? t('group.unmute') : t('group.mute'), muted.has(key) ? 'bell' : 'bellOff', () => { muted.has(key) ? muted.delete(key) : muted.add(key); store.set('muted', [...muted]); render() }, { size: 16 }),
         btn('icon sm', t('group.interrupt'), 'pause', () => openStop(running().filter((s) => mine(s.sessionId)), false), { size: 16 }))),
     open ? [
-      // To read, working, idle: the order says the state, no subheading (BRIEF 3b).
+      // To read, working, idle: the order says the state, no subheading.
       done.map((d) => {
         const s = sessionOf(d.session) ?? { sessionId: d.session, cwd: d.cwd }
         const when = h('span', { class: `when ${d.failed ? 'bad' : 'ok'}`, title: t(d.failed ? 'failed' : 'review') }, d.failed ? icon('x', 14) : h('span', { class: once(`done:${d.session}:${d.at}`, 'pop') }, icon('check', 14)), ago(d.at))
@@ -1149,7 +1149,7 @@ function groupBlock(g, L) {
     ] : null)
 }
 
-// Stopped sessions (ADR-0015): resumed in a new terminal tab, or deleted from clearance (the transcript
+// Stopped sessions: resumed in a new terminal tab, or deleted from clearance (the transcript
 // stays in Claude Code's folder).
 function stoppedDrawer(key, list) {
   return h('details', { class: 'fold stopped', open: drawers.has(key) || null, ontoggle: (e) => { e.target.open ? drawers.add(key) : drawers.delete(key) } },
@@ -1287,7 +1287,7 @@ function renderPane() {
         tab === 'settings' || tab === 'details' || (phone.matches && tab === 'action') ? null : composer(view)),
       narrow.matches || !inspOpen ? null : inspGrip,
       narrow.matches ? null : h('aside', { class: `inspector insp${inspOpen ? '' : ' shut'}`, id: 'inspector', 'aria-label': t('task') })))
-  // Files pasted or dropped anywhere on the session wait above its message field (BRIEF 3b); the terminal
+  // Files pasted or dropped anywhere on the session wait above its message field; the terminal
   // takes its own, typed as paths.
   const center = $('#pane .center')
   if (center && tab !== 'terminal' && tab !== 'settings') {
@@ -1488,7 +1488,7 @@ function decisionCard() {
   const head = (kind, extra) => h('div', { class: 'top-row' }, extra, h('span', { class: 'meta', title: t('since') }, icon('clock', 15), ' ', ago(r.at)), h('span', { class: 'spacer' }),
     next ? h('span', { class: 'meta', title: t('next', { name: named(next) }) }, icon('next', 15), ' ', named(next)) : null)
   const decide = (body, label) => queueDecision(r, body, label, next)
-  // Outside the validated Claude Code versions the page allows nothing; the server refuses it too (ADR-0017).
+  // Outside the validated Claude Code versions the page allows nothing; the server refuses it too.
   if (snap.claude && !snap.claude.validated) {
     return h('article', { class: 'card hot', 'aria-label': t('perm.kind') }, head(r.kind),
       h('strong', { role: 'alert' }, icon('alert', 18), ' ', t('unvalidated', { version: snap.claude.version })),
@@ -1638,7 +1638,7 @@ function composer(s) {
     h('span', { class: 'meta', style: 'display:inline-flex;align-items:center;gap:6px' }, icon('clock', 14), delivery, ' · ', t('attach.hint')))
 }
 
-// In clearance's own terminal the text is typed there, as a paste then Enter (ADR-0016); elsewhere the
+// In clearance's own terminal the text is typed there, as a paste then Enter; elsewhere the
 // companion mod submits it, in turn with the others queued for the session.
 async function sendText(id, text) {
   const term = termOf(id)
@@ -1679,7 +1679,7 @@ function addFiles(id, got) {
   for (const g of got) {
     const item = { path: g.path, name: g.name, size: g.size, image: /^image\//.test(g.file?.type ?? ''), thumb: null }
     list.push(item)
-    // A data URL, which the page's policy allows for images (ADR-0014); big ones get the icon only.
+    // A data URL, which the page's policy allows for images; big ones get the icon only.
     if (item.image && g.size < 3_000_000) {
       const reader = new FileReader()
       reader.onload = () => { item.thumb = reader.result; drawAttached(id) }
@@ -1720,13 +1720,13 @@ function acceptFiles(el, put) {
   })
 }
 
-// ---- clearance's own terminals (ADR-0016): the session's real screen, drawn by xterm.js ----
+// ---- clearance's own terminals: the session's real screen, drawn by xterm.js ----
 // A terminal not yet tied to its session (Claude Code asking whether to trust the folder) is shown as term:<id>.
 const termOf = (id) => (snap.terms ?? []).find((x) => x.session === id || `term:${x.id}` === id)
 let liveTerm = null // { id, term, fit, source, host, watch }
 let xtermReady = null
 // xterm.js is loaded when a terminal is first shown, with the page's nonce, which it also gives the style
-// elements it creates (ADR-0014).
+// elements it creates.
 function loadXterm() {
   if (xtermReady) return xtermReady
   const make = document.createElement.bind(document)
@@ -1859,7 +1859,7 @@ function openPalette() {
   const text = h('textarea', { class: 'field', rows: 3, placeholder: t('palette.prompt'), 'aria-label': t('palette.prompt') })
   const name = h('input', { class: 'field grow', 'aria-label': t('palette.name'), placeholder: t('palette.name') })
   const folders = h('div', { class: 'row', role: 'group', 'aria-label': t('folder') })
-  // The group it goes in once it shows up (ADR-0015).
+  // The group it goes in once it shows up.
   const groupPick = h('select', { class: 'field', 'aria-label': t('set.group'), onchange: (e) => { st.group = e.target.value } },
     [{ id: '', name: t('group.none') }, ...fleet().groups].map((g) => h('option', { value: g.id, selected: g.id === st.group ? true : null }, g.name)))
   const seg = (list, key, label) => h('div', { class: 'seg', role: 'group', 'aria-label': label }, list.map(([v, l]) => h('button', { type: 'button', 'aria-pressed': String(st[key] === v), onclick: (e) => { st[key] = v; e.target.parentNode.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === e.target))) } }, l)))
@@ -1868,7 +1868,7 @@ function openPalette() {
     fill(folders, icon('folder'), [...new Set([st.folder, ...recent].filter(Boolean))].slice(0, 8).map((p) => h('button', { type: 'button', class: 'folder', 'aria-pressed': String(p === st.folder), title: p, onclick: () => { st.folder = p; name.value = autoName(); drawFolders() } }, h('span', { class: 'dot', style: `background:${colours(folderName(p))[0]}` }), folderName(p))),
       btn('icon sm quiet', t('browse'), 'search', () => browse()))
   }
-  // The folders of the machine running clearance, browsed in the page (no system dialog, ADR-0016).
+  // The folders of the machine running clearance, browsed in the page (no system dialog).
   const browser = h('div', { class: 'menu', role: 'group', 'aria-label': t('browse') })
   async function browse(path = st.folder) {
     const res = await fetch(`/api/folders?path=${encodeURIComponent(path ?? '')}`).catch(() => null)
@@ -1923,7 +1923,7 @@ function openSearch() {
   input.focus()
 }
 
-// The user's groups (ADR-0015): create, rename (on leaving the field), delete; a deleted group's sessions go
+// The user's groups: create, rename (on leaving the field), delete; a deleted group's sessions go
 // back to "No group".
 function openGroups(createFirst) {
   const body = h('div', { class: 'menu' })
@@ -1991,7 +1991,7 @@ function openStop(sessions, exit) {
   const st = { exit }
   const reach = sessions.filter(modReady), away = sessions.filter((s) => !modReady(s))
   const asked = reach.some((s) => snap.requests.some((r) => r.session === s.sessionId))
-  // Quitting gives back the memory of the sessions it reaches (ADR-0015).
+  // Quitting gives back the memory of the sessions it reaches.
   const freed = exit ? reach.reduce((a, s) => a + memOf(s.sessionId), 0) : 0
   const who = (s) => h('div', { class: 'row' }, avatar(s.status === 'busy' ? 'work' : 'wait', s, 28), h('b', {}, nameOf(s)), h('span', { class: 'meta' }, s.title || s.waitingFor || ''))
   const go = h('button', { type: 'button', class: 'btn stop', disabled: !reach.length, onclick: async () => {
@@ -2055,7 +2055,7 @@ function shortcutsEditor() {
   return box
 }
 
-// Signed-in browsers (ADR-0013): each one has a session of its own, signed out alone or with the others.
+// Signed-in browsers: each one has a session of its own, signed out alone or with the others.
 const browsers = h('section', { class: 'menu', 'aria-label': 'browsers' })
 const browserName = (agent = '') => [/Edg\//.test(agent) ? 'Edge' : /Firefox\//.test(agent) ? 'Firefox' : /Chrome\//.test(agent) ? 'Chrome' : /Safari\//.test(agent) ? 'Safari' : '?',
   /Windows/.test(agent) ? 'Windows' : /Mac OS/.test(agent) ? 'macOS' : /Linux/.test(agent) ? 'Linux' : ''].filter(Boolean).join(' · ')

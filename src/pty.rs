@@ -1,4 +1,4 @@
-//! A program in a pseudo-terminal (ADR-0016): ConPTY on Windows, `openpty` on macOS, through the system's
+//! A program in a pseudo-terminal: ConPTY on Windows, `openpty` on macOS, through the system's
 //! own functions. What the program draws comes out as bytes; keys go in as bytes. System specific code
 //! stays here.
 

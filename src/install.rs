@@ -1,4 +1,4 @@
-//! clearance's hooks in the user's Claude Code settings, added or removed (ADR-0009). An explicit step: a
+//! clearance's hooks in the user's Claude Code settings, added or removed. An explicit step: a
 //! backup first, the user's own hooks left as they are, and only entries that point at clearance are
 //! ever replaced or removed.
 //!   clearance install [--dry-run] [--remove] [--settings <file>]
@@ -12,9 +12,9 @@ use std::path::{Path, PathBuf};
 const EVENTS: [&str; 7] = ["PermissionRequest", "PermissionDenied", "Stop", "StopFailure", "UserPromptSubmit", "SubagentStart", "SubagentStop"];
 
 // PermissionRequest (permissions, questions, plans) runs in parallel with the terminal dialog, so it
-// waits up to a day: past its timeout a request leaves the page (ADR-0009). An auto mode denial is held
+// waits up to a day: past its timeout a request leaves the page. An auto mode denial is held
 // 60 s while a page is open. The others answer at once. Only hooks that stay silent while clearance is
-// stopped: Stop and UserPromptSubmit would print an error in every session (ADR-0009).
+// stopped: Stop and UserPromptSubmit would print an error in every session.
 const HOOKS: [(&str, u64); 5] = [("PermissionRequest", 86_400), ("PermissionDenied", 60), ("StopFailure", 5), ("SubagentStart", 5), ("SubagentStop", 5)];
 
 /// The `hooks` block of a settings file that connects a session to clearance at `base`.
@@ -35,7 +35,7 @@ pub fn hooks(base: &str, token: &str) -> Json {
     )
 }
 
-/// The deny rules that keep a session's file tools out of clearance's folder (ADR-0013): `Edit` covers
+/// The deny rules that keep a session's file tools out of clearance's folder: `Edit` covers
 /// every tool that writes, `Read` the ones that read, Grep and Glob included.
 pub fn deny(home: &Path) -> Vec<String> {
     let posix = |p: &Path| p.display().to_string().replace('\\', "/");

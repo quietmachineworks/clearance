@@ -8,7 +8,7 @@ license = "MIT"
 repository = "https://github.com/quietmachineworks/clearance"
 publish = false
 
-# Standard library only (ADR-0010): a crate needs an ADR.
+# Standard library only: a crate needs a reason, written in docs/how-it-works.md.
 [dependencies]
 
 [lints.rust]

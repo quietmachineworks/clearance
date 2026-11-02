@@ -1,4 +1,4 @@
-//! What a crate would otherwise give (ADR-0010): time and ISO 8601 dates, the operating system's random
+//! What a crate would otherwise give: time and ISO 8601 dates, the operating system's random
 //! numbers, the home folder, a program run with a time limit, a comparison in constant time, SHA-256, the
 //! default browser.
 
@@ -188,7 +188,7 @@ pub fn sha256(data: &[u8]) -> String {
 }
 
 /// The memory of each root process with all its descendants, in bytes: the working set on Windows, the
-/// resident size elsewhere (ADR-0015). A root no longer running counts nothing.
+/// resident size elsewhere. A root no longer running counts nothing.
 pub fn tree_memory(roots: &[u32]) -> std::collections::HashMap<u32, u64> {
     let table = process_table();
     roots.iter().map(|&root| (root, descendants(&table, root).into_iter().filter_map(|pid| table.iter().find(|p| p.0 == pid).and_then(memory)).sum())).collect()

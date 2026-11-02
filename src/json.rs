@@ -1,4 +1,4 @@
-//! JSON without a crate (ADR-0010): a value that keeps the order of object keys, so that the user's
+//! JSON without a crate: a value that keeps the order of object keys, so that the user's
 //! `settings.json` is rewritten in place, a parser, and the two layouts of JavaScript's
 //! `JSON.stringify` (compact, and indented by two spaces).
 

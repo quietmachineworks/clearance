@@ -1,5 +1,5 @@
-//! Risk of a permission request: what an "Allow" would let run (BRIEF section 6), and the rules
-//! suggested from approvals given by hand (ADR-0007).
+//! Risk of a permission request: what an "Allow" would let run, and the rules
+//! suggested from approvals given by hand.
 //! ponytail: word rules on the command text, not a shell parser. Errors lean towards the higher class,
 //! and the card always shows the full command whatever the class.
 
@@ -78,7 +78,7 @@ pub fn classify(tool: &str, input: &Json) -> Risk {
     if reads { Risk::Read } else { Risk::Write }
 }
 
-/// The environment an infrastructure write reaches (ADR-0012): the first environment of the user's
+/// The environment an infrastructure write reaches: the first environment of the user's
 /// `environments.json` with a pattern found in the command (or the tool's input), and that pattern. None
 /// matched: unknown, which the page handles like production.
 pub fn environment(input: &Json, patterns: &Json) -> (String, Option<String>) {
@@ -267,7 +267,7 @@ fn dash_flag(p: &str, names: &[&str]) -> bool {
     })
 }
 
-// ---- suggested rules (BRIEF section 3: fewer interruptions) ----
+// ---- suggested rules ----
 
 pub struct Approval {
     pub tool: String,
@@ -452,14 +452,14 @@ mod tests {
     fn tools_without_a_shell() {
         assert_eq!(classify("Read", &obj([("file_path", "a.txt".into())])), Risk::Read);
         assert_eq!(classify("Edit", &Json::Null), Risk::Write);
-        // An MCP server reaches a service: a tool that writes there is an infrastructure write (ADR-0017).
+        // An MCP server reaches a service: a tool that writes there is an infrastructure write.
         assert_eq!(classify("mcp__tracker__create_ticket", &Json::Null), Risk::Infra);
         assert_eq!(classify("mcp__tracker__addComment", &Json::Null), Risk::Infra);
         assert_eq!(classify("mcp__tracker__get_ticket", &Json::Null), Risk::Write);
         assert_eq!(classify("mcp__ci__job_runs", &Json::Null), Risk::Write, "runs is not run");
     }
 
-    // Tricky commands (ADR-0017): wrappers, paths, extensions, PowerShell remoting.
+    // Tricky commands: wrappers, paths, extensions, PowerShell remoting.
     #[test]
     fn tricky_commands_still_reach_infra() {
         for c in [

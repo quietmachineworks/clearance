@@ -1,5 +1,5 @@
 //! How clearance starts a session: checked arguments for claude and its environment. Sessions run in
-//! clearance's own terminals only (ADR-0016): no terminal application, no PowerShell, no AppleScript. Windows Terminal on Windows, Terminal.app on macOS; system specific code stays here.
+//! clearance's own terminals only: no terminal application, no PowerShell, no AppleScript. Windows Terminal on Windows, Terminal.app on macOS; system specific code stays here.
 
 use crate::json::Json;
 
@@ -83,7 +83,7 @@ const SESSION_MARKERS: [&str; 10] = [
 ];
 
 /// clearance's environment without those markers, for a session it starts in its own terminal; a
-/// terminal type when there is none (ADR-0016).
+/// terminal type when there is none.
 pub fn session_env() -> Vec<(String, String)> {
     let mut env: Vec<(String, String)> = std::env::vars().filter(|(k, _)| !SESSION_MARKERS.contains(&k.as_str())).collect();
     if !env.iter().any(|(k, _)| k == "TERM") {

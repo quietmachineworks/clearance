@@ -1,4 +1,4 @@
-// clearance companion mod (ADR-0004). Every 5 s it sends this session's usage to clearance, shows
+// clearance companion mod. Every 5 s it sends this session's usage to clearance, shows
 // under the prompt what waits for you, submits an instruction typed for this session in clearance, and
 // stops the session when asked to. With clearance stopped it says nothing and does nothing.
 import type { Register } from 'claude-code'

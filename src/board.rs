@@ -1,4 +1,4 @@
-//! Board state: what waits for the user, what is done, who is working (BRIEF section 3, ADR-0003).
+//! Board state: what waits for the user, what is done, who is working.
 //! Pure: the server holds the connections and sends what `respond` builds.
 
 use crate::json::{Json, obj};
@@ -38,7 +38,7 @@ pub struct Request {
     pub mode: Option<String>,   // permission mode when asked
     pub reason: Option<String>, // auto mode denial reason
     pub seen_waiting: bool,     // the session reported `waiting` since this request arrived
-    pub env: Option<String>,    // infrastructure writes: the environment they reach (ADR-0012)
+    pub env: Option<String>,    // infrastructure writes: the environment they reach
     pub env_pattern: Option<String>,
 }
 
@@ -121,7 +121,7 @@ fn opt(v: &Json) -> Option<String> {
     v.str().map(String::from)
 }
 
-// Plan approvals come as AskUserQuestion with a GO option (BRIEF section 3).
+// Plan approvals come as AskUserQuestion with a GO option.
 fn is_go(label: &str) -> bool {
     label.trim().eq_ignore_ascii_case("go")
 }
@@ -135,7 +135,7 @@ impl Board {
         self.requests.iter().find(|r| r.id == id)
     }
 
-    /// What the companion mod reports: `$.session.usage()` (ADR-0004), stamped on arrival.
+    /// What the companion mod reports: `$.session.usage()`, stamped on arrival.
     pub fn report(&mut self, session: &str, usage: &Json, now: u64) {
         let mut kept = obj([("context", usage.get("context").clone()), ("rateLimits", usage.get("rateLimits").clone()), ("cost", usage.get("cost").clone())]);
         if let Some(usd) = usage.get("cost").get("usd").num() {
@@ -205,7 +205,7 @@ impl Board {
         let mut ended = Vec::new();
         let request = match event {
             // Questions come through PermissionRequest too, in parallel with the terminal dialog. A held
-            // PreToolUse hook would hide that dialog until it answers (observed in M1, ADR-0005).
+            // PreToolUse hook would hide that dialog until it answers (observed in M1).
             "PermissionRequest" if tool == "AskUserQuestion" => {
                 let plan = input.get("questions").items().iter().any(|q| q.get("options").items().iter().any(|o| is_go(o.get("label").str().unwrap_or(""))));
                 Some(if plan { new(self, Kind::Plan, Risk::Infra, Vec::new(), None) } else { new(self, Kind::Question, Risk::Read, Vec::new(), None) })
@@ -265,7 +265,7 @@ impl Board {
 
         // A turn that ended (busy or waiting, now idle) is done until read; a new turn (idle, now busy)
         // means the user typed or an instruction came in. Read off the status rather than from Stop and
-        // UserPromptSubmit hooks, whose errors show in every session while clearance is stopped (ADR-0009).
+        // UserPromptSubmit hooks, whose errors show in every session while clearance is stopped.
         let mut ended = Vec::new();
         for s in self.sessions.clone() {
             let id = id_of(&s);

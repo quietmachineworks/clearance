@@ -1,4 +1,4 @@
-# xterm.js, copied and frozen (ADR-0016)
+# xterm.js, copied and frozen
 
 The terminal drawn in a session's Terminal tab. Copied from the npm registry, never edited; loaded by
 the page only when that tab opens, with the page's nonce.

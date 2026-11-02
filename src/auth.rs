@@ -1,4 +1,4 @@
-//! Who may use the page (ADR-0013): single-use login links, then a session of its own for each browser.
+//! Who may use the page: single-use login links, then a session of its own for each browser.
 //! The hook secret never opens the page; a browser's cookie is a random id of which clearance keeps only
 //! the SHA-256, so reading `browsers.json` gives no working cookie.
 

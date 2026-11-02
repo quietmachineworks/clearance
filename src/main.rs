@@ -1,9 +1,9 @@
-//! clearance: the local control tower for Claude Code sessions (BRIEF, ADR-0010).
+//! clearance: the local control tower for Claude Code sessions.
 //!   clearance                        serves the page and the hooks on 127.0.0.1, without a window
 //!   clearance --foreground           the same, in the terminal it was started from
-//!   clearance open                   opens the page, signed in, from the running clearance (ADR-0013)
+//!   clearance open                   opens the page, signed in, from the running clearance
 //!   clearance install [--dry-run] [--remove] [--settings <file>]
-//!                                    adds clearance's hooks to the user's settings (ADR-0009)
+//!                                    adds clearance's hooks to the user's settings
 //! CLEARANCE_PORT (47800) and CLEARANCE_HOME (~/.clearance) move a test server out of the live one's way;
 //! CLEARANCE_LOG=1 keeps every hook payload, to study a new event's shape.
 
@@ -37,10 +37,10 @@ const PAGE: &str = include_str!("../public/index.html");
 // While the repository the binary was built from is there, the page is read from it (no rebuild to see
 // an edit) and the companion mod is loaded from it.
 const REPO: &str = env!("CARGO_MANIFEST_DIR");
-// The page's own script and styles only, marked with a nonce drawn for each load (ADR-0014).
+// The page's own script and styles only, marked with a nonce drawn for each load.
 const NONCE: &str = "__NONCE__";
 
-// The page's fonts and their licences (ADR-0014), in the binary for a copy run without the repository.
+// The page's fonts and their licences, in the binary for a copy run without the repository.
 const FONTS: [(&str, &[u8]); 25] = [
     ("archivo-800.woff2", include_bytes!("../public/fonts/archivo-800.woff2")),
     ("archivo-OFL.txt", include_bytes!("../public/fonts/archivo-OFL.txt")),
@@ -75,11 +75,11 @@ fn csp(nonce: &str) -> String {
 
 struct App {
     port: u16,
-    token: String, // the hook secret: hooks, companion mod, `clearance open` (ADR-0013)
+    token: String, // the hook secret: hooks, companion mod, `clearance open`
     home: PathBuf, // ~/.clearance: token, hooks.json, endpoint.json, browsers.json, journal
     projects: PathBuf,
     state: Mutex<State>,
-    terms: Arc<terms::Terms>, // sessions running in clearance's own terminals (ADR-0016)
+    terms: Arc<terms::Terms>, // sessions running in clearance's own terminals
 }
 
 #[derive(Default)]
@@ -92,7 +92,7 @@ struct State {
     stops: HashMap<String, (&'static str, u64)>, // session -> "interrupt" or "exit", and when it was asked
     // ponytail: never pruned, a few bytes per session clearance has seen since it started.
     mods: HashMap<String, u64>,            // session -> version of its companion mod: 2 and up can stop the session
-    fleet: fleet::Fleet,                   // groups, stopped sessions, names (~/.clearance/fleet.json, ADR-0015)
+    fleet: fleet::Fleet,                   // groups, stopped sessions, names (~/.clearance/fleet.json)
     memory: HashMap<String, u64>,          // session -> bytes of its processes, read every 10 s
     first_groups: HashMap<String, String>, // session name -> group picked when it was started from the page
     lang: String,                          // the page's language, for the line under the prompt
@@ -101,7 +101,7 @@ struct State {
     restart: Option<(u64, bool)>,          // a restart asked from the page: since when, forced
     prompts: Json,                         // the user's shortcuts, ~/.clearance/prompts.json: [{label, text}]
     started: u64,                          // when this clearance started, for the Settings
-    claude: Option<String>,                // `claude --version`, read every 10 minutes (ADR-0017)
+    claude: Option<String>,                // `claude --version`, read every 10 minutes
     poll: (u64, u64, u64),                 // last good `claude agents`: when, how long it took (ms); last failure
     pinged: u64,                           // last heartbeat written to the page streams
 }
@@ -137,7 +137,7 @@ impl State {
     }
 
     /// A comment line on every page stream every 15 s: a dead one is dropped even when nothing changes,
-    /// and the poll slows down once no page is left (ADR-0017).
+    /// and the poll slows down once no page is left.
     fn ping(&mut self, now: u64) {
         if now.saturating_sub(self.pinged) < 15_000 {
             return;
@@ -231,7 +231,7 @@ impl App {
         sys::open_url(&format!("{}/?login={link}", self.base())).map_err(|e| e.to_string())
     }
 
-    /// Append-only journal of what was decided from the page (BRIEF section 6).
+    /// Append-only journal of what was decided from the page.
     fn journal(&self, entry: Json) {
         let mut line = obj([("at", sys::iso(sys::now_ms()).into())]);
         for (k, v) in entry.entries() {
@@ -248,7 +248,7 @@ fn read_json(file: &Path) -> Json {
     fs::read_to_string(file).ok().and_then(|t| Json::parse(&t).ok()).filter(|j| matches!(j, Json::Obj(_))).unwrap_or(Json::Obj(Vec::new()))
 }
 
-// About 10 MB of journal in all: the current file and the one before (ADR-0017).
+// About 10 MB of journal in all: the current file and the one before.
 const JOURNAL_MAX: u64 = 5 * 1024 * 1024;
 
 /// Past `max` bytes, `x.jsonl` becomes `x.1.jsonl`, replacing the one before.
@@ -294,7 +294,7 @@ fn main() {
     match args.first().map(String::as_str) {
         // In place: what the windowless clearance runs, and a way to watch it while working on it.
         Some("--foreground") => serve(Arc::new(app)),
-        // No window to keep open (ADR-0016): the same clearance, detached; the page opens signed in. A second
+        // No window to keep open: the same clearance, detached; the page opens signed in. A second
         // one finds the first on its port and only opens the page.
         None => {
             let exe = std::env::current_exe().unwrap_or_else(|e| fail(&e.to_string()));
@@ -365,7 +365,7 @@ fn serve(app: Arc<App>) {
     }
     {
         let mut st = app.lock();
-        // Groups were folders until ADR-0015: the old map is set aside, the user makes their own groups.
+        // Groups were folders before groups made by hand: the old map is set aside, the user makes their own groups.
         let (old, kept) = (app.home.join("groups.json"), app.home.join("groups.json.old"));
         if old.exists() && !kept.exists() {
             let _ = fs::rename(&old, &kept);
@@ -394,7 +394,7 @@ fn serve(app: Arc<App>) {
     thread::spawn(move || weigh(&weigher));
     let restarter = app.clone();
     thread::spawn(move || restart_when_idle(&restarter));
-    // Claude Code's version, against the range clearance was checked with (ADR-0017).
+    // Claude Code's version, against the range clearance was checked with.
     let versions = app.clone();
     thread::spawn(move || {
         loop {
@@ -429,7 +429,7 @@ fn serve(app: Arc<App>) {
 const RESTARTED: &str = "CLEARANCE_RESTARTED";
 const RESTART_WAIT_MS: u64 = 20 * 60_000;
 
-/// Starts a session in one of clearance's own terminals (ADR-0016); its group is placed once it shows up.
+/// Starts a session in one of clearance's own terminals; its group is placed once it shows up.
 fn start_term(app: &Arc<App>, start: &terminal::Start, extra: &[String], group: Option<String>) -> Result<(), String> {
     start.check()?;
     let args = start.claude(extra);
@@ -489,7 +489,7 @@ fn refresh_terms(app: &App, st: &mut State) {
     }
 }
 
-/// The terminals clearance ran when it stopped, reopened on their sessions (ADR-0016).
+/// The terminals clearance ran when it stopped, reopened on their sessions.
 fn reopen_terms(app: &Arc<App>) {
     let saved = fs::read_to_string(app.home.join("terminals.json")).ok().and_then(|t| Json::parse(&t).ok()).unwrap_or(Json::Null);
     for t in saved.items() {
@@ -520,7 +520,7 @@ fn restart_when_idle(app: &App) {
         };
         if due {
             let mut cmd = std::process::Command::new(std::env::current_exe().unwrap_or_else(|e| fail(&e.to_string())));
-            // ponytail: the new clearance runs without a window (ADR-0016); the old one's tab closes with it.
+            // ponytail: the new clearance runs without a window; the old one's tab closes with it.
             sys::hidden(&mut cmd).arg("--foreground").env(RESTARTED, "1");
             cmd.stdin(std::process::Stdio::null()).stdout(std::process::Stdio::null()).stderr(std::process::Stdio::null());
             match cmd.spawn() {
@@ -551,7 +551,7 @@ fn session_extra(app: &App) -> Vec<String> {
     extra
 }
 
-/// `claude agents` every 2 s while a page is open, every 10 s otherwise (ADR-0010).
+/// `claude agents` every 2 s while a page is open, every 10 s otherwise.
 fn poll(app: &App) {
     loop {
         let asked = sys::now_ms();
@@ -595,7 +595,7 @@ fn poll(app: &App) {
     }
 }
 
-/// The memory of each session's processes, every 10 s (ADR-0015): apart from the 2 s poll, a process
+/// The memory of each session's processes, every 10 s: apart from the 2 s poll, a process
 /// table takes a moment to read.
 fn weigh(app: &App) {
     loop {
@@ -667,7 +667,7 @@ fn route(app: &Arc<App>, s: &TcpStream, req: &http::Request) -> io::Result<()> {
     let bearer = req.header("authorization").and_then(|a| a.strip_prefix("Bearer ")).unwrap_or("");
     let path = req.path.as_str();
 
-    // The hook secret (ADR-0013): hooks, the companion mod, and `clearance open`. Never the page.
+    // The hook secret: hooks, the companion mod, and `clearance open`. Never the page.
     if req.method == "POST" && (path.starts_with("/hook/") || path == "/mod/sync" || path == "/open") {
         if !sys::same(bearer, &app.token) {
             return http::respond(s, 401, &[], b"");
@@ -728,7 +728,7 @@ fn route(app: &Arc<App>, s: &TcpStream, req: &http::Request) -> io::Result<()> {
         if path == "/api/browsers" {
             return http::json(s, 200, &app.lock().auth.list(&me));
         }
-        // What a terminal draws, from what it kept (ADR-0016).
+        // What a terminal draws, from what it kept.
         if let Some(id) = path.strip_prefix("/api/term/") {
             return if app.terms.attach(id, &me, s)? { Ok(()) } else { error(s, 404, "No such terminal.") };
         }
@@ -776,7 +776,7 @@ fn route(app: &Arc<App>, s: &TcpStream, req: &http::Request) -> io::Result<()> {
             st.publish();
             ok(s)
         }
-        // The user's groups (ADR-0015): `create` (name), `rename` (id, name), `delete` (id).
+        // The user's groups: `create` (name), `rename` (id, name), `delete` (id).
         "/api/groups" => {
             let (id, name) = (body.get("id").str().unwrap_or(""), body.get("name").str().unwrap_or(""));
             let mut st = app.lock();
@@ -920,7 +920,7 @@ fn route(app: &Arc<App>, s: &TcpStream, req: &http::Request) -> io::Result<()> {
 
 const SIGNED_OUT: &str = "This browser is not signed in to clearance, or its link was already used or is more than 5 minutes old.\nRun `clearance open` in a terminal: the page opens here, signed in.\n\nCe navigateur n'est pas connecté à clearance, ou son lien a déjà servi ou date de plus de 5 minutes.\nLancez `clearance open` dans un terminal : la page s'ouvre ici, connectée.\n";
 
-// xterm.js and its fit addon, frozen with their licences (ADR-0016).
+// xterm.js and its fit addon, frozen with their licences.
 const VENDOR: [(&str, &[u8]); 5] = [
     ("xterm.js", include_bytes!("../public/vendor/xterm/xterm.js")),
     ("xterm.css", include_bytes!("../public/vendor/xterm/xterm.css")),
@@ -960,7 +960,7 @@ fn folders(path: &str) -> Json {
 const MAX_ATTACHMENT: usize = 25 * 1024 * 1024;
 
 /// Saves a pasted or dropped file in its own folder under the system's temporary one, outside
-/// clearance's folder, which sessions are denied (ADR-0013); its path.
+/// clearance's folder, which sessions are denied; its path.
 fn attach(name: &str, bytes: &[u8]) -> Result<String, String> {
     if bytes.is_empty() || bytes.len() > MAX_ATTACHMENT {
         return Err("A file of 1 byte to 25 MB.".into());
@@ -975,7 +975,7 @@ fn attach(name: &str, bytes: &[u8]) -> Result<String, String> {
     Ok(path.display().to_string())
 }
 
-/// One of the page's fonts (ADR-0014): from the repository while it is there, else from the binary.
+/// One of the page's fonts: from the repository while it is there, else from the binary.
 fn font(s: &TcpStream, name: &str) -> io::Result<()> {
     let known = FONTS.iter().find(|(n, _)| *n == name);
     let Some((_, embedded)) = known else { return http::respond(s, 404, &[], b"") };
@@ -1101,7 +1101,7 @@ fn decide(app: &App, s: &TcpStream, decision: &Json) -> io::Result<()> {
         return error(s, 410, "Already answered, or the session moved on.");
     };
     let action = decision.get("action").str().unwrap_or("");
-    // Outside the validated versions only what lets nothing run passes (ADR-0017).
+    // Outside the validated versions only what lets nothing run passes.
     if let Some(v) = st.unvalidated().filter(|_| !matches!(action, "deny" | "dismiss")) {
         return error(s, 409, &format!("Claude Code {v} is not validated with clearance: decide in its terminal."));
     }
@@ -1143,7 +1143,7 @@ fn prompts(list: &Json) -> Result<Json, &'static str> {
     Ok(Json::Arr(kept))
 }
 
-/// A new session, or a stopped one resumed, in one of clearance's own terminals (ADR-0016).
+/// A new session, or a stopped one resumed, in one of clearance's own terminals.
 fn start(app: &Arc<App>, s: &TcpStream, body: &Json) -> io::Result<()> {
     let start = terminal::Start::from_json(body);
     if let Err(e) = start.check() {
@@ -1292,7 +1292,7 @@ mod tests {
         let _ = fs::remove_dir_all(&app.home);
     }
 
-    // ---- end to end (ADR-0017): a fake Claude Code and a fake page over real sockets ----
+    // ---- end to end: a fake Claude Code and a fake page over real sockets ----
 
     /// clearance on a port of its own, as `serve` runs it: each connection in its own thread.
     fn serve_test(app: &Arc<App>) -> std::net::SocketAddr {
