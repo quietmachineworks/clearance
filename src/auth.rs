@@ -91,7 +91,7 @@ impl Auth {
     /// Signed-in browsers, most recently used first; `current` is the asking browser's digest.
     pub fn list(&self, current: &str) -> Json {
         let mut all: Vec<(&String, &Entry)> = self.browsers.iter().collect();
-        all.sort_by(|a, b| b.1.seen.cmp(&a.1.seen));
+        all.sort_by_key(|a| std::cmp::Reverse(a.1.seen));
         Json::Arr(
             all.into_iter()
                 .map(|(k, e)| {
@@ -120,7 +120,7 @@ impl Auth {
         self.browsers.retain(|_, e| now.saturating_sub(e.seen) <= IDLE_MS);
         if self.browsers.len() > MAX_BROWSERS {
             let mut by_use: Vec<(String, u64)> = self.browsers.iter().map(|(k, e)| (k.clone(), e.seen)).collect();
-            by_use.sort_by(|a, b| b.1.cmp(&a.1));
+            by_use.sort_by_key(|a| std::cmp::Reverse(a.1));
             for (k, _) in by_use.into_iter().skip(MAX_BROWSERS) {
                 self.browsers.remove(&k);
             }

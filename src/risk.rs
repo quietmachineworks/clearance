@@ -436,7 +436,7 @@ pub fn suggest(approvals: &[Approval], min: usize) -> Vec<Suggestion> {
             Suggestion { rule, count: list.len(), sessions: sessions.len(), last: last.at.clone(), example: example.chars().take(200).collect() }
         })
         .collect();
-    out.sort_by(|a, b| b.count.cmp(&a.count));
+    out.sort_by_key(|a| std::cmp::Reverse(a.count));
     out
 }
 
