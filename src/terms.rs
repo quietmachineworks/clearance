@@ -84,9 +84,26 @@ impl Terms {
         let id = sys::random_hex(8)?;
         let term = Arc::new(Term { id: id.clone(), launch, pty, screen: Mutex::default() });
         lock(&self.map).insert(id.clone(), term.clone());
-        let waiter = term.clone();
-        std::thread::spawn(move || waiter.pty.wait());
-        let (reader, terms) = (term.clone(), self.clone());
+        // Ends once, by the first of: the output closed, or the program gone a second ago. A program started
+        // elsewhere in this process at the wrong moment can inherit the output's write end (Windows
+        // duplicates it inheritable while it creates the pseudo-console) and keep it open as long as it lives.
+        let end = {
+            let (term, terms, gone) = (term.clone(), self.clone(), Mutex::new(Some(gone)));
+            Arc::new(move || {
+                if let Some(gone) = lock(&gone).take() {
+                    term.ended();
+                    lock(&terms.map).remove(&term.id);
+                    gone(&term.id);
+                }
+            })
+        };
+        let (waiter, ender) = (term.clone(), end.clone());
+        std::thread::spawn(move || {
+            waiter.pty.wait();
+            std::thread::sleep(std::time::Duration::from_secs(1)); // what it drew last is still on its way
+            ender();
+        });
+        let reader = term.clone();
         std::thread::spawn(move || {
             let mut buf = [0u8; 16 * 1024];
             while let Ok(n) = out.read(&mut buf) {
@@ -95,9 +112,7 @@ impl Terms {
                 }
                 reader.drawn(&buf[..n]);
             }
-            reader.ended();
-            lock(&terms.map).remove(&reader.id);
-            gone(&reader.id);
+            end();
         });
         Ok(term)
     }

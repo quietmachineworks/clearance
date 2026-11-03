@@ -158,6 +158,8 @@
   sentences show their `code` as code.
 - The quota no longer blinks: each window keeps its newest reading across sessions, an idle session's
   old one no longer replaces it. A reset on another day shows the day; a window past its reset shows 0 %.
+- A session in a terminal of the page ends with its program, even when another program started at the
+  same moment holds its output open.
 - An infrastructure write and a plan are approved with a click, no more `GO` to type: the button wakes
   a second after the card comes into view, and the key `a` takes two presses.
 - Files a session wrote in its scratchpad are no longer listed as changes.
