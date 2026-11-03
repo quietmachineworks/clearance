@@ -9,7 +9,7 @@ lets you answer from there.
 
 - **What waits for you first**: permissions, questions, plan approvals and auto mode denials, sorted by
   risk then age, each with the full command. An infrastructure write shows its environment (production,
-  staging, local, or unknown, handled like production) and asks you to type `GO`.
+  staging, local, or unknown, handled like production) and its button only wakes a second after the card shows.
 - **Answer from the page or the terminal**: Claude Code keeps its own dialog open, the first answer wins.
   Every answer can be taken back for 5 seconds.
 - **Every session at a glance**: to read, working, idle, asleep, stopped; in groups you make, with each

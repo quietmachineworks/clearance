@@ -355,7 +355,6 @@ pre.cmd { margin: 0; padding: 12px 14px; color: var(--screenInk); background: va
 .box strong { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; letter-spacing: .05em; text-transform: uppercase }
 .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px }
 .field { min-height: 44px; padding: 8px 12px; color: var(--ink); background: var(--paper); border: var(--bw) solid var(--edge); border-radius: var(--rs) }
-.field.go { flex: none; width: 96px; font-weight: 800; letter-spacing: .1em; text-align: center; text-transform: uppercase }
 .field.grow { flex: 1 1 220px; min-width: 0 }
 textarea.field { width: 100%; resize: vertical }
 fieldset { margin: 0; padding: 0; border: 0; display: grid; gap: 8px }
@@ -551,7 +550,7 @@ const I18N = {
     checked: 'Checked by clearance', claimed: 'The agent says, not checked', tool: 'tool', folder: 'folder', environment: 'environment',
     allow: 'Allow', always: 'Always', 'always.title': 'Allow, and do not ask again for: {rule}', deny: 'Deny', why: 'Why?', 'to.terminal': 'Leave it to the terminal',
     'mode.after': 'Mode after the answer', 'mode.keep': 'unchanged', 'mode.default': 'ask', 'mode.acceptEdits': 'edits', 'mode.plan': 'plan', 'mode.auto': 'auto',
-    'go.ph': 'GO', 'go.label': 'Type GO', send: 'Send', 'other.answer': 'Other answer', launch: 'Launch', revise: 'Ask for a change', retry: 'Let it retry', 'keep.denied': 'Keep it denied',
+    'go.again': 'Press a again to confirm', send: 'Send', 'other.answer': 'Other answer', launch: 'Launch', revise: 'Ask for a change', retry: 'Let it retry', 'keep.denied': 'Keep it denied',
     next: 'Opens next: {name}', since: 'Waiting since', 'settled.note': 'Answered in the terminal at {time}. Nothing to do here.',
     validate: 'Validate', fix: 'Ask for a fix', 'fix.text': 'Fix: ', diff: 'See the diff', facts: 'The facts, checked by clearance',
     'tests.ok': 'tests pass', 'tests.ko': 'tests fail', 'tests.none': 'no tests run', files: '{n} files', commits: '{n} commits',
@@ -577,7 +576,7 @@ const I18N = {
     'not.connected.short': 'not connected to clearance', 'waits.lost.short': 'request not on the page',
     'waits.lost': 'Its request did not reach this page, probably asked while clearance was restarting: answer it in its terminal.',
     'waits.terminal': 'waits for you in its terminal', 'tab.found': 'Tab brought to the front.', 'tab.missing': 'Tab not found: look for “{title}”.',
-    'err.gone': 'Already answered, or the session moved on.', 'err.go': 'Type GO first.', 'err.answer': 'Pick an answer for each question.', 'err.start': 'The session did not start: {error}',
+    'err.gone': 'Already answered, or the session moved on.', 'err.answer': 'Pick an answer for each question.', 'err.start': 'The session did not start: {error}',
     connecting: 'connecting...', offline: 'clearance is not answering', live: 'live · {n} sessions',
     'tab.action': 'Action', 'tab.thread': 'Thread', 'tab.terminal': 'Terminal', 'tab.details': 'Details', 'tab.settings': 'Settings',
     'nothing.todo': 'Nothing to do for this session.', back: 'Back to the queue', copy: 'Copy', copied: 'Copied',
@@ -623,7 +622,7 @@ const I18N = {
     checked: 'Vérifié par clearance', claimed: "Selon l'agent, non vérifié", tool: 'outil', folder: 'dossier', environment: 'environnement',
     allow: 'Autoriser', always: 'Toujours', 'always.title': 'Autoriser et ne plus demander pour : {rule}', deny: 'Refuser', why: 'Pourquoi ?', 'to.terminal': 'Laisser au terminal',
     'mode.after': 'Mode après la réponse', 'mode.keep': 'inchangé', 'mode.default': 'demander', 'mode.acceptEdits': 'éditions', 'mode.plan': 'plan', 'mode.auto': 'auto',
-    'go.ph': 'GO', 'go.label': 'Tape GO', send: 'Envoyer', 'other.answer': 'Autre réponse', launch: 'Lancer', revise: 'Modifier', retry: 'Laisser réessayer', 'keep.denied': 'Garder le refus',
+    'go.again': 'Appuie encore sur a pour confirmer', send: 'Envoyer', 'other.answer': 'Autre réponse', launch: 'Lancer', revise: 'Modifier', retry: 'Laisser réessayer', 'keep.denied': 'Garder le refus',
     next: 'Ensuite : {name}', since: 'Attend depuis', 'settled.note': 'Réglée au terminal à {time}. Rien à faire ici.',
     validate: 'Valider', fix: 'Corriger', 'fix.text': 'Corrige : ', diff: 'Voir le diff', facts: 'Les faits, vérifiés par clearance',
     'tests.ok': 'tests au vert', 'tests.ko': 'tests en échec', 'tests.none': 'pas de tests lancés', files: '{n} fichiers', commits: '{n} commits',
@@ -649,7 +648,7 @@ const I18N = {
     'not.connected.short': 'pas reliée à clearance', 'waits.lost.short': 'demande hors de la page',
     'waits.lost': "Sa demande n'est pas arrivée sur cette page, sans doute posée pendant un redémarrage de clearance : réponds dans son terminal.",
     'waits.terminal': "t'attend dans son terminal", 'tab.found': 'Onglet mis au premier plan.', 'tab.missing': 'Onglet introuvable : cherche « {title} ».',
-    'err.gone': 'Déjà répondue, ou la session est passée à autre chose.', 'err.go': "Tape GO d'abord.", 'err.answer': 'Choisis une réponse pour chaque question.', 'err.start': "La session n'a pas démarré : {error}",
+    'err.gone': 'Déjà répondue, ou la session est passée à autre chose.', 'err.answer': 'Choisis une réponse pour chaque question.', 'err.start': "La session n'a pas démarré : {error}",
     connecting: 'connexion...', offline: 'clearance ne répond pas', live: 'en direct · {n} sessions',
     'tab.action': 'Action', 'tab.thread': 'Fil', 'tab.terminal': 'Terminal', 'tab.details': 'Détails', 'tab.settings': 'Réglages',
     'nothing.todo': 'Rien à faire pour cette session.', back: 'Retour à la file', copy: 'Copier', copied: 'Copié',
@@ -673,7 +672,7 @@ const ROBOT_SKINS = ['cockpit', 'arcade', 'phosphore']
 let lang = store.get('lang', null) ?? (navigator.language?.startsWith('fr') ? 'fr' : 'en')
 let skin = store.get('skin', null) ?? (matchMedia('(prefers-color-scheme: dark)').matches ? 'manga-dark' : 'manga')
 const t = (key, vars = {}) => (I18N[lang][key] ?? I18N.en[key] ?? key).replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '')
-const ERRORS = { 'Already answered, or the session moved on.': 'err.gone', 'type GO to allow an infrastructure write': 'err.go', 'type GO to approve a plan': 'err.go' }
+const ERRORS = { 'Already answered, or the session moved on.': 'err.gone' }
 const error = (message) => (ERRORS[message] ? t(ERRORS[message]) : message)
 const clock = (ms) => (ms ? new Date(ms).toLocaleTimeString(lang, { hour: '2-digit', minute: '2-digit' }) : '')
 const ago = (ms) => minutes(Date.now() - ms)
@@ -970,8 +969,11 @@ function renderTop() {
   document.title = L.waiting.length + L.terminalWaits.length ? `(${L.waiting.length + L.terminalWaits.length}) clearance` : 'clearance'
   const count = (cls, iconName, n, label) => h('span', { class: `count ${cls}`, title: label }, icon(iconName), String(n), h('span', { class: 'sr' }, label))
   const quota = (snap.quota ?? []).filter((q) => t(`q.label.${q.kind}`) !== `q.label.${q.kind}`).map((q) => {
-    const pct = Math.round(q.percentUsed)
-    const reset = q.resetsAt ? clock(Date.parse(q.resetsAt)) : '?'
+    // A window past its reset is empty until the next response opens a new one.
+    const at = q.resetsAt ? Date.parse(q.resetsAt) : null
+    const past = at && at <= Date.now()
+    const pct = past ? 0 : Math.round(q.percentUsed)
+    const reset = !at || past ? '?' : new Date(at).toDateString() === new Date().toDateString() ? clock(at) : new Date(at).toLocaleString(lang, { weekday: 'short', hour: '2-digit', minute: '2-digit' })
     const dry = q.kind === 'five_hour' && snap.quotaDryAt && (!q.resetsAt || snap.quotaDryAt < Date.parse(q.resetsAt)) ? snap.quotaDryAt : null
     const cells = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => h('i', { class: i < Math.round(pct / 10) ? `on ${i < 5 ? 'g' : i < 7 ? 'y' : i < 9 ? 'o' : 'r'}` : '' }))
     const label = t('q.aria', { label: t(`q.label.${q.kind}`), pct, reset })
@@ -1475,8 +1477,19 @@ function copyField(command, label = command) {
 // ---- decision cards ----
 const MODES = ['', 'default', 'acceptEdits', 'plan', 'auto']
 const isGo = (label = '') => /^go$/i.test(label.trim())
+// An infrastructure write or a plan takes a click, never a reflex: its button wakes a second after the
+// card came into the pane, so a click meant for the card before falls in the void; the key a takes two.
+let shown = { id: null, at: 0 }
+let armed = { id: null, at: 0 }
+function wakes(button) {
+  const left = shown.at + 1000 - Date.now()
+  if (left > 0) { button.disabled = true; setTimeout(() => { button.disabled = false }, left) }
+  button.dataset.go = ''
+  return button
+}
 function decisionCard() {
   const r = requestOf(sel)
+  if (shown.id !== (r?.id ?? null)) shown = { id: r?.id ?? null, at: Date.now() }
   const settled = !r && (snap.settled ?? []).findLast((x) => x.session === sel)
   if (settled) return h('article', { class: 'card settledcard' }, h('strong', {}, icon('handoff', 18), ' ', t('settled.note', { time: clock(settled.settledAt) })), h('code', {}, cmdOf(settled.input)))
   const done = !r && (snap.done ?? []).find((d) => d.session === sel && !pending.has(`read:${sel}`))
@@ -1495,18 +1508,15 @@ function decisionCard() {
       h('pre', { class: 'cmd' }, cmdOf(r.input)),
       h('div', { class: 'actions' }, h('button', { type: 'button', class: 'btn', 'data-key': 'd', title: `${t('deny')}  d`, onclick: () => decide({ action: 'deny' }, 'deny') }, icon('x'), t('deny'))))
   }
-  // Ctrl+Enter in the GO field does what its button does, once GO is typed.
-  const goEnter = (e, button) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !button.disabled) { e.preventDefault(); button.click() } }
   if (r.kind === 'permission' || r.kind === 'denied') {
     const env = envLabel(r)
     const infra = r.risk === 'infra'
-    const go = infra ? h('input', { class: 'field go', name: 'go', autocomplete: 'off', spellcheck: 'false', placeholder: t('go.ph'), 'aria-label': t('go.label'), oninput: () => { allow.disabled = go.value.trim().toUpperCase() !== 'GO' }, onkeydown: (e) => goEnter(e, allow) }) : null
     const mode = h('select', { class: 'field', 'aria-label': t('mode.after') }, MODES.map((m) => h('option', { value: m }, t(m ? `mode.${m}` : 'mode.keep'))))
     const reason = h('input', { class: 'field grow', placeholder: t('why'), 'aria-label': t('why') })
-    const typed = () => (go ? go.value.trim().toUpperCase() : undefined)
     const allow = r.kind === 'denied'
       ? h('button', { type: 'button', class: 'btn primary', onclick: () => decide({ action: 'retry' }, 'retry') }, icon('check'), t('retry'))
-      : h('button', { type: 'button', class: 'btn primary', 'data-key': 'a', disabled: infra, title: `${t('allow')}  a`, onclick: () => decide({ action: 'allow', mode: mode.value || undefined, typed: typed() }, 'allow') }, icon('check'), t('allow'))
+      : h('button', { type: 'button', class: 'btn primary', 'data-key': 'a', title: `${t('allow')}  a${infra ? ' a' : ''}`, onclick: () => decide({ action: 'allow', mode: mode.value || undefined }, 'allow') }, icon('check'), t('allow'))
+    if (infra && r.kind === 'permission') wakes(allow)
     const rule = r.kind === 'permission' && !infra && r.suggestions?.length
     return h('article', { class: `card${isHot(r) ? ' hot' : ''}`, 'aria-label': t(r.kind === 'denied' ? 'denied.kind' : 'perm.kind') },
       head(r.kind, [h('span', { class: `bigenv env ${env.cls}`, title: env.why }, env.text), h('span', { class: 'classbadge' }, icon('shield', 14), t(`risk.${r.risk}`))]),
@@ -1516,7 +1526,7 @@ function decisionCard() {
           h('span', {}, h('span', { class: 'meta' }, t('tool')), ' ', h('b', {}, r.tool), r.cwd ? [' · ', h('span', { class: 'meta' }, t('folder')), ' ', h('b', {}, folderName(r.cwd))] : null),
           h('span', {}, h('span', { class: 'meta' }, t('environment')), ' ', h('b', {}, env.why))),
         r.input?.description || r.reason ? h('div', { class: 'box claimed' }, h('strong', {}, icon('speech', 16), t('claimed')), h('span', {}, r.input?.description || r.reason)) : null),
-      h('div', { class: 'actions' }, go, allow,
+      h('div', { class: 'actions' }, allow,
         rule ? h('button', { type: 'button', class: 'btn', title: t('always.title', { rule: describe(r.suggestions) }), onclick: () => decide({ action: 'rule', mode: mode.value || undefined }, 'always') }, icon('checks'), t('always')) : null,
         r.kind === 'permission' ? h('label', { title: t('mode.after'), style: 'display:inline-flex;align-items:center;gap:6px' }, icon('mode'), h('span', { class: 'sr' }, t('mode.after')), mode) : null,
         h('span', { class: 'spacer' }), r.kind === 'permission' ? reason : null,
@@ -1528,16 +1538,15 @@ function decisionCard() {
   const qs = r.input?.questions ?? []
   if (r.kind === 'plan') {
     const q = qs[0] ?? {}
-    const go = h('input', { class: 'field go', name: 'go', autocomplete: 'off', spellcheck: 'false', placeholder: t('go.ph'), 'aria-label': t('go.label'), oninput: () => { launch.disabled = go.value.trim().toUpperCase() !== 'GO' }, onkeydown: (e) => goEnter(e, launch) })
     const yes = (q.options ?? []).find((o) => isGo(o.label))
     const no = (q.options ?? []).find((o) => !isGo(o.label))
-    const launch = h('button', { type: 'button', class: 'btn primary', 'data-key': 'a', disabled: true, onclick: () => decide({ action: 'answer', answers: { [q.question]: yes?.label ?? 'GO' }, typed: go.value.trim().toUpperCase() }, 'launch') }, icon('play'), t('launch'))
+    const launch = wakes(h('button', { type: 'button', class: 'btn primary', 'data-key': 'a', title: `${t('launch')}  a a`, onclick: () => decide({ action: 'answer', answers: { [q.question]: yes?.label ?? 'GO' } }, 'launch') }, icon('play'), t('launch')))
     const change = h('input', { class: 'field grow', placeholder: t('revise'), 'aria-label': t('revise') })
     return h('article', { class: 'card', 'aria-label': t('plan.kind') },
       head('plan', h('span', { class: 'kind plan' }, icon('plan', 16))),
       h('p', { style: 'margin:0;font-weight:800;font-size:18px' }, q.question),
       (q.options ?? []).filter((o) => o.description).map((o) => h('p', { class: 'said' }, h('b', {}, o.label), ': ', prose(o.description))),
-      h('div', { class: 'actions' }, go, launch, h('span', { class: 'spacer' }), change,
+      h('div', { class: 'actions' }, launch, h('span', { class: 'spacer' }), change,
         h('button', { type: 'button', class: 'btn', 'data-key': 'd', onclick: () => decide(change.value.trim() ? { action: 'answer', text: change.value.trim() } : no ? { action: 'answer', answers: { [q.question]: no.label } } : { action: 'deny' }, 'revise') }, icon('pencil'), t('revise')),
         btn('icon quiet', t('to.terminal'), 'handoff', () => decide({ action: 'dismiss' }, 'dismiss'))))
   }
@@ -2109,7 +2118,11 @@ document.addEventListener('keydown', (e) => {
     return $(`#pane [data-key="${key}"]`)
   }
   if (e.key === 'j' || e.key === 'k') { const i = queue.indexOf(sel); select(queue[Math.max(0, Math.min(queue.length - 1, i + (e.key === 'j' ? 1 : -1)))] ?? queue[0] ?? null) }
-  else if (e.key === 'a') { const go = $('#pane input[name=go]'); go && go.value.trim().toUpperCase() !== 'GO' ? go.focus() : click('a')?.click() }
+  else if (e.key === 'a') {
+    const b = click('a')
+    if (b && 'go' in b.dataset && !b.disabled && (armed.id !== shown.id || Date.now() - armed.at > 3000)) { armed = { id: shown.id, at: Date.now() }; toast(t('go.again'), 'alert') }
+    else { armed = { id: null, at: 0 }; b?.click() }
+  }
   else if (e.key === 'd') click('d')?.click()
   else if (e.key === 'e') click('e')?.click()
   else if (/^[1-9]$/.test(e.key)) $(`#pane [data-option="${e.key}"]`)?.click()

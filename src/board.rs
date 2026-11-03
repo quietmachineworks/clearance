@@ -142,10 +142,26 @@ impl Board {
             let per_ms = rate(self.costs.entry(session.to_string()).or_default(), now, usd);
             kept.set("rate", per_ms.map(|r| r * 3_600_000.0).into()); // USD per hour
         }
-        if let Some(pct) = usage.get("rateLimits").items().iter().find(|l| l.get("kind").str() == Some("five_hour")).and_then(|l| l.get("percentUsed").num()) {
+        self.usage.insert(session.to_string(), (now, kept));
+        if let Some(pct) = self.quota().iter().find(|l| l.get("kind").str() == Some("five_hour")).and_then(|l| l.get("percentUsed").num()) {
             rate(&mut self.quota, now, pct);
         }
-        self.usage.insert(session.to_string(), (now, kept));
+    }
+
+    /// The account's quota is the same for every session, but each one has the windows of its own last
+    /// response, an idle one an old reading: per window, the latest reset wins, then the most used.
+    fn quota(&self) -> Vec<Json> {
+        let key = |l: &Json| (l.get("resetsAt").str().and_then(crate::sys::parse_iso).unwrap_or(0), l.get("percentUsed").num().unwrap_or(0.0));
+        let mut best: Vec<Json> = Vec::new();
+        for l in self.usage.values().flat_map(|(_, u)| u.get("rateLimits").items()) {
+            match best.iter_mut().find(|b| b.get("kind") == l.get("kind")) {
+                Some(b) if key(l) > key(b) => *b = l.clone(),
+                Some(_) => {}
+                None => best.push(l.clone()),
+            }
+        }
+        best.sort_by(|a, b| a.get("kind").str().cmp(&b.get("kind").str()));
+        best
     }
 
     /// When the 5-hour quota runs dry at the pace of the last hour, if it rises.
@@ -348,8 +364,8 @@ impl Board {
             .collect();
         let mut done: Vec<&Done> = self.done.values().collect();
         done.sort_by_key(|d| d.at);
-        // The account's quota is the same for every session: the freshest report wins.
-        let quota = self.usage.values().filter(|(_, u)| !u.get("rateLimits").items().is_empty()).max_by_key(|(at, _)| *at).map(|(_, u)| u.get("rateLimits").clone());
+        let quota = self.quota();
+        let quota = (!quota.is_empty()).then_some(Json::Arr(quota));
         obj([
             ("requests", Json::Arr(requests.iter().map(|r| r.to_json()).collect())),
             ("sessions", Json::Arr(sessions)),
@@ -389,12 +405,10 @@ impl Board {
 }
 
 /// The hook answer for a decision taken on the page; an error for a decision the request does not allow.
-/// The decision: `action` (allow, rule, deny, answer, retry, dismiss), `reason`, `mode`, `answers`, `text`,
-/// `typed`.
+/// The decision: `action` (allow, rule, deny, answer, retry, dismiss), `reason`, `mode`, `answers`, `text`.
 pub fn respond(r: &Request, d: &Json) -> Result<Json, String> {
     let action = d.get("action").str().unwrap_or("");
     let filled = |key: &str| d.get(key).str().filter(|s| !s.is_empty());
-    let typed_go = d.get("typed").str() == Some("GO");
     if action == "dismiss" {
         return Ok(Json::Obj(Vec::new())); // no decision: the terminal dialog stays
     }
@@ -416,9 +430,6 @@ pub fn respond(r: &Request, d: &Json) -> Result<Json, String> {
             }
             if action != "allow" && action != "rule" {
                 return Err(format!("{action} does not apply to a permission"));
-            }
-            if r.risk == Risk::Infra && !typed_go {
-                return Err("type GO to allow an infrastructure write".into());
             }
             let mut updates = if action == "rule" { r.suggestions.clone() } else { Vec::new() };
             if let Some(mode) = filled("mode") {
@@ -445,9 +456,6 @@ pub fn respond(r: &Request, d: &Json) -> Result<Json, String> {
                 let picked: Vec<&str> = picked.split(", ").collect();
                 if !picked.iter().all(|l| labels.contains(l)) {
                     return Err(format!("no valid answer for \"{question}\""));
-                }
-                if r.kind == Kind::Plan && picked.iter().any(|l| is_go(l)) && !typed_go {
-                    return Err("type GO to approve a plan".into());
                 }
             }
             let mut input = r.input.clone();
@@ -560,14 +568,13 @@ mod tests {
     }
 
     #[test]
-    fn an_infrastructure_write_needs_go_typed_and_never_becomes_a_rule() {
+    fn an_infrastructure_write_never_becomes_a_rule() {
         let mut b = Board::default();
         let mut body = permission("git push --force");
         body.set("permission_suggestions", j(r#"[{"type":"addRules"}]"#));
         let r = b.hook("PermissionRequest", &body, 1).0.unwrap();
-        assert!(respond(&r, &j(r#"{"action":"rule","typed":"GO"}"#)).unwrap_err().contains("no rule"));
-        assert!(respond(&r, &j(r#"{"action":"allow"}"#)).unwrap_err().contains("type GO"));
-        assert_eq!(respond(&r, &j(r#"{"action":"allow","typed":"GO"}"#)).unwrap().get("hookSpecificOutput").get("decision").get("behavior").str(), Some("allow"));
+        assert!(respond(&r, &j(r#"{"action":"rule"}"#)).unwrap_err().contains("no rule"));
+        assert_eq!(respond(&r, &j(r#"{"action":"allow"}"#)).unwrap().get("hookSpecificOutput").get("decision").get("behavior").str(), Some("allow"));
         assert!(respond(&r, &j(r#"{"action":"deny"}"#)).is_ok());
     }
 
@@ -586,14 +593,12 @@ mod tests {
     }
 
     #[test]
-    fn a_plan_needs_go_typed() {
+    fn a_plan_is_an_infrastructure_request() {
         let mut b = Board::default();
         let r = b.hook("PermissionRequest", &ask(&["GO", "No"]), 1).0.unwrap();
         assert_eq!(r.kind, Kind::Plan);
         assert_eq!(b.snapshot().get("requests").items()[0].get("risk").str(), Some("infra"));
-        assert!(respond(&r, &j(r#"{"action":"answer","answers":{"Ship the plan?":"GO"}}"#)).unwrap_err().contains("type GO"));
-        assert!(respond(&r, &j(r#"{"action":"answer","answers":{"Ship the plan?":"GO"},"typed":"go"}"#)).unwrap_err().contains("type GO"));
-        assert!(respond(&r, &j(r#"{"action":"answer","answers":{"Ship the plan?":"GO"},"typed":"GO"}"#)).is_ok());
+        assert!(respond(&r, &j(r#"{"action":"answer","answers":{"Ship the plan?":"GO"}}"#)).is_ok());
         assert!(respond(&r, &j(r#"{"action":"answer","answers":{"Ship the plan?":"No"}}"#)).is_ok());
     }
 
@@ -618,6 +623,13 @@ mod tests {
         let mine = snap.get("sessions").items().iter().find(|s| s.get("sessionId").str() == Some(S)).unwrap().clone();
         assert_eq!(mine.get("usage").get("context").get("percent").num(), Some(91.0));
         assert_eq!(snap.get("quota").to_string(), r#"[{"kind":"five_hour","percentUsed":42}]"#);
+        // An idle session reports the windows of its last response: an old one, or without the 5 hours.
+        let w = |kind: &str, pct: u32, reset: &str| format!(r#"{{"kind":"{kind}","percentUsed":{pct},"resetsAt":"2026-11-{reset}:00:00Z"}}"#);
+        b.report(S, &j(&format!(r#"{{"rateLimits":[{},{}]}}"#, w("five_hour", 30, "02T18"), w("seven_day", 49, "06T14"))), 210);
+        b.report("sess-quarry", &j(&format!(r#"{{"rateLimits":[{},{}]}}"#, w("seven_day", 47, "06T14"), w("five_hour", 90, "02T09"))), 220);
+        assert_eq!(b.snapshot().get("quota").to_string(), format!("[{},{}]", w("five_hour", 30, "02T18"), w("seven_day", 49, "06T14")));
+        b.report("sess-quarry", &j(&format!(r#"{{"rateLimits":[{}]}}"#, w("seven_day", 47, "06T14"))), 230);
+        assert_eq!(b.snapshot().get("quota").items().len(), 2, "the 5 hours stay shown");
         assert_eq!(b.take(S, 250), None);
         b.instruct(S, "Run the linter too.", 300);
         b.instruct(S, "Run the linter too.", 301); // a shortcut sent twice: both arrive, in turn

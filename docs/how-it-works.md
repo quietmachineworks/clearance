@@ -133,8 +133,11 @@ quits them through their mod after saying how much memory it frees. Everything l
 ## Risk
 
 `src/risk.rs` sorts a request into read, write or infrastructure write. It is a signal, not a guarantee:
-the card always shows the full command, and an infrastructure write always asks for `GO` typed on the
-page, checked by the server, and never adds a rule.
+the card always shows the full command, and an infrastructure write never adds a rule. Typing `GO` was
+dropped for a click: the danger it guarded against is a reflex, not an attacker (a session cannot answer
+for itself, another site is stopped by `Origin`). So the button of an infrastructure write or a plan
+wakes one second after its card came into the pane, a click meant for the card before falls in the
+void, the key `a` takes two presses, and every answer can still be taken back for 5 seconds.
 
 - The program word is normalised first (quotes, folder, `.exe`, `.cmd`, `.bat`, `.ps1`, case).
 - An MCP tool whose name holds a writing verb is an infrastructure write: its server can reach a remote

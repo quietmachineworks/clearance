@@ -156,6 +156,10 @@
 - Durations over an hour read "5 h 01", not "5 h 1".
 - The thread names an MCP tool as people say it ("playwright · browser click"), and the session's own
   sentences show their `code` as code.
+- The quota no longer blinks: each window keeps its newest reading across sessions, an idle session's
+  old one no longer replaces it. A reset on another day shows the day; a window past its reset shows 0 %.
+- An infrastructure write and a plan are approved with a click, no more `GO` to type: the button wakes
+  a second after the card comes into view, and the key `a` takes two presses.
 - Files a session wrote in its scratchpad are no longer listed as changes.
 - Ctrl+Enter in a GO field allows the infrastructure write or launches the plan, once GO is typed.
 - An open drawer of the queue stays within it: Resume and Delete no longer slip out of view.
